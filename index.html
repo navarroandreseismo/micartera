@@ -212,13 +212,23 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 
 <!-- CLIENTES -->
 <div class="screen" id="s-clientes">
- <div class="header">
+ <div class="header" id="cli-header-normal">
   <div class="header-top">
    <div><div class="h-title">Clientes</div><div class="h-sub" id="h-subc">0 clientes</div></div>
-   <div style="display:flex;gap:8px;align-items:center">
-    <button onclick="document.getElementById('csv-input').click()" style="background:#10b981;border:none;border-radius:8px;padding:7px 11px;color:#fff;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer">📂 CSV</button>
+   <div style="display:flex;gap:6px;align-items:center">
+    <button onclick="entrarSelectMode()" style="background:#3a2818;border:none;border-radius:8px;padding:7px 10px;color:#d4a456;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer">☑ Seleccionar</button>
+    <button onclick="document.getElementById('csv-input').click()" style="background:#10b981;border:none;border-radius:8px;padding:7px 10px;color:#fff;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer">📂 CSV</button>
     <input type="file" id="csv-input" accept=".csv" style="display:none" onchange="importarCSV(this)">
     <button class="add-btn" onclick="goScreen('s-nuevo')">+</button>
+   </div>
+  </div>
+ </div>
+ <div class="header" id="cli-header-select" style="display:none;background:#3a2818">
+  <div class="header-top">
+   <div><div class="h-title" id="sel-count">0 seleccionados</div><div class="h-sub">Modo selección</div></div>
+   <div style="display:flex;gap:6px;align-items:center">
+    <button onclick="seleccionarTodosCli()" style="background:#5a3828;border:none;border-radius:8px;padding:7px 10px;color:#fff;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer">Todos</button>
+    <button onclick="salirSelectMode()" style="background:var(--bg);border:none;border-radius:8px;padding:7px 10px;color:var(--dark);font-family:inherit;font-size:11px;font-weight:700;cursor:pointer">Cancelar</button>
    </div>
   </div>
  </div>
@@ -232,7 +242,10 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
   <button class="tab" onclick="setTab(this,'ok')">✅ Al día</button>
  </div>
  <div id="lista"></div>
- <button class="add-btn" onclick="goScreen('s-nuevo')" style="position:fixed;bottom:90px;right:20px;width:52px;height:52px;font-size:28px;box-shadow:0 4px 16px #0003;z-index:90">+</button>
+ <button class="add-btn" id="cli-add-fab" onclick="goScreen('s-nuevo')" style="position:fixed;bottom:90px;right:20px;width:52px;height:52px;font-size:28px;box-shadow:0 4px 16px #0003;z-index:90">+</button>
+ <div id="cli-bulk-bar" style="display:none;position:fixed;bottom:60px;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:var(--white);border-top:1px solid var(--border);padding:12px 14px;z-index:95;box-shadow:0 -4px 16px #0003">
+  <button onclick="confirmarBorrarSeleccionados()" class="fb danger" style="margin:0">🗑 Eliminar <span id="sel-count-btn">0</span> cliente(s)</button>
+ </div>
 </div>
 
 <!-- DETALLE -->
@@ -498,6 +511,62 @@ var clienteIdx=null;
 var polizaIdx=null;
 var msgSel={};
 var renovarDeData=null;
+var selectMode=false;
+var selectedIds={};
+
+function entrarSelectMode(){
+ selectMode=true;
+ selectedIds={};
+ document.getElementById('cli-header-normal').style.display='none';
+ document.getElementById('cli-header-select').style.display='block';
+ document.getElementById('cli-add-fab').style.display='none';
+ actualizarSelectUI();
+ renderLista();
+}
+function salirSelectMode(){
+ selectMode=false;
+ selectedIds={};
+ document.getElementById('cli-header-normal').style.display='block';
+ document.getElementById('cli-header-select').style.display='none';
+ document.getElementById('cli-add-fab').style.display='flex';
+ document.getElementById('cli-bulk-bar').style.display='none';
+ renderLista();
+}
+function toggleSelectCli(idx){
+ var c=clientes[idx];if(!c)return;
+ var k=c.id;
+ if(selectedIds[k])delete selectedIds[k];
+ else selectedIds[k]=true;
+ actualizarSelectUI();
+ renderLista();
+}
+function actualizarSelectUI(){
+ var n=Object.keys(selectedIds).length;
+ var lbl=n+' seleccionado'+(n!==1?'s':'');
+ var cnt=document.getElementById('sel-count');if(cnt)cnt.textContent=lbl;
+ var cb=document.getElementById('sel-count-btn');if(cb)cb.textContent=n;
+ var bar=document.getElementById('cli-bulk-bar');if(bar)bar.style.display=n>0?'block':'none';
+}
+function seleccionarTodosCli(){
+ var q=(document.getElementById('buscador').value||'').toLowerCase().trim();
+ var lista=clientes;
+ if(q)lista=lista.filter(function(c){return (c.nombre||'').toLowerCase().indexOf(q)>=0});
+ if(tabActual!=='todos')lista=lista.filter(function(c){return matchTab(c,tabActual)});
+ lista.forEach(function(c){selectedIds[c.id]=true});
+ actualizarSelectUI();
+ renderLista();
+}
+function confirmarBorrarSeleccionados(){
+ var ids=Object.keys(selectedIds);
+ if(!ids.length){toast('Nada seleccionado');return}
+ modal('Eliminar '+ids.length+' cliente(s)','¿Eliminar todos los seleccionados? Se perderán sus pólizas. No se puede deshacer.','Eliminar',function(){
+  clientes=clientes.filter(function(c){return !selectedIds[c.id]});
+  save('mc2_clientes',clientes);
+  programarNotificaciones();
+  toast('🗑 '+ids.length+' eliminados');
+  salirSelectMode();
+ },true);
+}
 
 // ============== TOGGLE VEHICULO ==============
 function toggleVehiculo(prefix){
@@ -543,6 +612,8 @@ var NAV_MAP={'s-home':0,'s-clientes':1,'s-mensajes':2,'s-alertas':3,'s-cobranza'
 function goScreen(id,reset){
  if(SCREENS.indexOf(id)<0){console.warn('Pantalla no existe:',id);return}
  if(reset)historial=['s-home'];
+ // Si salimos de clientes, limpiar select mode
+ if(selectMode&&id!=='s-clientes'){selectMode=false;selectedIds={};var hn=document.getElementById('cli-header-normal');if(hn)hn.style.display='block';var hs=document.getElementById('cli-header-select');if(hs)hs.style.display='none';var fab=document.getElementById('cli-add-fab');if(fab)fab.style.display='flex';var bar=document.getElementById('cli-bulk-bar');if(bar)bar.style.display='none'}
  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active')});
  var el=document.getElementById(id);
  if(!el){console.error('No el:',id);return}
@@ -713,6 +784,10 @@ function renderLista(){
   var idx=clientes.indexOf(c);var e=estCli(c);
   var pa=(c.polizas||[]).filter(polActiva);
   var prima=pa.reduce(function(a,p){return a+(parseFloat(p.prima)||0)},0);
+  if(selectMode){
+   var on=selectedIds[c.id]?'on':'';
+   return '<div class="cli" onclick="toggleSelectCli('+idx+')" style="'+(selectedIds[c.id]?'background:#fff8e1':'')+'"><div class="chk '+on+'">✓</div><div class="av" style="background:'+colA(idx)+';color:'+colB(idx)+'">'+ini(c.nombre)+'</div><div class="info"><div class="c-nombre">'+esc(c.nombre)+'</div><div class="c-det">'+esc(pa.map(function(p){return p.tipo}).join(' · ')||'Sin pólizas')+'</div></div></div>';
+  }
   return '<div class="cli" onclick="verCliente('+idx+')"><div class="av" style="background:'+colA(idx)+';color:'+colB(idx)+'">'+ini(c.nombre)+'</div><div class="info"><div class="c-nombre">'+esc(c.nombre)+'</div><div class="c-det">'+esc(pa.map(function(p){return p.tipo}).join(' · ')||'Sin pólizas')+' · $'+prima.toLocaleString()+'/año</div></div>'+bdg(e)+'</div>';
  }).join('');
 }
