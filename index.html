@@ -253,7 +253,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
   <div class="fg"><label class="fl">Notas</label><input class="fi" id="nc-notas" placeholder="Referido por, intereses..."></div>
 
   <div class="fsec">📋 Primera póliza (opcional)</div>
-  <div class="fg"><label class="fl">Tipo de seguro</label><select class="fs2" id="nc-tipo"><option value="">— Seleccionar —</option><option>Automóvil</option><option>Vida</option><option>Gastos Médicos Mayores</option><option>Hogar</option><option>Negocio</option><option>Accidentes Personales</option><option>Retiro / Ahorro</option></select></div>
+  <div class="fg"><label class="fl">Tipo de seguro</label><select class="fs2" id="nc-tipo" onchange="toggleVehiculo('nc')"><option value="">— Seleccionar —</option><option>Automóvil</option><option>Vida</option><option>Gastos Médicos Mayores</option><option>Hogar</option><option>Negocio</option><option>Accidentes Personales</option><option>Retiro / Ahorro</option></select></div>
   <div class="fr">
    <div class="fg"><label class="fl">Prima anual ($)</label><input class="fi" type="number" id="nc-prima" placeholder="0"></div>
    <div class="fg"><label class="fl">Vencimiento</label><input class="fi" type="date" id="nc-vigencia"></div>
@@ -265,6 +265,20 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
   <div class="fr">
    <div class="fg"><label class="fl">Forma de pago</label><select class="fs2" id="nc-pago"><option value="">—</option><option>Anual</option><option>Semestral</option><option>Trimestral</option><option>Mensual</option><option>Contado</option></select></div>
    <div class="fg"><label class="fl">Coberturas</label><input class="fi" id="nc-coberturas" placeholder="RC | GMM..."></div>
+  </div>
+  <div id="nc-veh-block" style="display:none;background:#fff8f0;border:1px solid #f0d8b8;border-radius:10px;padding:12px;margin-bottom:12px">
+   <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:10px">🚗 Datos del vehículo</div>
+   <div class="fr">
+    <div class="fg"><label class="fl">Marca</label><input class="fi" id="nc-veh-marca" placeholder="Toyota"></div>
+    <div class="fg"><label class="fl">Modelo</label><input class="fi" id="nc-veh-modelo" placeholder="Corolla"></div>
+   </div>
+   <div class="fr">
+    <div class="fg"><label class="fl">Año</label><input class="fi" type="number" id="nc-veh-anio" placeholder="2020"></div>
+    <div class="fg"><label class="fl">Color</label><input class="fi" id="nc-veh-color"></div>
+   </div>
+   <div class="fg"><label class="fl">Placas</label><input class="fi" id="nc-veh-placas"></div>
+   <div class="fg"><label class="fl">Serie (VIN)</label><input class="fi" id="nc-veh-serie"></div>
+   <div class="fg" style="margin-bottom:0"><label class="fl">No. Motor</label><input class="fi" id="nc-veh-motor"></div>
   </div>
   <button class="fb" onclick="guardarCliente()">Guardar cliente</button>
   <div style="height:10px"></div>
@@ -298,7 +312,8 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 <div class="screen" id="s-nueva-pol">
  <div class="bbar"><button class="bbtn" onclick="goBack()">←</button><div class="btitle" id="np-titulo">Nueva Póliza</div></div>
  <div class="fs">
-  <div class="fg"><label class="fl">Tipo *</label><select class="fs2" id="np-tipo"><option value="">— Seleccionar —</option><option>Automóvil</option><option>Vida</option><option>Gastos Médicos Mayores</option><option>Hogar</option><option>Negocio</option><option>Accidentes Personales</option><option>Retiro / Ahorro</option></select></div>
+  <div id="np-renov-banner" style="display:none;background:#dde8ff;color:#1a3f8a;padding:11px 14px;border-radius:10px;margin-bottom:14px;font-size:12px;font-weight:600">🔄 Estás <b>renovando</b> una póliza. Al guardar, la anterior queda en historial.</div>
+  <div class="fg"><label class="fl">Tipo *</label><select class="fs2" id="np-tipo" onchange="toggleVehiculo('np')"><option value="">— Seleccionar —</option><option>Automóvil</option><option>Vida</option><option>Gastos Médicos Mayores</option><option>Hogar</option><option>Negocio</option><option>Accidentes Personales</option><option>Retiro / Ahorro</option></select></div>
   <div class="fr">
    <div class="fg"><label class="fl">Prima ($)</label><input class="fi" type="number" id="np-prima"></div>
    <div class="fg"><label class="fl">Vencimiento</label><input class="fi" type="date" id="np-vigencia"></div>
@@ -310,6 +325,20 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
   <div class="fr">
    <div class="fg"><label class="fl">Forma de pago</label><select class="fs2" id="np-pago"><option value="">—</option><option>Anual</option><option>Semestral</option><option>Trimestral</option><option>Mensual</option><option>Contado</option></select></div>
    <div class="fg"><label class="fl">Coberturas</label><input class="fi" id="np-coberturas"></div>
+  </div>
+  <div id="np-veh-block" style="display:none;background:#fff8f0;border:1px solid #f0d8b8;border-radius:10px;padding:12px;margin-bottom:12px">
+   <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:10px">🚗 Datos del vehículo</div>
+   <div class="fr">
+    <div class="fg"><label class="fl">Marca</label><input class="fi" id="np-veh-marca" placeholder="Toyota"></div>
+    <div class="fg"><label class="fl">Modelo</label><input class="fi" id="np-veh-modelo" placeholder="Corolla"></div>
+   </div>
+   <div class="fr">
+    <div class="fg"><label class="fl">Año</label><input class="fi" type="number" id="np-veh-anio" placeholder="2020"></div>
+    <div class="fg"><label class="fl">Color</label><input class="fi" id="np-veh-color"></div>
+   </div>
+   <div class="fg"><label class="fl">Placas</label><input class="fi" id="np-veh-placas"></div>
+   <div class="fg"><label class="fl">Serie (VIN)</label><input class="fi" id="np-veh-serie"></div>
+   <div class="fg" style="margin-bottom:0"><label class="fl">No. Motor</label><input class="fi" id="np-veh-motor"></div>
   </div>
   <div class="fg"><label class="fl">Notas</label><input class="fi" id="np-nota"></div>
   <button class="fb" onclick="guardarPoliza()">💾 Guardar póliza</button>
@@ -439,14 +468,24 @@ var historial=['s-home'];
 var clienteIdx=null;
 var polizaIdx=null;
 var msgSel={};
+var renovarDeData=null;
+
+// ============== TOGGLE VEHICULO ==============
+function toggleVehiculo(prefix){
+ var sel=document.getElementById(prefix+'-tipo');
+ var blk=document.getElementById(prefix+'-veh-block');
+ if(!sel||!blk)return;
+ blk.style.display=sel.value==='Automóvil'?'block':'none';
+}
 
 // ============== UTILS ==============
 function ini(n){return (n||'?').split(' ').slice(0,2).map(function(p){return p[0]||''}).join('').toUpperCase()||'?'}
 function colA(i){return COLS[Math.abs(i||0)%COLS.length]}
 function colB(i){return COLT[Math.abs(i||0)%COLT.length]}
 function diasHasta(f){if(!f)return null;var d=new Date(f+'T00:00:00');var h=new Date();h.setHours(0,0,0,0);return Math.round((d-h)/86400000)}
-function estPol(p){if(!p.vigencia)return 'ok';var d=diasHasta(p.vigencia);if(d<0)return 'venc';if(d<=30)return 'prox';return 'ok'}
-function estCli(c){if(!(c.polizas||[]).length)return 'ok';if(c.polizas.some(function(p){return estPol(p)==='venc'}))return 'venc';if(c.polizas.some(function(p){return estPol(p)==='prox'}))return 'prox';return 'ok'}
+function polActiva(p){return p.estado!=='renovada'&&p.estado!=='cancelada'}
+function estPol(p){if(!polActiva(p))return 'ok';if(!p.vigencia)return 'ok';var d=diasHasta(p.vigencia);if(d<0)return 'venc';if(d<=30)return 'prox';return 'ok'}
+function estCli(c){var pa=(c.polizas||[]).filter(polActiva);if(!pa.length)return 'ok';if(pa.some(function(p){return estPol(p)==='venc'}))return 'venc';if(pa.some(function(p){return estPol(p)==='prox'}))return 'prox';return 'ok'}
 function bdg(e){return {ok:'<span class="bdg ok">Al día</span>',venc:'<span class="bdg venc">Vencido</span>',prox:'<span class="bdg prox">Por renovar</span>'}[e]||''}
 function bdgPol(e){return {ok:'<span class="bdg ok">Vigente</span>',venc:'<span class="bdg venc">Vencida</span>',prox:'<span class="bdg prox">Por renovar</span>'}[e]||''}
 function ico(t){return {'Automóvil':'🚗','Vida':'❤️','Gastos Médicos Mayores':'🏥','Hogar':'🏠','Negocio':'🏢','Accidentes Personales':'🛡️','Retiro / Ahorro':'💰'}[t]||'📋'}
@@ -513,9 +552,9 @@ document.getElementById('cobro-mes').textContent=MESES[hoy.getMonth()]+' '+hoy.g
 // ============== HOME ==============
 function renderHome(){
  perfil=load('mc2_perfil',perfil);
- var totalP=clientes.reduce(function(a,c){return a+(c.polizas||[]).length},0);
- var venc=clientes.reduce(function(a,c){return a+(c.polizas||[]).filter(function(p){return estPol(p)==='venc'}).length},0);
- var prox=clientes.reduce(function(a,c){return a+(c.polizas||[]).filter(function(p){return estPol(p)==='prox'}).length},0);
+ var totalP=clientes.reduce(function(a,c){return a+(c.polizas||[]).filter(polActiva).length},0);
+ var venc=clientes.reduce(function(a,c){return a+(c.polizas||[]).filter(function(p){return polActiva(p)&&estPol(p)==='venc'}).length},0);
+ var prox=clientes.reduce(function(a,c){return a+(c.polizas||[]).filter(function(p){return polActiva(p)&&estPol(p)==='prox'}).length},0);
  document.getElementById('h-nc').textContent=clientes.length;
  document.getElementById('h-np').textContent=totalP;
  document.getElementById('h-nv').textContent=venc;
@@ -541,7 +580,7 @@ function renderHome(){
  if(!rec.length)el2.innerHTML='<div style="padding:16px;text-align:center;color:var(--mid);font-size:13px">Sin clientes aún</div>';
  else el2.innerHTML=rec.map(function(c){
   var idx=clientes.indexOf(c);var e=estCli(c);
-  return '<div class="cli" onclick="verCliente('+idx+')"><div class="av" style="background:'+colA(idx)+';color:'+colB(idx)+'">'+ini(c.nombre)+'</div><div class="info"><div class="c-nombre">'+esc(c.nombre)+'</div><div class="c-det">'+esc((c.polizas||[]).map(function(p){return p.tipo}).join(' · ')||'Sin pólizas')+'</div></div>'+bdg(e)+'</div>';
+  return '<div class="cli" onclick="verCliente('+idx+')"><div class="av" style="background:'+colA(idx)+';color:'+colB(idx)+'">'+ini(c.nombre)+'</div><div class="info"><div class="c-nombre">'+esc(c.nombre)+'</div><div class="c-det">'+esc((c.polizas||[]).filter(polActiva).map(function(p){return p.tipo}).join(' · ')||'Sin pólizas')+'</div></div>'+bdg(e)+'</div>';
  }).join('');
  document.getElementById('nbdot').style.display=ur.length?'block':'none';
 }
@@ -559,7 +598,7 @@ function getAlertas(){
     if(d<=7)arr.push({txt:'🎂 Cumpleaños de <b>'+esc(c.nombre)+'</b> '+(d===0?'HOY':'en '+d+' días'),sub:'Envía felicitación',tipo:d<=2?'rojo':'naranja',idx:idx});
    }
   }
-  (c.polizas||[]).forEach(function(p){
+  (c.polizas||[]).filter(polActiva).forEach(function(p){
    if(!p.vigencia)return;
    var d=diasHasta(p.vigencia);
    if(d<0)arr.push({txt:'<b>'+esc(c.nombre)+'</b> — '+esc(p.tipo)+' venció hace '+Math.abs(d)+' días',sub:esc((p.num||'')+' · '+(p.aseg||''))+' · Renovar urgente',tipo:'rojo',idx:idx});
@@ -643,12 +682,13 @@ function renderLista(){
  if(!lista.length){el.innerHTML='<div class="empty"><div class="ico">📂</div><p>Sin clientes que coincidan.<br>Toca <b>+</b> para agregar uno o <b>📂 CSV</b> para importar.</p></div>';return}
  el.innerHTML=lista.map(function(c){
   var idx=clientes.indexOf(c);var e=estCli(c);
-  var prima=(c.polizas||[]).reduce(function(a,p){return a+(parseFloat(p.prima)||0)},0);
-  return '<div class="cli" onclick="verCliente('+idx+')"><div class="av" style="background:'+colA(idx)+';color:'+colB(idx)+'">'+ini(c.nombre)+'</div><div class="info"><div class="c-nombre">'+esc(c.nombre)+'</div><div class="c-det">'+esc((c.polizas||[]).map(function(p){return p.tipo}).join(' · ')||'Sin pólizas')+' · $'+prima.toLocaleString()+'/año</div></div>'+bdg(e)+'</div>';
+  var pa=(c.polizas||[]).filter(polActiva);
+  var prima=pa.reduce(function(a,p){return a+(parseFloat(p.prima)||0)},0);
+  return '<div class="cli" onclick="verCliente('+idx+')"><div class="av" style="background:'+colA(idx)+';color:'+colB(idx)+'">'+ini(c.nombre)+'</div><div class="info"><div class="c-nombre">'+esc(c.nombre)+'</div><div class="c-det">'+esc(pa.map(function(p){return p.tipo}).join(' · ')||'Sin pólizas')+' · $'+prima.toLocaleString()+'/año</div></div>'+bdg(e)+'</div>';
  }).join('');
 }
 function matchTab(c,tab){
- var pols=c.polizas||[];
+ var pols=(c.polizas||[]).filter(polActiva);
  if(tab==='ok')return estCli(c)==='ok';
  if(tab==='venc')return pols.some(function(p){return estPol(p)==='venc'});
  var dmax=tab==='5d'?5:tab==='15d'?15:tab==='30d'?30:9999;
@@ -686,11 +726,32 @@ function renderDetalle(){
  if(c.notas)html+='<div class="row"><span class="k">Notas</span><span class="v" style="font-size:12px">'+esc(c.notas)+'</span></div>';
  html+='</div>';
  html+='<div class="sec" style="display:flex;justify-content:space-between;align-items:center"><span>Pólizas ('+(c.polizas||[]).length+')</span><button onclick="nuevaPolizaPara('+clienteIdx+')" style="background:var(--dark);color:#fff;border:none;border-radius:6px;padding:5px 10px;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer">+ Agregar</button></div><div style="height:6px"></div>';
- if(!(c.polizas||[]).length)html+='<div style="text-align:center;padding:20px;color:var(--mid);font-size:13px">Sin pólizas. Toca + Agregar.</div>';
- else html+=(c.polizas||[]).map(function(p,pi){
+ var todasPol=c.polizas||[];
+ var polActivas=todasPol.filter(function(p){return p.estado!=='renovada'&&p.estado!=='cancelada'});
+ var polHist=todasPol.filter(function(p){return p.estado==='renovada'||p.estado==='cancelada'});
+ if(!polActivas.length)html+='<div style="text-align:center;padding:20px;color:var(--mid);font-size:13px">Sin pólizas activas. Toca + Agregar.</div>';
+ else html+=polActivas.map(function(p){
+  var pi=todasPol.indexOf(p);
   var ep=estPol(p);
   var dias=p.vigencia?diasHasta(p.vigencia):null;
   var diasTxt=dias===null?'':dias<0?'Venció hace '+Math.abs(dias)+' días':dias===0?'Vence HOY':'Vence en '+dias+' días';
+  var veh='';
+  if(p.tipo==='Automóvil'&&p.vehiculo){
+   var v=p.vehiculo;
+   var partes=[];
+   if(v.marca||v.modelo)partes.push((v.marca||'')+' '+(v.modelo||''));
+   if(v.anio)partes.push(v.anio);
+   if(v.color)partes.push(v.color);
+   var vehResumen=partes.join(' · ').trim();
+   if(vehResumen||v.placas||v.serie||v.motor){
+    veh='<div style="background:#fff8f0;margin:6px 14px;padding:10px;border-radius:8px;border:1px solid #f0d8b8"><div style="font-size:11px;font-weight:700;color:var(--accent);margin-bottom:6px">🚗 Vehículo</div>';
+    if(vehResumen)veh+='<div style="font-size:13px;font-weight:600">'+esc(vehResumen)+'</div>';
+    if(v.placas)veh+='<div style="font-size:11px;color:var(--mid)">Placas: <b>'+esc(v.placas)+'</b></div>';
+    if(v.serie)veh+='<div style="font-size:11px;color:var(--mid);font-family:monospace">VIN: '+esc(v.serie)+'</div>';
+    if(v.motor)veh+='<div style="font-size:11px;color:var(--mid)">Motor: '+esc(v.motor)+'</div>';
+    veh+='</div>';
+   }
+  }
   return '<div class="pol"><div class="phead"><div class="ptipo">'+ico(p.tipo)+' '+esc(p.tipo)+'</div>'+bdgPol(ep)+'</div><div>'+
    '<div class="row"><span class="k">No. Póliza</span><span class="v" style="font-family:monospace;font-size:12px">'+esc(p.num||'—')+'</span></div>'+
    '<div class="row"><span class="k">Aseguradora</span><span class="v">'+esc(p.aseg||'—')+'</span></div>'+
@@ -699,11 +760,32 @@ function renderDetalle(){
    '<div class="row"><span class="k">Vencimiento</span><span class="v" style="color:'+(ep==='venc'?'var(--red)':ep==='prox'?'var(--orange)':'var(--green)')+'">'+fmtFecha(p.vigencia)+'<br><span style="font-size:10px;font-weight:400">'+diasTxt+'</span></span></div>'+
    (p.coberturas?'<div class="row"><span class="k">Coberturas</span><span class="v" style="font-size:11px">'+esc(p.coberturas)+'</span></div>':'')+
    (p.nota?'<div class="row"><span class="k">Notas</span><span class="v" style="font-size:11px">'+esc(p.nota)+'</span></div>':'')+
-   '</div><div style="display:flex;gap:6px;margin:10px 12px 12px"><button onclick="editarPoliza('+pi+')" class="fb alt" style="margin:0;padding:10px;font-size:12px">✏️ Editar</button>'+
-   (c.tel?'<button onclick="enviarAvisoWA('+clienteIdx+','+pi+')" class="fb green" style="margin:0;padding:10px;font-size:12px;background:#25D366">💬</button>':'')+
-   (c.email?'<button onclick="enviarAvisoEmail('+clienteIdx+','+pi+')" class="fb" style="margin:0;padding:10px;font-size:12px;background:var(--blue)">✉️</button>':'')+
+   '</div>'+veh+
+   '<div style="display:flex;gap:6px;margin:10px 12px 12px;flex-wrap:wrap">'+
+   '<button onclick="renovarPoliza('+pi+')" class="fb green" style="margin:0;padding:10px;font-size:12px;background:#10b981;flex:1">🔄 Renovar</button>'+
+   '<button onclick="editarPoliza('+pi+')" class="fb alt" style="margin:0;padding:10px;font-size:12px;flex:1">✏️ Editar</button>'+
+   (c.tel?'<button onclick="enviarAvisoWA('+clienteIdx+','+pi+')" class="fb green" style="margin:0;padding:10px;font-size:12px;background:#25D366;min-width:60px">💬</button>':'')+
+   (c.email?'<button onclick="enviarAvisoEmail('+clienteIdx+','+pi+')" class="fb" style="margin:0;padding:10px;font-size:12px;background:var(--blue);min-width:60px">✉️</button>':'')+
    '</div></div>';
  }).join('');
+ // Historial
+ if(polHist.length){
+  html+='<div class="sec" style="margin-top:14px;display:flex;justify-content:space-between;align-items:center;cursor:pointer" onclick="document.getElementById(\'hist-block\').style.display=document.getElementById(\'hist-block\').style.display===\'none\'?\'block\':\'none\'"><span>📜 Historial de renovaciones ('+polHist.length+')</span><span style="color:var(--mid);font-size:14px">▼</span></div>';
+  html+='<div id="hist-block" style="display:none">';
+  html+=polHist.map(function(p){
+   var pi=todasPol.indexOf(p);
+   var dias=p.vigencia?diasHasta(p.vigencia):null;
+   var diasTxt=dias===null?'':dias<0?'Vencía hace '+Math.abs(dias)+' días':'Vencía en '+dias+' días';
+   var labelEstado=p.estado==='renovada'?'<span class="bdg" style="background:#dde8ff;color:#1a3f8a">Renovada</span>':'<span class="bdg" style="background:#f0f0f0;color:#666">Cancelada</span>';
+   return '<div class="pol" style="opacity:.75"><div class="phead"><div class="ptipo" style="font-size:13px">'+ico(p.tipo)+' '+esc(p.tipo)+'</div>'+labelEstado+'</div><div>'+
+    '<div class="row"><span class="k">No. Póliza</span><span class="v" style="font-family:monospace;font-size:11px">'+esc(p.num||'—')+'</span></div>'+
+    '<div class="row"><span class="k">Aseguradora</span><span class="v">'+esc(p.aseg||'—')+'</span></div>'+
+    '<div class="row"><span class="k">Vencía</span><span class="v">'+fmtFecha(p.vigencia)+' <span style="font-size:10px;color:var(--mid)">'+diasTxt+'</span></span></div>'+
+    (p.fechaRenovacion?'<div class="row"><span class="k">Renovada el</span><span class="v" style="font-size:11px">'+fmtFecha(p.fechaRenovacion.slice(0,10))+'</span></div>':'')+
+    '</div></div>';
+  }).join('');
+  html+='</div>';
+ }
  html+='<div style="height:14px"></div>';
  document.getElementById('d-cont').innerHTML=html;
 }
@@ -763,8 +845,9 @@ function buscarDuplicado(nombre,tel,email,rfc,exceptIdx){
 }
 
 function limpiarNuevo(){
- ['nc-nombre','nc-tel','nc-email','nc-rfc','nc-nac','nc-dir','nc-notas','nc-prima','nc-vigencia','nc-num','nc-coberturas'].forEach(function(id){var el=document.getElementById(id);if(el)el.value=''});
+ ['nc-nombre','nc-tel','nc-email','nc-rfc','nc-nac','nc-dir','nc-notas','nc-prima','nc-vigencia','nc-num','nc-coberturas','nc-veh-marca','nc-veh-modelo','nc-veh-anio','nc-veh-color','nc-veh-placas','nc-veh-serie','nc-veh-motor'].forEach(function(id){var el=document.getElementById(id);if(el)el.value=''});
  ['nc-tipo','nc-aseg','nc-pago'].forEach(function(id){var el=document.getElementById(id);if(el)el.value=''});
+ toggleVehiculo('nc');
  var pr=document.getElementById('pdf-result');if(pr)pr.classList.remove('show');
  var ps=document.getElementById('pdf-status');if(ps){ps.textContent='';ps.style.color='#888'}
  var pb=document.getElementById('pdf-btn');if(pb)pb.textContent='📂 Seleccionar PDF';
@@ -787,14 +870,28 @@ function guardarCliente(){
  var tipo=document.getElementById('nc-tipo').value;
  if(tipo){
   poliza={
+   id:Date.now()+Math.random(),
    tipo:tipo,
    prima:parseFloat(document.getElementById('nc-prima').value)||0,
    vigencia:document.getElementById('nc-vigencia').value,
    num:document.getElementById('nc-num').value.trim(),
    aseg:document.getElementById('nc-aseg').value,
    pago:document.getElementById('nc-pago').value,
-   coberturas:document.getElementById('nc-coberturas').value.trim()
+   coberturas:document.getElementById('nc-coberturas').value.trim(),
+   estado:'activa',
+   fechaCreacion:new Date().toISOString()
   };
+  if(tipo==='Automóvil'){
+   poliza.vehiculo={
+    marca:document.getElementById('nc-veh-marca').value.trim(),
+    modelo:document.getElementById('nc-veh-modelo').value.trim(),
+    anio:document.getElementById('nc-veh-anio').value.trim(),
+    color:document.getElementById('nc-veh-color').value.trim(),
+    placas:document.getElementById('nc-veh-placas').value.trim().toUpperCase(),
+    serie:document.getElementById('nc-veh-serie').value.trim().toUpperCase(),
+    motor:document.getElementById('nc-veh-motor').value.trim().toUpperCase()
+   };
+  }
  }
  // Buscar duplicado
  var dup=buscarDuplicado(nombre,tel,email,rfc,-1);
@@ -891,31 +988,75 @@ function nuevaPolizaPara(idx){
  goScreen('s-nueva-pol');
 }
 function limpiarNuevaPol(){
- ['np-prima','np-vigencia','np-num','np-coberturas','np-nota'].forEach(function(id){var el=document.getElementById(id);if(el)el.value=''});
+ var ids=['np-prima','np-vigencia','np-num','np-coberturas','np-nota','np-veh-marca','np-veh-modelo','np-veh-anio','np-veh-color','np-veh-placas','np-veh-serie','np-veh-motor'];
+ ids.forEach(function(id){var el=document.getElementById(id);if(el)el.value=''});
  ['np-tipo','np-aseg','np-pago'].forEach(function(id){var el=document.getElementById(id);if(el)el.value=''});
  var t=document.getElementById('np-titulo');
  var d=document.getElementById('np-del-btn');
+ var ban=document.getElementById('np-renov-banner');
+ // Helper para llenar selects
+ function setSel(id,val){var s=document.getElementById(id);if(!s||!val)return;for(var i=0;i<s.options.length;i++)if(s.options[i].text===val){s.selectedIndex=i;return}}
+ function llenarVeh(v){if(!v)return;document.getElementById('np-veh-marca').value=v.marca||'';document.getElementById('np-veh-modelo').value=v.modelo||'';document.getElementById('np-veh-anio').value=v.anio||'';document.getElementById('np-veh-color').value=v.color||'';document.getElementById('np-veh-placas').value=v.placas||'';document.getElementById('np-veh-serie').value=v.serie||'';document.getElementById('np-veh-motor').value=v.motor||''}
+ if(renovarDeData){
+  // Renovación: prefill con datos viejos, nueva vigencia
+  if(t)t.textContent='🔄 Renovar Póliza';
+  if(d)d.style.display='none';
+  if(ban)ban.style.display='block';
+  var p=renovarDeData.poliza;
+  setSel('np-tipo',p.tipo);
+  document.getElementById('np-prima').value=p.prima||'';
+  document.getElementById('np-vigencia').value=renovarDeData.nuevaVigencia||'';
+  document.getElementById('np-num').value=p.num||'';
+  setSel('np-aseg',p.aseg);
+  setSel('np-pago',p.pago);
+  document.getElementById('np-coberturas').value=p.coberturas||'';
+  document.getElementById('np-nota').value='Renovación de póliza '+(p.num||'')+(p.vigencia?' (vencía '+p.vigencia+')':'');
+  llenarVeh(p.vehiculo);
+  toggleVehiculo('np');
+  return;
+ }
+ if(ban)ban.style.display='none';
  if(polizaIdx===null){
   if(t)t.textContent='Nueva Póliza';
   if(d)d.style.display='none';
+  toggleVehiculo('np');
  } else {
   if(t)t.textContent='Editar Póliza';
   if(d)d.style.display='block';
-  // Llenar con datos existentes
-  var p=clientes[clienteIdx].polizas[polizaIdx];
-  if(!p)return;
-  var sel=document.getElementById('np-tipo');
-  for(var i=0;i<sel.options.length;i++)if(sel.options[i].text===p.tipo){sel.selectedIndex=i;break}
-  document.getElementById('np-prima').value=p.prima||'';
-  document.getElementById('np-vigencia').value=p.vigencia||'';
-  document.getElementById('np-num').value=p.num||'';
-  var sa=document.getElementById('np-aseg');
-  for(var j=0;j<sa.options.length;j++)if(sa.options[j].text===p.aseg){sa.selectedIndex=j;break}
-  var sp=document.getElementById('np-pago');
-  for(var k=0;k<sp.options.length;k++)if(sp.options[k].text===p.pago){sp.selectedIndex=k;break}
-  document.getElementById('np-coberturas').value=p.coberturas||'';
-  document.getElementById('np-nota').value=p.nota||'';
+  var pe=clientes[clienteIdx].polizas[polizaIdx];
+  if(!pe)return;
+  setSel('np-tipo',pe.tipo);
+  document.getElementById('np-prima').value=pe.prima||'';
+  document.getElementById('np-vigencia').value=pe.vigencia||'';
+  document.getElementById('np-num').value=pe.num||'';
+  setSel('np-aseg',pe.aseg);
+  setSel('np-pago',pe.pago);
+  document.getElementById('np-coberturas').value=pe.coberturas||'';
+  document.getElementById('np-nota').value=pe.nota||'';
+  llenarVeh(pe.vehiculo);
+  toggleVehiculo('np');
  }
+}
+
+// ============== RENOVAR PÓLIZA ==============
+function renovarPoliza(pi){
+ if(clienteIdx===null)return;
+ var c=clientes[clienteIdx];
+ if(!c||pi<0||pi>=c.polizas.length)return;
+ var p=c.polizas[pi];
+ if(p.estado==='renovada'){toast('Esta póliza ya fue renovada');return}
+ // Calcular nueva vigencia: +1 año desde vigencia actual (o desde hoy si no había)
+ var nuevaVigencia='';
+ if(p.vigencia){
+  var d=new Date(p.vigencia+'T00:00:00');
+  d.setFullYear(d.getFullYear()+1);
+  nuevaVigencia=d.toISOString().slice(0,10);
+ } else {
+  var dh=new Date();dh.setFullYear(dh.getFullYear()+1);nuevaVigencia=dh.toISOString().slice(0,10);
+ }
+ renovarDeData={pi:pi,poliza:JSON.parse(JSON.stringify(p)),nuevaVigencia:nuevaVigencia};
+ polizaIdx=null;
+ goScreen('s-nueva-pol');
 }
 function editarPoliza(pi){
  if(clienteIdx===null||pi<0||pi>=clientes[clienteIdx].polizas.length)return;
@@ -927,6 +1068,7 @@ function guardarPoliza(){
  var tipo=document.getElementById('np-tipo').value;
  if(!tipo){toast('⚠️ Selecciona el tipo');return}
  var datos={
+  id:Date.now()+Math.random(),
   tipo:tipo,
   prima:parseFloat(document.getElementById('np-prima').value)||0,
   vigencia:document.getElementById('np-vigencia').value,
@@ -934,20 +1076,62 @@ function guardarPoliza(){
   aseg:document.getElementById('np-aseg').value,
   pago:document.getElementById('np-pago').value,
   coberturas:document.getElementById('np-coberturas').value.trim(),
-  nota:document.getElementById('np-nota').value.trim()
+  nota:document.getElementById('np-nota').value.trim(),
+  estado:'activa',
+  fechaCreacion:new Date().toISOString()
  };
+ if(tipo==='Automóvil'){
+  datos.vehiculo={
+   marca:document.getElementById('np-veh-marca').value.trim(),
+   modelo:document.getElementById('np-veh-modelo').value.trim(),
+   anio:document.getElementById('np-veh-anio').value.trim(),
+   color:document.getElementById('np-veh-color').value.trim(),
+   placas:document.getElementById('np-veh-placas').value.trim().toUpperCase(),
+   serie:document.getElementById('np-veh-serie').value.trim().toUpperCase(),
+   motor:document.getElementById('np-veh-motor').value.trim().toUpperCase()
+  };
+ }
  if(!clientes[clienteIdx].polizas)clientes[clienteIdx].polizas=[];
- if(polizaIdx===null){
-  // Nueva — verificar no duplicado por número
+ // RENOVACIÓN
+ if(renovarDeData){
+  var oldP=clientes[clienteIdx].polizas[renovarDeData.pi];
+  if(!oldP){toast('Error: póliza original no encontrada');renovarDeData=null;return}
+  // Marcar la vieja como renovada
+  oldP.estado='renovada';
+  oldP.renovadaPor=datos.id;
+  oldP.fechaRenovacion=new Date().toISOString();
+  datos.renovacionDe=oldP.id||('p_'+renovarDeData.pi);
+  clientes[clienteIdx].polizas.push(datos);
+  save('mc2_clientes',clientes);
+  programarNotificaciones();
+  renovarDeData=null;
+  polizaIdx=null;
+  toast('🔄 Renovada con éxito. La anterior queda en historial.');
+  goBack();
+  return;
+ }
+ // EDITAR existente
+ if(polizaIdx!==null){
+  // Preservar id y estado original al editar
+  var orig=clientes[clienteIdx].polizas[polizaIdx];
+  if(orig){
+   datos.id=orig.id||datos.id;
+   datos.estado=orig.estado||'activa';
+   datos.fechaCreacion=orig.fechaCreacion||datos.fechaCreacion;
+   if(orig.renovacionDe)datos.renovacionDe=orig.renovacionDe;
+   if(orig.renovadaPor)datos.renovadaPor=orig.renovadaPor;
+   if(orig.fechaRenovacion)datos.fechaRenovacion=orig.fechaRenovacion;
+  }
+  clientes[clienteIdx].polizas[polizaIdx]=datos;
+  toast('✅ Póliza actualizada');
+ } else {
+  // NUEVA — verificar no duplicado por número entre activas
   if(datos.num){
-   var ya=clientes[clienteIdx].polizas.find(function(p){return p.num===datos.num});
-   if(ya){toast('⚠️ Ya existe una póliza con ese número');return}
+   var ya=clientes[clienteIdx].polizas.find(function(p){return p.num===datos.num&&p.estado!=='renovada'&&p.estado!=='cancelada'});
+   if(ya){toast('⚠️ Ya existe una póliza activa con ese número');return}
   }
   clientes[clienteIdx].polizas.push(datos);
   toast('✅ Póliza agregada');
- } else {
-  clientes[clienteIdx].polizas[polizaIdx]=datos;
-  toast('✅ Póliza actualizada');
  }
  save('mc2_clientes',clientes);
  programarNotificaciones();
@@ -998,7 +1182,7 @@ function getClientesParaMensaje(filtro){
   if(filtro==='todos'){
    res.push({idx:idx,c:c,p:null,dias:null});return;
   }
-  (c.polizas||[]).forEach(function(p){
+  (c.polizas||[]).filter(polActiva).forEach(function(p){
    var d=p.vigencia?diasHasta(p.vigencia):null;
    if(filtro==='venc'&&d!==null&&d<0){res.push({idx:idx,c:c,p:p,dias:d})}
    else if(filtro==='5d'&&d!==null&&d>=0&&d<=5){res.push({idx:idx,c:c,p:p,dias:d})}
@@ -1157,7 +1341,7 @@ function programarNotificaciones(){
  if(!window.nativeScheduleNotifications)return;
  var notifs=[];var ahora=new Date();
  clientes.forEach(function(c){
-  (c.polizas||[]).forEach(function(p){
+  (c.polizas||[]).filter(polActiva).forEach(function(p){
    if(!p.vigencia)return;
    var venc=new Date(p.vigencia+'T09:00:00');
    if(isNaN(venc))return;
@@ -1203,7 +1387,7 @@ function leerPDF(input){
 function setStatus(m,c){var el=document.getElementById('pdf-status');el.textContent=m;el.style.color=c==='green'?'#2d6a4f':c==='red'?'#b5192a':'#c8622a'}
 function fileToBase64(f){return new Promise(function(res,rej){var r=new FileReader();r.onload=function(){res(r.result.split(',')[1])};r.onerror=function(){rej(new Error('No se pudo leer'))};r.readAsDataURL(f)})}
 function extraerConClaude(b64){
- var sys='Eres experto en pólizas de seguros mexicanas. Extrae datos del ASEGURADO/CONTRATANTE únicamente, NUNCA de la aseguradora ni del agente. Devuelve SOLO JSON sin markdown: {"nombre":"","rfc":"","tel":"","email":"","direccion":"","nacimiento":"","numPoliza":"","tipo":"","aseg":"","vigencia":"","prima":"","pago":"","coberturas":""}\n\nREGLAS:\n1. NOMBRE del asegurado (no aseguradora ni agente).\n2. RFC del asegurado (13 chars). Ignora MTE440316E54, GNP9211244P0, ASE931116231, AXA920310953, QSA931209G49, MMA0501105X4, HDI0708205F3, MET860605G14.\n3. TEL del asegurado, 10 dígitos. Ignora 800-XXX, 01-800.\n4. EMAIL del asegurado. Ignora @axa.com, @gnp.com.mx.\n5. DIRECCION en una línea.\n6. NACIMIENTO YYYY-MM-DD.\n7. NUMPOLIZA con guiones.\n8. TIPO: Automóvil | Vida | Gastos Médicos Mayores | Hogar | Negocio | Accidentes Personales | Retiro / Ahorro.\n9. ASEG: AXA | GNP | Qualitas | Mapfre | HDI | Metlife | Zurich | Allianz | Sura | Otra.\n10. VIGENCIA fecha FIN YYYY-MM-DD.\n11. PRIMA total anual entero (sin $ ni comas).\n12. PAGO: Anual | Semestral | Trimestral | Mensual | Contado.\n13. COBERTURAS separadas por " | ".\nSi un dato no está, devuelve "". NUNCA inventes.';
+ var sys='Eres experto en pólizas de seguros mexicanas. Extrae datos del ASEGURADO/CONTRATANTE únicamente, NUNCA de la aseguradora ni del agente. Devuelve SOLO JSON sin markdown: {"nombre":"","rfc":"","tel":"","email":"","direccion":"","nacimiento":"","numPoliza":"","tipo":"","aseg":"","vigencia":"","prima":"","pago":"","coberturas":"","vehiculo":{"marca":"","modelo":"","anio":"","color":"","placas":"","serie":"","motor":""}}\n\nREGLAS:\n1. NOMBRE del asegurado (no aseguradora ni agente).\n2. RFC del asegurado (13 chars). Ignora MTE440316E54, GNP9211244P0, ASE931116231, AXA920310953, QSA931209G49, MMA0501105X4, HDI0708205F3, MET860605G14.\n3. TEL del asegurado, 10 dígitos. Ignora 800-XXX, 01-800.\n4. EMAIL del asegurado. Ignora @axa.com, @gnp.com.mx.\n5. DIRECCION en una línea.\n6. NACIMIENTO YYYY-MM-DD.\n7. NUMPOLIZA con guiones.\n8. TIPO: Automóvil | Vida | Gastos Médicos Mayores | Hogar | Negocio | Accidentes Personales | Retiro / Ahorro.\n9. ASEG: AXA | GNP | Qualitas | Mapfre | HDI | Metlife | Zurich | Allianz | Sura | Otra.\n10. VIGENCIA fecha FIN YYYY-MM-DD.\n11. PRIMA total anual entero (sin $ ni comas).\n12. PAGO: Anual | Semestral | Trimestral | Mensual | Contado.\n13. COBERTURAS separadas por " | ".\n14. VEHICULO: solo si tipo es Automóvil. anio entero (ej "2020"). placas y serie/VIN sin espacios. Si no aplica deja vehiculo con strings vacíos.\nSi un dato no está, devuelve "". NUNCA inventes.';
  return fetch(PROXY_URL,{method:'POST',headers:{'Content-Type':'application/json','anthropic-version':'2023-06-01'},body:JSON.stringify({model:'claude-opus-4-6',max_tokens:1500,system:sys,messages:[{role:'user',content:[{type:'document',source:{type:'base64',media_type:'application/pdf',data:b64}},{type:'text',text:'Extrae los datos del asegurado. Devuelve SOLO el JSON.'}]}]})})
  .then(function(r){if(!r.ok)return r.text().then(function(t){throw new Error('API '+r.status+': '+t.substring(0,200))});return r.json()})
  .then(function(d){var t=(d.content&&d.content[0]&&d.content[0].text)||'';if(!t)throw new Error('Respuesta vacía');var l=t.replace(/```json\s*|\s*```/gi,'').trim();var m=l.match(/\{[\s\S]*\}/);if(!m)throw new Error('No JSON');var o;try{o=JSON.parse(m[0])}catch(e){throw new Error('JSON inválido: '+e.message)}return normalizar(o)});
@@ -1211,6 +1395,10 @@ function extraerConClaude(b64){
 function normalizar(d){
  var out={nombre:nm(d.nombre),rfc:nmRFC(d.rfc),tel:nmTel(d.tel),email:nmEmail(d.email),direccion:nm(d.direccion||d.dir),nacimiento:nmFecha(d.nacimiento||d.nac),numPoliza:nm(d.numPoliza||d.poliza||d.num),tipo:nmTipo(d.tipo),aseg:nmAseg(d.aseg||d.aseguradora),vigencia:nmFecha(d.vigencia||d.vencimiento),prima:nmPrima(d.prima),pago:nmPago(d.pago),coberturas:nm(d.coberturas)};
  if(!out.nacimiento&&out.rfc){var f=nacFromRFC(out.rfc);if(f)out.nacimiento=f}
+ if(d.vehiculo&&typeof d.vehiculo==='object'){
+  var v=d.vehiculo;
+  out.vehiculo={marca:nm(v.marca),modelo:nm(v.modelo),anio:nm(v.anio),color:nm(v.color),placas:(v.placas||'').toString().toUpperCase().trim().replace(/\s/g,''),serie:(v.serie||v.vin||'').toString().toUpperCase().trim().replace(/\s/g,''),motor:(v.motor||'').toString().toUpperCase().trim().replace(/\s/g,'')};
+ }
  return out;
 }
 function nm(s){return (s||'').toString().trim().replace(/\s+/g,' ')}
@@ -1230,6 +1418,16 @@ function llenarFormulario(d){
  set('nc-nombre',d.nombre);set('nc-rfc',d.rfc);set('nc-tel',d.tel);set('nc-email',d.email);set('nc-dir',d.direccion);set('nc-nac',d.nacimiento);set('nc-num',d.numPoliza);
  setSel('nc-tipo',d.tipo);setSel('nc-aseg',d.aseg);setSel('nc-pago',d.pago);
  set('nc-vigencia',d.vigencia);set('nc-prima',d.prima);set('nc-coberturas',d.coberturas);
+ if(d.vehiculo){
+  set('nc-veh-marca',d.vehiculo.marca);
+  set('nc-veh-modelo',d.vehiculo.modelo);
+  set('nc-veh-anio',d.vehiculo.anio);
+  set('nc-veh-color',d.vehiculo.color);
+  set('nc-veh-placas',d.vehiculo.placas);
+  set('nc-veh-serie',d.vehiculo.serie);
+  set('nc-veh-motor',d.vehiculo.motor);
+ }
+ toggleVehiculo('nc');
  return n;
 }
 function mostrarResultado(d){
@@ -1237,6 +1435,11 @@ function mostrarResultado(d){
  var labels={nombre:'Nombre',rfc:'RFC',tel:'Teléfono',email:'Correo',direccion:'Dirección',nacimiento:'Nacimiento',numPoliza:'Póliza',tipo:'Tipo',aseg:'Aseguradora',vigencia:'Vencimiento',prima:'Prima',pago:'Forma pago',coberturas:'Coberturas'};
  var html='<div style="font-weight:700;color:#1a4f1a;margin-bottom:6px">Datos extraídos:</div>';
  for(var k in labels){var v=d[k];html+='<div class="it"><span class="l">'+labels[k]+'</span><span class="v'+(v?'':' e')+'">'+(v?esc(v):'— vacío —')+'</span></div>'}
+ if(d.vehiculo){
+  var veh=d.vehiculo;
+  var vlabels={marca:'Marca',modelo:'Modelo',anio:'Año',color:'Color',placas:'Placas',serie:'VIN',motor:'Motor'};
+  for(var vk in vlabels){var vv=veh[vk];if(vv)html+='<div class="it"><span class="l">🚗 '+vlabels[vk]+'</span><span class="v">'+esc(vv)+'</span></div>'}
+ }
  el.innerHTML=html;el.classList.add('show');
 }
 
@@ -1251,7 +1454,7 @@ function importarCSV(input){
    if(lineas.length<2){toast('⚠️ CSV vacío');return}
    var sep=lineas[0].indexOf(';')>=0?';':',';
    var headers=lineas[0].split(sep).map(function(h){return h.trim().replace(/^"|"$/g,'').toLowerCase()});
-   var mapa={'nombre':'nombre','name':'nombre','rfc':'rfc','tel':'tel','telefono':'tel','teléfono':'tel','phone':'tel','correo':'email','email':'email','mail':'email','direccion':'dir','dirección':'dir','address':'dir','nacimiento':'nac','fecha_nacimiento':'nac','dob':'nac','poliza':'numPoliza','póliza':'numPoliza','num_poliza':'numPoliza','tipo':'tipo','aseguradora':'aseg','vigencia_hasta':'vigencia','vigencia':'vigencia','vencimiento':'vigencia','prima':'prima','coberturas':'coberturas','notas':'notas','forma_pago':'pago','pago':'pago','forma_de_pago':'pago'};
+   var mapa={'nombre':'nombre','name':'nombre','rfc':'rfc','tel':'tel','telefono':'tel','teléfono':'tel','phone':'tel','correo':'email','email':'email','mail':'email','direccion':'dir','dirección':'dir','address':'dir','nacimiento':'nac','fecha_nacimiento':'nac','dob':'nac','poliza':'numPoliza','póliza':'numPoliza','num_poliza':'numPoliza','tipo':'tipo','aseguradora':'aseg','vigencia_hasta':'vigencia','vigencia':'vigencia','vencimiento':'vigencia','prima':'prima','coberturas':'coberturas','notas':'notas','forma_pago':'pago','pago':'pago','forma_de_pago':'pago','marca':'vMarca','modelo':'vModelo','anio':'vAnio','año':'vAnio','year':'vAnio','color':'vColor','placas':'vPlacas','placa':'vPlacas','serie':'vSerie','vin':'vSerie','motor':'vMotor'};
    var importados=0,actualizados=0,polizasNuevas=0,omitidos=0;
    for(var i=1;i<lineas.length;i++){
     var vals=parseCSVLine(lineas[i],sep);
@@ -1260,7 +1463,10 @@ function importarCSV(input){
     if(!datos.nombre){omitidos++;continue}
     var poliza=null;
     if(datos.tipo||datos.numPoliza){
-     poliza={tipo:nmTipo(datos.tipo)||datos.tipo||'',num:datos.numPoliza||'',aseg:nmAseg(datos.aseg)||datos.aseg||'',prima:parseFloat(datos.prima)||0,vigencia:nmFecha(datos.vigencia)||datos.vigencia||'',coberturas:datos.coberturas||'',pago:nmPago(datos.pago)||datos.pago||''};
+     poliza={id:Date.now()+Math.random()+i,tipo:nmTipo(datos.tipo)||datos.tipo||'',num:datos.numPoliza||'',aseg:nmAseg(datos.aseg)||datos.aseg||'',prima:parseFloat(datos.prima)||0,vigencia:nmFecha(datos.vigencia)||datos.vigencia||'',coberturas:datos.coberturas||'',pago:nmPago(datos.pago)||datos.pago||'',estado:'activa',fechaCreacion:new Date().toISOString()};
+     if(poliza.tipo==='Automóvil'&&(datos.vMarca||datos.vModelo||datos.vPlacas||datos.vSerie)){
+      poliza.vehiculo={marca:datos.vMarca||'',modelo:datos.vModelo||'',anio:datos.vAnio||'',color:datos.vColor||'',placas:(datos.vPlacas||'').toUpperCase(),serie:(datos.vSerie||'').toUpperCase(),motor:(datos.vMotor||'').toUpperCase()};
+     }
     }
     var dup=buscarDuplicado(datos.nombre,datos.tel||'',datos.email||'',datos.rfc||'',-1);
     if(dup>=0){
@@ -1307,12 +1513,21 @@ function parseCSVLine(linea,sep){
 }
 
 // ============== INIT ==============
+function migrarPolizas(){
+ // Asegurar que cada póliza tenga estado e id (para datos viejos)
+ var cambios=false;
+ clientes.forEach(function(c){
+  (c.polizas||[]).forEach(function(p){
+   if(!p.estado){p.estado='activa';cambios=true}
+   if(!p.id){p.id=Date.now()+Math.random();cambios=true}
+  });
+ });
+ if(cambios)save('mc2_clientes',clientes);
+}
 function init(){
- // Bind global event listeners
+ migrarPolizas();
  document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)modalCerrar()});
- // Render initial
  renderHome();
- // Schedule notifications after bridge loads
  setTimeout(function(){programarNotificaciones()},1500);
 }
 init();
