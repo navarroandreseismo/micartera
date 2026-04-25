@@ -3,1662 +3,1319 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#1a1208">
 <title>MiCartera</title>
+<link rel="manifest" href='data:application/manifest+json,{"name":"MiCartera","short_name":"MiCartera","start_url":"./","display":"standalone","background_color":"%231a1208","theme_color":"%231a1208","icons":[]}'>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-:root {
-  --bg: #f5f0eb;
-  --white: #ffffff;
-  --dark: #1a1208;
-  --mid: #6b5e4e;
-  --light: #c9beb2;
-  --border: #e2d9d0;
-  --green: #2d6a4f;
-  --green-bg: #d8f3dc;
-  --red: #b5192a;
-  --red-bg: #fde8ea;
-  --orange: #c45e00;
-  --orange-bg: #fef0e0;
-  --blue: #1a4f8a;
-  --blue-bg: #ddeeff;
-  --accent: #c8622a;
-  --safe-top: env(safe-area-inset-top, 0px);
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+ --bg:#f5f0eb;--white:#fff;--dark:#1a1208;--mid:#6b5e4e;--light:#c9beb2;--border:#e2d9d0;
+ --green:#2d6a4f;--green-bg:#d8f3dc;--red:#b5192a;--red-bg:#fde8ea;
+ --orange:#c45e00;--orange-bg:#fef0e0;--blue:#1a4f8a;--blue-bg:#ddeeff;--accent:#c8622a;
+ --st:env(safe-area-inset-top,0px);--sb:env(safe-area-inset-bottom,0px);
 }
-body {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  background: var(--bg);
-  color: var(--dark);
-  min-height: 100vh;
-  max-width: 430px;
-  margin: 0 auto;
-  padding-top: var(--safe-top);
-}
-.screen { display:none; min-height:100vh; padding-bottom:80px; }
-.screen.active { display:block; }
-.header {
-  background: var(--dark);
-  color: #fff;
-  padding: 20px 20px 16px;
-  position: sticky; top:0; z-index:50;
-}
-.header-top { display:flex; justify-content:space-between; align-items:center; }
-.header-title { font-size:20px; font-weight:800; letter-spacing:-0.5px; }
-.header-sub { font-size:12px; color: var(--light); margin-top:2px; }
-.add-btn {
-  width:36px; height:36px; border-radius:50%;
-  background: var(--accent); border:none;
-  color:#fff; font-size:22px; cursor:pointer;
-  display:flex; align-items:center; justify-content:center;
-  font-weight:300; line-height:1;
-}
-.stats-bar {
-  display:flex; gap:1px; background:var(--border);
-  border-bottom: 1px solid var(--border);
-}
-.stat-box {
-  flex:1; background:var(--white);
-  padding:12px 10px; text-align:center;
-}
-.stat-box .num { font-size:22px; font-weight:800; }
-.stat-box .lbl { font-size:10px; color:var(--mid); margin-top:2px; }
-.stat-box.red .num { color:var(--red); }
-.stat-box.orange .num { color:var(--orange); }
-.stat-box.green .num { color:var(--green); }
-.search-wrap { padding:12px 16px; background:var(--white); border-bottom:1px solid var(--border); position:relative; }
-.search-input {
-  width:100%; background:var(--bg);
-  border:1px solid var(--border); border-radius:8px;
-  padding:9px 14px 9px 36px;
-  font-family:'Plus Jakarta Sans',sans-serif;
-  font-size:14px; color:var(--dark); outline:none;
-}
-.search-ico { position:absolute; left:28px; top:50%; transform:translateY(-50%); font-size:14px; }
-.tabs { display:flex; background:var(--white); border-bottom:2px solid var(--border); overflow-x:auto; scrollbar-width:none; }
-.tabs::-webkit-scrollbar { display:none; }
-.tab {
-  flex-shrink:0; padding:10px 16px;
-  font-size:12px; font-weight:600; color:var(--mid);
-  border:none; background:none; cursor:pointer;
-  font-family:'Plus Jakarta Sans',sans-serif;
-  border-bottom:2px solid transparent; margin-bottom:-2px;
-}
-.tab.active { color:var(--accent); border-bottom-color:var(--accent); }
-.lista { padding:0; }
-.cliente-card {
-  background:var(--white);
-  border-bottom:1px solid var(--border);
-  padding:14px 16px;
-  display:flex; align-items:center; gap:12px;
-  cursor:pointer; transition:.1s;
-}
-.cliente-card:active { background:#f8f4f0; }
-.av {
-  width:44px; height:44px; border-radius:12px;
-  display:flex; align-items:center; justify-content:center;
-  font-size:16px; font-weight:800; flex-shrink:0;
-}
-.info { flex:1; min-width:0; }
-.c-nombre { font-size:14px; font-weight:700; }
-.c-det { font-size:11px; color:var(--mid); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.badge {
-  padding:3px 9px; border-radius:20px;
-  font-size:10px; font-weight:700; flex-shrink:0;
-}
-.badge.ok { background:var(--green-bg); color:var(--green); }
-.badge.venc { background:var(--red-bg); color:var(--red); }
-.badge.prox { background:var(--orange-bg); color:var(--orange); }
-/* BACK-BAR — con padding extra arriba para que los botones no queden tapados */
-.back-bar {
-  background:var(--white); border-bottom:1px solid var(--border);
-  padding:18px 12px 14px;
-  display:flex; align-items:center; gap:8px;
-  position:sticky; top:0; z-index:40;
-}
-.back-btn {
-  background:var(--bg); border:1px solid var(--border);
-  font-size:22px; cursor:pointer;
-  width:40px; height:40px; border-radius:10px;
-  display:flex; align-items:center; justify-content:center;
-  color:var(--dark); flex-shrink:0;
-  padding:0;
-}
-.back-btn:active { background:#e8ddd0; }
-.back-title { font-size:15px; font-weight:700; flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.icon-btn {
-  background:var(--bg); border:1px solid var(--border);
-  width:40px; height:40px; border-radius:10px;
-  display:flex; align-items:center; justify-content:center;
-  font-size:18px; cursor:pointer; flex-shrink:0;
-  padding:0;
-}
-.icon-btn:active { background:#e8ddd0; }
-.icon-btn.delete { background:#fde8ea; border-color:#f5c2c7; color:#b5192a; }
-.icon-btn.delete:active { background:#f5c2c7; }
-.det-hero {
-  background:var(--dark); color:#fff;
-  padding:20px 16px 16px;
-  display:flex; align-items:center; gap:14px;
-}
-.det-av {
-  width:56px; height:56px; border-radius:14px;
-  display:flex; align-items:center; justify-content:center;
-  font-size:20px; font-weight:800; flex-shrink:0;
-}
-.det-nombre { font-size:18px; font-weight:800; }
-.det-sub { font-size:12px; color:var(--light); margin-top:3px; }
-.acciones {
-  display:flex; gap:10px; padding:14px 16px;
-  background:var(--white); border-bottom:1px solid var(--border);
-}
-.ac-btn {
-  flex:1; padding:11px 8px;
-  border-radius:10px; border:none; cursor:pointer;
-  font-family:'Plus Jakarta Sans',sans-serif;
-  font-size:13px; font-weight:700;
-  display:flex; flex-direction:column; align-items:center; gap:4px;
-}
-.ac-btn .ico { font-size:20px; }
-.ac-btn.whats { background:#d4edda; color:#1a6b35; }
-.ac-btn.mail  { background:#dde8ff; color:#1a3f8a; }
-.ac-btn.call  { background:#f5f0eb; color:var(--dark); border:1px solid var(--border); }
-.seccion { padding:14px 16px 6px; font-size:11px; font-weight:700; color:var(--mid); text-transform:uppercase; letter-spacing:.5px; }
-.info-card { background:var(--white); margin:0; border-top:1px solid var(--border); border-bottom:1px solid var(--border); }
-.info-row {
-  display:flex; justify-content:space-between; align-items:center;
-  padding:11px 16px; border-bottom:1px solid var(--border);
-}
-.info-row:last-child { border-bottom:none; }
-.info-k { font-size:12px; color:var(--mid); }
-.info-v { font-size:13px; font-weight:600; text-align:right; max-width:60%; }
-.poliza-card {
-  background:var(--white); margin:0 16px 10px;
-  border:1px solid var(--border); border-radius:12px;
-  overflow:hidden;
-}
-.poliza-head {
-  padding:12px 14px; display:flex; justify-content:space-between; align-items:center;
-  border-bottom:1px solid var(--border);
-}
-.poliza-tipo { font-size:15px; font-weight:700; }
-.poliza-body { padding:4px 0; }
-.form-scroll { padding:16px; }
-.f-group { margin-bottom:14px; }
-.f-label { font-size:12px; font-weight:600; color:var(--mid); margin-bottom:5px; display:block; }
-.f-input, .f-select {
-  width:100%; background:var(--white);
-  border:1px solid var(--border); border-radius:8px;
-  padding:11px 13px; font-family:'Plus Jakarta Sans',sans-serif;
-  font-size:14px; color:var(--dark); outline:none; -webkit-appearance:none;
-}
-.f-input:focus, .f-select:focus { border-color:var(--accent); }
-.f-input.flash {
-  background: #fff8e1;
-  border-color: #f0a500;
-  animation: flash 1.2s ease;
-}
-@keyframes flash {
-  0% { background:#fff3b0; }
-  100% { background:#fff8e1; }
-}
-.f-row { display:flex; gap:10px; }
-.f-row .f-group { flex:1; }
-.f-section { font-size:13px; font-weight:700; color:var(--dark); margin:18px 0 10px; padding-bottom:6px; border-bottom:2px solid var(--border); }
-.f-btn {
-  width:100%; padding:14px; background:var(--dark);
-  color:#fff; border:none; border-radius:10px;
-  font-family:'Plus Jakarta Sans',sans-serif;
-  font-size:15px; font-weight:700; cursor:pointer; margin-top:8px;
-}
-.f-btn:active { background:#333; }
-.empty { text-align:center; padding:50px 20px; color:var(--mid); }
-.empty .ico { font-size:50px; margin-bottom:12px; }
-.empty p { font-size:13px; line-height:1.6; }
-.alerta-item {
-  background:var(--white); border-bottom:1px solid var(--border);
-  padding:13px 16px; display:flex; align-items:flex-start; gap:10px;
-  cursor:pointer;
-}
-.alerta-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; margin-top:4px; }
-.alerta-txt { font-size:13px; line-height:1.4; flex:1; }
-.alerta-sub { font-size:11px; color:var(--mid); margin-top:3px; }
-.av-btn {
-  padding:5px 10px; border-radius:6px; border:none;
-  font-family:'Plus Jakarta Sans',sans-serif;
-  font-size:11px; font-weight:700; cursor:pointer; flex-shrink:0;
-}
-.cobro-item {
-  background:var(--white); border-bottom:1px solid var(--border);
-  padding:13px 16px; display:flex; align-items:center; gap:12px;
-}
-.cobro-check {
-  width:24px; height:24px; border-radius:50%;
-  border:2px solid var(--border); flex-shrink:0;
-  cursor:pointer; display:flex; align-items:center;
-  justify-content:center; font-size:12px; transition:.2s;
-}
-.cobro-check.done { background:var(--green); border-color:var(--green); color:#fff; }
-.bottomnav {
-  position:fixed; bottom:0; left:50%; transform:translateX(-50%);
-  width:100%; max-width:430px;
-  background:var(--white); border-top:1px solid var(--border);
-  display:flex; z-index:100;
-  padding-bottom: env(safe-area-inset-bottom, 0px);
-}
-.nav-btn {
-  flex:1; display:flex; flex-direction:column; align-items:center;
-  padding:9px 0 12px; gap:3px; border:none; background:none;
-  color:var(--mid); font-family:'Plus Jakarta Sans',sans-serif;
-  font-size:10px; font-weight:600; cursor:pointer;
-}
-.nav-btn svg { width:22px; height:22px; }
-.nav-btn.active { color:var(--accent); }
-.nav-dot { position:absolute; top:-1px; right:-1px; width:7px; height:7px; background:var(--red); border-radius:50%; }
-.nav-ico-wrap { position:relative; }
-.perfil-input {
-  background:none; border:none; font-family:'Plus Jakarta Sans',sans-serif;
-  font-size:13px; font-weight:600; text-align:right;
-  outline:none; color:var(--dark); width:60%;
-}
-.toast {
-  position:fixed; bottom:90px; left:50%; transform:translateX(-50%);
-  background:var(--dark); color:#fff; border-radius:8px;
-  padding:9px 18px; font-size:13px; font-weight:600;
-  z-index:999; opacity:0; transition:.3s; white-space:nowrap; pointer-events:none;
-}
-.toast.show { opacity:1; }
-.pdf-extract-result {
-  margin-top:10px;
-  background:#f0f8f0;
-  border:1px solid #b8e0b8;
-  border-radius:8px;
-  padding:10px 12px;
-  font-size:11px;
-  text-align:left;
-  display:none;
-}
-.pdf-extract-result.show { display:block; }
-.pdf-extract-result .item {
-  display:flex; justify-content:space-between;
-  padding:2px 0; border-bottom:1px dashed #d0e0d0;
-}
-.pdf-extract-result .item:last-child { border-bottom:none; }
-.pdf-extract-result .lbl { color:#555; font-weight:600; }
-.pdf-extract-result .val { color:#1a4f1a; font-weight:700; max-width:60%; text-align:right; word-break:break-word; }
-.pdf-extract-result .val.empty { color:#999; font-style:italic; }
-@keyframes fadeUp { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none} }
-.screen.active { animation:fadeUp .2s ease; }
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--dark);min-height:100vh;max-width:430px;margin:0 auto;padding-top:var(--st);overflow-x:hidden}
+.screen{display:none;min-height:100vh;padding-bottom:90px}
+.screen.active{display:block;animation:fadeUp .2s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+.header{background:var(--dark);color:#fff;padding:18px 18px 14px;position:sticky;top:0;z-index:50}
+.header-top{display:flex;justify-content:space-between;align-items:center}
+.h-title{font-size:20px;font-weight:800;letter-spacing:-0.5px}
+.h-sub{font-size:12px;color:var(--light);margin-top:2px}
+.add-btn{width:36px;height:36px;border-radius:50%;background:var(--accent);border:none;color:#fff;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:300;line-height:1}
+
+.stats{display:flex;gap:1px;background:var(--border);border-bottom:1px solid var(--border)}
+.stat{flex:1;background:var(--white);padding:12px 8px;text-align:center}
+.stat .num{font-size:22px;font-weight:800}
+.stat .lbl{font-size:10px;color:var(--mid);margin-top:2px}
+.stat.red .num{color:var(--red)} .stat.orange .num{color:var(--orange)} .stat.green .num{color:var(--green)}
+
+.search{padding:10px 14px;background:var(--white);border-bottom:1px solid var(--border);position:relative}
+.s-input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:9px 14px 9px 36px;font-family:inherit;font-size:14px;color:var(--dark);outline:none}
+.s-ico{position:absolute;left:26px;top:50%;transform:translateY(-50%);font-size:14px}
+
+.tabs{display:flex;background:var(--white);border-bottom:2px solid var(--border);overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex-shrink:0;padding:10px 14px;font-size:12px;font-weight:600;color:var(--mid);border:none;background:none;cursor:pointer;font-family:inherit;border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+
+.cli{background:var(--white);border-bottom:1px solid var(--border);padding:13px 16px;display:flex;align-items:center;gap:12px;cursor:pointer}
+.cli:active{background:#f8f4f0}
+.av{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;flex-shrink:0;background-size:cover;background-position:center}
+.info{flex:1;min-width:0}
+.c-nombre{font-size:14px;font-weight:700}
+.c-det{font-size:11px;color:var(--mid);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bdg{padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;flex-shrink:0;white-space:nowrap}
+.bdg.ok{background:var(--green-bg);color:var(--green)}
+.bdg.venc{background:var(--red-bg);color:var(--red)}
+.bdg.prox{background:var(--orange-bg);color:var(--orange)}
+
+.bbar{background:var(--white);border-bottom:1px solid var(--border);padding:14px 12px;display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:40}
+.bbtn{background:var(--bg);border:1px solid var(--border);font-size:22px;cursor:pointer;width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--dark);flex-shrink:0;padding:0;font-family:inherit}
+.bbtn:active{background:#e8ddd0}
+.btitle{font-size:15px;font-weight:700;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ibtn{background:var(--bg);border:1px solid var(--border);width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;flex-shrink:0;padding:0}
+.ibtn:active{background:#e8ddd0}
+.ibtn.del{background:#fde8ea;border-color:#f5c2c7;color:#b5192a}
+.ibtn.del:active{background:#f5c2c7}
+
+.hero{background:var(--dark);color:#fff;padding:18px 16px;display:flex;align-items:center;gap:14px}
+.hav{width:60px;height:60px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;flex-shrink:0;background-size:cover;background-position:center}
+.hnom{font-size:18px;font-weight:800}
+.hsub{font-size:12px;color:var(--light);margin-top:3px}
+
+.acc{display:flex;gap:10px;padding:14px 16px;background:var(--white);border-bottom:1px solid var(--border)}
+.ac{flex:1;padding:11px 6px;border-radius:10px;border:none;cursor:pointer;font-family:inherit;font-size:12px;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:4px}
+.ac .i{font-size:20px}
+.ac.w{background:#d4edda;color:#1a6b35}
+.ac.m{background:#dde8ff;color:#1a3f8a}
+.ac.c{background:#f5f0eb;color:var(--dark);border:1px solid var(--border)}
+
+.sec{padding:14px 16px 6px;font-size:11px;font-weight:700;color:var(--mid);text-transform:uppercase;letter-spacing:.5px}
+.card{background:var(--white);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.row{display:flex;justify-content:space-between;align-items:center;padding:11px 16px;border-bottom:1px solid var(--border)}
+.row:last-child{border-bottom:none}
+.k{font-size:12px;color:var(--mid)}
+.v{font-size:13px;font-weight:600;text-align:right;max-width:60%;word-break:break-word}
+
+.pol{background:var(--white);margin:0 14px 10px;border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.phead{padding:12px 14px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border)}
+.ptipo{font-size:15px;font-weight:700}
+
+.fs{padding:14px}
+.fg{margin-bottom:12px}
+.fl{font-size:12px;font-weight:600;color:var(--mid);margin-bottom:5px;display:block}
+.fi,.fs2{width:100%;background:var(--white);border:1px solid var(--border);border-radius:8px;padding:11px 13px;font-family:inherit;font-size:14px;color:var(--dark);outline:none;-webkit-appearance:none}
+.fi:focus,.fs2:focus{border-color:var(--accent)}
+.fi.flash,.fs2.flash{background:#fff8e1;border-color:#f0a500;animation:flash 1.2s ease}
+@keyframes flash{0%{background:#fff3b0}100%{background:#fff8e1}}
+.fr{display:flex;gap:10px}
+.fr .fg{flex:1}
+.fsec{font-size:13px;font-weight:700;color:var(--dark);margin:18px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--border)}
+.fb{width:100%;padding:14px;background:var(--dark);color:#fff;border:none;border-radius:10px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;margin-top:6px}
+.fb:active{background:#333}
+.fb.danger{background:#fde8ea;color:#b5192a;border:1px solid #f5c2c7}
+.fb.danger:active{background:#f5c2c7}
+.fb.alt{background:var(--bg);color:var(--dark);border:1px solid var(--border)}
+.fb.green{background:#10b981}
+
+.empty{text-align:center;padding:50px 20px;color:var(--mid)}
+.empty .ico{font-size:50px;margin-bottom:12px}
+.empty p{font-size:13px;line-height:1.6}
+
+.ali{background:var(--white);border-bottom:1px solid var(--border);padding:13px 16px;display:flex;align-items:flex-start;gap:10px;cursor:pointer}
+.adot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.atxt{font-size:13px;line-height:1.4;flex:1}
+.asub{font-size:11px;color:var(--mid);margin-top:3px}
+
+.cob{background:var(--white);border-bottom:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;gap:12px}
+.cck{width:24px;height:24px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;transition:.2s}
+.cck.done{background:var(--green);border-color:var(--green);color:#fff}
+
+.bn{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:var(--white);border-top:1px solid var(--border);display:flex;z-index:100;padding-bottom:var(--sb)}
+.nb{flex:1;display:flex;flex-direction:column;align-items:center;padding:8px 0 10px;gap:2px;border:none;background:none;color:var(--mid);font-family:inherit;font-size:9px;font-weight:600;cursor:pointer}
+.nb svg{width:20px;height:20px}
+.nb.active{color:var(--accent)}
+.nbdot{position:absolute;top:-1px;right:-1px;width:7px;height:7px;background:var(--red);border-radius:50%}
+.nbico{position:relative}
+
+.pi{background:none;border:none;font-family:inherit;font-size:13px;font-weight:600;text-align:right;outline:none;color:var(--dark);width:60%}
+
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--dark);color:#fff;border-radius:8px;padding:10px 18px;font-size:13px;font-weight:600;z-index:999;opacity:0;transition:.3s;white-space:nowrap;pointer-events:none;max-width:90%;text-align:center}
+.toast.show{opacity:1}
+
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:999;padding:20px}
+.modal.show{display:flex}
+.mbox{background:var(--white);border-radius:14px;padding:20px;max-width:340px;width:100%}
+.mtit{font-size:16px;font-weight:800;margin-bottom:8px}
+.mtxt{font-size:13px;color:var(--mid);line-height:1.4;margin-bottom:14px}
+.mbtns{display:flex;gap:10px}
+.mb{flex:1;padding:11px;border:none;border-radius:8px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer}
+.mb.cancel{background:var(--bg);color:var(--dark)}
+.mb.ok{background:var(--accent);color:#fff}
+.mb.del{background:var(--red);color:#fff}
+
+.pdfres{margin-top:10px;background:#f0f8f0;border:1px solid #b8e0b8;border-radius:8px;padding:10px;font-size:11px;text-align:left;display:none}
+.pdfres.show{display:block}
+.pdfres .it{display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px dashed #d0e0d0}
+.pdfres .it:last-child{border-bottom:none}
+.pdfres .l{color:#555;font-weight:600}
+.pdfres .v{color:#1a4f1a;font-weight:700;max-width:60%;text-align:right;word-break:break-word}
+.pdfres .v.e{color:#999;font-style:italic}
+
+.foto-up{position:relative;width:90px;height:90px;border-radius:22px;background:var(--dark);display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:800;color:#fff;margin:0 auto;background-size:cover;background-position:center;cursor:pointer;border:3px solid var(--white);box-shadow:0 2px 10px #0002}
+.foto-cam{position:absolute;bottom:-4px;right:-4px;width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;border:2px solid var(--white)}
+
+.cumple-card{background:var(--white);border-bottom:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;gap:12px;cursor:pointer}
+.cumple-fecha{background:var(--accent);color:#fff;border-radius:10px;padding:6px 8px;text-align:center;flex-shrink:0;width:48px}
+.cumple-dia{font-size:18px;font-weight:800;line-height:1}
+.cumple-mes{font-size:9px;text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+
+.chk{width:22px;height:22px;border:2px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;font-size:14px;color:transparent;transition:.15s;background:var(--white)}
+.chk.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.msg-cli{background:var(--white);border-bottom:1px solid var(--border);padding:11px 16px;display:flex;align-items:center;gap:12px}
+.msg-cli .info{flex:1;min-width:0}
+.msg-cli .acts{display:flex;gap:6px;flex-shrink:0}
+.msg-cli .a{width:36px;height:36px;border-radius:8px;border:none;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer}
+.msg-cli .a.w{background:#d4edda;color:#1a6b35}
+.msg-cli .a.m{background:#dde8ff;color:#1a3f8a}
 </style>
 </head>
 <body>
 
-<!-- ===== HOME ===== -->
+<!-- HOME -->
 <div class="screen active" id="s-home">
-  <div class="header">
-    <div class="header-top">
-      <div>
-        <div class="header-title">MiCartera 📋</div>
-        <div class="header-sub" id="h-fecha"></div>
-      </div>
-      <div style="display:flex;gap:8px;align-items:center;">
-        <div onclick="goScreen('s-perfil')" style="cursor:pointer;font-size:22px;">👤</div>
-      </div>
-    </div>
+ <div class="header">
+  <div class="header-top">
+   <div><div class="h-title">MiCartera 📋</div><div class="h-sub" id="h-fecha"></div></div>
+   <div onclick="goScreen('s-perfil')" style="cursor:pointer;font-size:24px;width:38px;height:38px;border-radius:50%;background:#3a2818;display:flex;align-items:center;justify-content:center;background-size:cover;background-position:center" id="h-perfil-av">👤</div>
   </div>
-  <div class="stats-bar">
-    <div class="stat-box"><div class="num" id="h-nc">0</div><div class="lbl">Clientes</div></div>
-    <div class="stat-box"><div class="num" id="h-np">0</div><div class="lbl">Pólizas</div></div>
-    <div class="stat-box red"><div class="num" id="h-nv">0</div><div class="lbl">Vencidas</div></div>
-    <div class="stat-box orange"><div class="num" id="h-nr">0</div><div class="lbl">Por renovar</div></div>
-  </div>
-  <div style="padding:14px 16px 6px;font-size:13px;font-weight:700;">⚠️ Pendientes urgentes</div>
-  <div id="home-alertas"></div>
-  <div style="padding:14px 16px 6px;font-size:13px;font-weight:700;margin-top:6px;">👥 Clientes recientes</div>
-  <div id="home-clientes"></div>
-  <div style="height:10px;"></div>
+ </div>
+ <div class="stats">
+  <div class="stat"><div class="num" id="h-nc">0</div><div class="lbl">Clientes</div></div>
+  <div class="stat"><div class="num" id="h-np">0</div><div class="lbl">Pólizas</div></div>
+  <div class="stat red"><div class="num" id="h-nv">0</div><div class="lbl">Vencidas</div></div>
+  <div class="stat orange"><div class="num" id="h-nr">0</div><div class="lbl">Por renovar</div></div>
+ </div>
+ <div style="padding:14px 16px 6px;font-size:13px;font-weight:700">⚠️ Pendientes urgentes</div>
+ <div id="h-alertas"></div>
+ <div style="padding:14px 16px 6px;font-size:13px;font-weight:700;display:flex;justify-content:space-between;align-items:center">🎂 Próximos cumpleaños <button onclick="goScreen('s-cumples')" style="background:none;border:none;color:var(--accent);font-size:11px;font-weight:700;cursor:pointer">Ver todos →</button></div>
+ <div id="h-cumples"></div>
+ <div style="padding:14px 16px 6px;font-size:13px;font-weight:700">👥 Clientes recientes</div>
+ <div id="h-clientes"></div>
+ <div style="height:10px"></div>
 </div>
 
-<!-- ===== CLIENTES ===== -->
+<!-- CLIENTES -->
 <div class="screen" id="s-clientes">
-  <div class="header">
-    <div class="header-top">
-      <div>
-        <div class="header-title">Clientes</div>
-        <div class="header-sub" id="sub-clientes">0 clientes</div>
-      </div>
-      <div style="display:flex;gap:8px;align-items:center;">
-        <button onclick="document.getElementById('csv-input').click()" style="background:#10b981;border:none;border-radius:8px;padding:7px 12px;color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer;">📂 CSV</button>
-        <input type="file" id="csv-input" accept=".csv" style="display:none;" onchange="importarCSV(this)">
-        <button class="add-btn" onclick="goScreen('s-nuevo-cliente')">+</button>
-      </div>
-    </div>
+ <div class="header">
+  <div class="header-top">
+   <div><div class="h-title">Clientes</div><div class="h-sub" id="h-subc">0 clientes</div></div>
+   <div style="display:flex;gap:8px;align-items:center">
+    <button onclick="document.getElementById('csv-input').click()" style="background:#10b981;border:none;border-radius:8px;padding:7px 11px;color:#fff;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer">📂 CSV</button>
+    <input type="file" id="csv-input" accept=".csv" style="display:none" onchange="importarCSV(this)">
+    <button class="add-btn" onclick="goScreen('s-nuevo')">+</button>
+   </div>
   </div>
-  <div class="search-wrap">
-    <span class="search-ico">🔍</span>
-    <input class="search-input" placeholder="Buscar cliente..." oninput="filtrar(this.value)" id="buscador">
-  </div>
-  <div class="tabs">
-    <button class="tab active" onclick="setTab(this,'todos')">Todos</button>
-    <button class="tab" onclick="setTab(this,'ok')">Al día</button>
-    <button class="tab" onclick="setTab(this,'venc')">Vencidos</button>
-    <button class="tab" onclick="setTab(this,'prox')">Por renovar</button>
-  </div>
-  <div class="lista" id="lista-clientes"></div>
-  <button class="add-btn" onclick="goScreen('s-nuevo-cliente')" style="position:fixed;bottom:90px;right:20px;width:52px;height:52px;font-size:28px;box-shadow:0 4px 16px #0003;">+</button>
+ </div>
+ <div class="search"><span class="s-ico">🔍</span><input class="s-input" placeholder="Buscar cliente..." oninput="filtrar(this.value)" id="buscador"></div>
+ <div class="tabs">
+  <button class="tab active" onclick="setTab(this,'todos')">Todos</button>
+  <button class="tab" onclick="setTab(this,'venc')">🔴 Vencidos</button>
+  <button class="tab" onclick="setTab(this,'5d')">5 días</button>
+  <button class="tab" onclick="setTab(this,'15d')">15 días</button>
+  <button class="tab" onclick="setTab(this,'30d')">30 días</button>
+  <button class="tab" onclick="setTab(this,'ok')">✅ Al día</button>
+ </div>
+ <div id="lista"></div>
+ <button class="add-btn" onclick="goScreen('s-nuevo')" style="position:fixed;bottom:90px;right:20px;width:52px;height:52px;font-size:28px;box-shadow:0 4px 16px #0003;z-index:90">+</button>
 </div>
 
-<!-- ===== DETALLE CLIENTE ===== -->
+<!-- DETALLE -->
 <div class="screen" id="s-detalle">
-  <div class="back-bar">
-    <button class="back-btn" onclick="goBack()">←</button>
-    <div class="back-title" id="det-titulo">Cliente</div>
-    <button class="icon-btn" onclick="editarCliente()" title="Editar">✏️</button>
-    <button class="icon-btn delete" onclick="eliminarCliente()" title="Eliminar">🗑</button>
-  </div>
-  <div id="det-content"></div>
+ <div class="bbar">
+  <button class="bbtn" onclick="goBack()">←</button>
+  <div class="btitle" id="d-titulo">Cliente</div>
+  <button class="ibtn" onclick="editarCliente()">✏️</button>
+  <button class="ibtn del" onclick="confirmarBorrarCliente()">🗑</button>
+ </div>
+ <div id="d-cont"></div>
 </div>
 
-<!-- ===== NUEVO CLIENTE ===== -->
-<div class="screen" id="s-nuevo-cliente">
-  <div class="back-bar">
-    <button class="back-btn" onclick="goBack()">←</button>
-    <div class="back-title">Nuevo Cliente</div>
+<!-- NUEVO CLIENTE -->
+<div class="screen" id="s-nuevo">
+ <div class="bbar">
+  <button class="bbtn" onclick="goBack()">←</button>
+  <div class="btitle">Nuevo Cliente</div>
+ </div>
+ <div class="fs">
+  <div class="fsec">📄 Importar desde PDF</div>
+  <div style="background:#fff8f0;border:2px dashed #c8622a;border-radius:10px;padding:14px;margin-bottom:14px;text-align:center">
+   <div style="font-size:13px;font-weight:700;color:#c8622a;margin-bottom:4px">Cargar póliza PDF</div>
+   <div style="font-size:11px;color:#888;margin-bottom:10px">Claude lee el PDF y llena los campos</div>
+   <input type="file" id="pdf-input" accept=".pdf" style="display:none" onchange="leerPDF(this)">
+   <button id="pdf-btn" onclick="document.getElementById('pdf-input').click()" style="background:#c8622a;color:#fff;border:none;border-radius:8px;padding:10px 20px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer">📂 Seleccionar PDF</button>
+   <div id="pdf-status" style="font-size:11px;margin-top:8px;color:#888"></div>
+   <div id="pdf-result" class="pdfres"></div>
   </div>
-  <div class="form-scroll">
-    <div class="f-section">📄 Importar desde PDF</div>
-    <div style="background:#fff8f0;border:2px dashed #c8622a;border-radius:10px;padding:14px;margin-bottom:16px;text-align:center;">
-      <div style="font-size:13px;font-weight:700;color:#c8622a;margin-bottom:4px;">Cargar póliza PDF (AXA, GNP, Qualitas, etc.)</div>
-      <div style="font-size:11px;color:#888;margin-bottom:10px;">Claude lee el PDF y llena los datos</div>
-      <input type="file" id="pdf-input" accept=".pdf" style="display:none;" onchange="leerPDF(this)">
-      <button id="pdf-btn" onclick="document.getElementById('pdf-input').click()" style="background:#c8622a;color:#fff;border:none;border-radius:8px;padding:10px 20px;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">📂 Seleccionar PDF</button>
-      <div id="pdf-status" style="font-size:11px;margin-top:8px;color:#888;"></div>
-      <div id="pdf-result" class="pdf-extract-result"></div>
-    </div>
 
-    <div class="f-section">👤 Datos del cliente</div>
-    <div class="f-group">
-      <label class="f-label">Nombre completo *</label>
-      <input class="f-input" placeholder="Nombre completo" id="nc-nombre">
-    </div>
-    <div class="f-row">
-      <div class="f-group">
-        <label class="f-label">Teléfono *</label>
-        <input class="f-input" placeholder="10 dígitos" type="tel" id="nc-tel">
-      </div>
-      <div class="f-group">
-        <label class="f-label">Nacimiento</label>
-        <input class="f-input" type="date" id="nc-nac">
-      </div>
-    </div>
-    <div class="f-group">
-      <label class="f-label">Correo electrónico</label>
-      <input class="f-input" placeholder="correo@ejemplo.com" type="email" id="nc-email">
-    </div>
-    <div class="f-group">
-      <label class="f-label">RFC</label>
-      <input class="f-input" placeholder="RFC" id="nc-rfc">
-    </div>
-    <div class="f-group">
-      <label class="f-label">Dirección</label>
-      <input class="f-input" placeholder="Calle, Colonia, Ciudad" id="nc-dir">
-    </div>
-    <div class="f-group">
-      <label class="f-label">Notas</label>
-      <input class="f-input" placeholder="Referido por, intereses..." id="nc-notas">
-    </div>
-
-    <div class="f-section">📋 Primera póliza (opcional)</div>
-    <div class="f-group">
-      <label class="f-label">Tipo de seguro</label>
-      <select class="f-select" id="nc-tipo">
-        <option value="">— Seleccionar —</option>
-        <option>Automóvil</option><option>Vida</option>
-        <option>Gastos Médicos Mayores</option><option>Hogar</option>
-        <option>Negocio</option><option>Accidentes Personales</option>
-        <option>Retiro / Ahorro</option>
-      </select>
-    </div>
-    <div class="f-row">
-      <div class="f-group">
-        <label class="f-label">Prima anual ($)</label>
-        <input class="f-input" placeholder="0" type="number" id="nc-prima">
-      </div>
-      <div class="f-group">
-        <label class="f-label">Vencimiento</label>
-        <input class="f-input" type="date" id="nc-vigencia">
-      </div>
-    </div>
-    <div class="f-row">
-      <div class="f-group">
-        <label class="f-label">No. de Póliza</label>
-        <input class="f-input" placeholder="Número" id="nc-num">
-      </div>
-      <div class="f-group">
-        <label class="f-label">Aseguradora</label>
-        <select class="f-select" id="nc-aseg">
-          <option value="">—</option>
-          <option>GNP</option><option>Qualitas</option><option>AXA</option>
-          <option>Mapfre</option><option>HDI</option><option>Metlife</option>
-          <option>Zurich</option><option>Allianz</option><option>Sura</option><option>Otra</option>
-        </select>
-      </div>
-    </div>
-    <div class="f-group">
-      <label class="f-label">Coberturas</label>
-      <input class="f-input" placeholder="RC | GMM | Robo total..." id="nc-coberturas">
-    </div>
-    <button class="f-btn" onclick="guardarCliente()">Guardar cliente</button>
-    <div style="height:10px;"></div>
+  <div class="fsec">👤 Datos del cliente</div>
+  <div class="fg"><label class="fl">Nombre completo *</label><input class="fi" id="nc-nombre" placeholder="Nombre completo"></div>
+  <div class="fr">
+   <div class="fg"><label class="fl">Teléfono *</label><input class="fi" type="tel" id="nc-tel" placeholder="10 dígitos"></div>
+   <div class="fg"><label class="fl">Nacimiento</label><input class="fi" type="date" id="nc-nac"></div>
   </div>
+  <div class="fg"><label class="fl">Correo *</label><input class="fi" type="email" id="nc-email" placeholder="correo@ejemplo.com"></div>
+  <div class="fg"><label class="fl">RFC</label><input class="fi" id="nc-rfc" placeholder="RFC"></div>
+  <div class="fg"><label class="fl">Dirección</label><input class="fi" id="nc-dir" placeholder="Calle, Colonia, Ciudad"></div>
+  <div class="fg"><label class="fl">Notas</label><input class="fi" id="nc-notas" placeholder="Referido por, intereses..."></div>
+
+  <div class="fsec">📋 Primera póliza (opcional)</div>
+  <div class="fg"><label class="fl">Tipo de seguro</label><select class="fs2" id="nc-tipo"><option value="">— Seleccionar —</option><option>Automóvil</option><option>Vida</option><option>Gastos Médicos Mayores</option><option>Hogar</option><option>Negocio</option><option>Accidentes Personales</option><option>Retiro / Ahorro</option></select></div>
+  <div class="fr">
+   <div class="fg"><label class="fl">Prima anual ($)</label><input class="fi" type="number" id="nc-prima" placeholder="0"></div>
+   <div class="fg"><label class="fl">Vencimiento</label><input class="fi" type="date" id="nc-vigencia"></div>
+  </div>
+  <div class="fr">
+   <div class="fg"><label class="fl">No. Póliza</label><input class="fi" id="nc-num" placeholder="Número"></div>
+   <div class="fg"><label class="fl">Aseguradora</label><select class="fs2" id="nc-aseg"><option value="">—</option><option>GNP</option><option>Qualitas</option><option>AXA</option><option>Mapfre</option><option>HDI</option><option>Metlife</option><option>Zurich</option><option>Allianz</option><option>Sura</option><option>Otra</option></select></div>
+  </div>
+  <div class="fr">
+   <div class="fg"><label class="fl">Forma de pago</label><select class="fs2" id="nc-pago"><option value="">—</option><option>Anual</option><option>Semestral</option><option>Trimestral</option><option>Mensual</option><option>Contado</option></select></div>
+   <div class="fg"><label class="fl">Coberturas</label><input class="fi" id="nc-coberturas" placeholder="RC | GMM..."></div>
+  </div>
+  <button class="fb" onclick="guardarCliente()">Guardar cliente</button>
+  <div style="height:10px"></div>
+ </div>
 </div>
 
-<!-- ===== ALERTAS ===== -->
+<!-- EDITAR CLIENTE -->
+<div class="screen" id="s-editar">
+ <div class="bbar"><button class="bbtn" onclick="goBack()">←</button><div class="btitle">Editar Cliente</div></div>
+ <div class="fs">
+  <div class="fsec">👤 Datos del cliente</div>
+  <div class="fg"><label class="fl">Nombre *</label><input class="fi" id="ec-nombre"></div>
+  <div class="fr">
+   <div class="fg"><label class="fl">Teléfono *</label><input class="fi" type="tel" id="ec-tel"></div>
+   <div class="fg"><label class="fl">Nacimiento</label><input class="fi" type="date" id="ec-nac"></div>
+  </div>
+  <div class="fg"><label class="fl">Correo *</label><input class="fi" type="email" id="ec-email"></div>
+  <div class="fg"><label class="fl">RFC</label><input class="fi" id="ec-rfc"></div>
+  <div class="fg"><label class="fl">Dirección</label><input class="fi" id="ec-dir"></div>
+  <div class="fg"><label class="fl">Notas</label><input class="fi" id="ec-notas"></div>
+  <button class="fb" onclick="guardarEdicion()">💾 Guardar cambios</button>
+  <div style="height:10px"></div>
+  <div class="fsec">📋 Pólizas</div>
+  <div id="ec-polizas"></div>
+  <button onclick="goScreen('s-nueva-pol')" class="fb alt" style="margin-top:8px">+ Agregar póliza</button>
+  <div style="height:20px"></div>
+ </div>
+</div>
+
+<!-- NUEVA / EDITAR PÓLIZA -->
+<div class="screen" id="s-nueva-pol">
+ <div class="bbar"><button class="bbtn" onclick="goBack()">←</button><div class="btitle" id="np-titulo">Nueva Póliza</div></div>
+ <div class="fs">
+  <div class="fg"><label class="fl">Tipo *</label><select class="fs2" id="np-tipo"><option value="">— Seleccionar —</option><option>Automóvil</option><option>Vida</option><option>Gastos Médicos Mayores</option><option>Hogar</option><option>Negocio</option><option>Accidentes Personales</option><option>Retiro / Ahorro</option></select></div>
+  <div class="fr">
+   <div class="fg"><label class="fl">Prima ($)</label><input class="fi" type="number" id="np-prima"></div>
+   <div class="fg"><label class="fl">Vencimiento</label><input class="fi" type="date" id="np-vigencia"></div>
+  </div>
+  <div class="fr">
+   <div class="fg"><label class="fl">No. Póliza</label><input class="fi" id="np-num"></div>
+   <div class="fg"><label class="fl">Aseguradora</label><select class="fs2" id="np-aseg"><option value="">—</option><option>GNP</option><option>Qualitas</option><option>AXA</option><option>Mapfre</option><option>HDI</option><option>Metlife</option><option>Zurich</option><option>Allianz</option><option>Sura</option><option>Otra</option></select></div>
+  </div>
+  <div class="fr">
+   <div class="fg"><label class="fl">Forma de pago</label><select class="fs2" id="np-pago"><option value="">—</option><option>Anual</option><option>Semestral</option><option>Trimestral</option><option>Mensual</option><option>Contado</option></select></div>
+   <div class="fg"><label class="fl">Coberturas</label><input class="fi" id="np-coberturas"></div>
+  </div>
+  <div class="fg"><label class="fl">Notas</label><input class="fi" id="np-nota"></div>
+  <button class="fb" onclick="guardarPoliza()">💾 Guardar póliza</button>
+  <button onclick="confirmarBorrarPoliza()" id="np-del-btn" class="fb danger" style="display:none">🗑 Eliminar póliza</button>
+ </div>
+</div>
+
+<!-- ALERTAS -->
 <div class="screen" id="s-alertas">
-  <div class="header">
-    <div class="header-top">
-      <div>
-        <div class="header-title">Alertas 🔔</div>
-        <div class="header-sub">Acciones pendientes</div>
-      </div>
-    </div>
-  </div>
-  <div id="alertas-content"></div>
+ <div class="header"><div class="header-top"><div><div class="h-title">Alertas 🔔</div><div class="h-sub">Pendientes y vencimientos</div></div></div></div>
+ <div id="alertas-cont"></div>
 </div>
 
-<!-- ===== COBRANZA ===== -->
+<!-- COBRANZA -->
 <div class="screen" id="s-cobranza">
-  <div class="header">
-    <div class="header-top">
-      <div>
-        <div class="header-title">Cobranza 💰</div>
-        <div class="header-sub" id="cobro-mes"></div>
-      </div>
-    </div>
-  </div>
-  <div id="cobro-resumen" style="padding:14px 16px 0;"></div>
-  <div style="padding:10px 16px 6px;font-size:13px;font-weight:700;">Lista de cobros</div>
-  <div id="lista-cobros"></div>
+ <div class="header"><div class="header-top"><div><div class="h-title">Cobranza 💰</div><div class="h-sub" id="cobro-mes"></div></div></div></div>
+ <div id="cobro-resumen" style="padding:14px 16px 0"></div>
+ <div style="padding:10px 16px 6px;font-size:13px;font-weight:700">Lista de cobros</div>
+ <div id="lista-cobros"></div>
 </div>
 
-<!-- ===== PERFIL ===== -->
+<!-- MENSAJERÍA MASIVA -->
+<div class="screen" id="s-mensajes">
+ <div class="bbar"><button class="bbtn" onclick="goBack()">←</button><div class="btitle">Mensaje masivo</div></div>
+ <div class="fs">
+  <div class="fg">
+   <label class="fl">Mensaje (puedes usar {nombre}, {tipo}, {dias}, {vence})</label>
+   <textarea class="fi" id="msg-template" rows="4" style="font-family:inherit;resize:vertical">Hola {nombre}, tu póliza de {tipo} vence el {vence} ({dias} días). ¿Cuándo platicamos para renovarla?</textarea>
+  </div>
+  <div class="fg">
+   <label class="fl">Filtrar a quién enviar</label>
+   <select class="fs2" id="msg-filtro" onchange="renderMensajes()">
+    <option value="venc">Solo vencidos</option>
+    <option value="5d">Vencen en 5 días</option>
+    <option value="15d" selected>Vencen en 15 días</option>
+    <option value="30d">Vencen en 30 días</option>
+    <option value="60d">Vencen en 60 días</option>
+    <option value="todos">Todos los clientes</option>
+   </select>
+  </div>
+  <div style="display:flex;gap:8px;margin:6px 0 10px">
+   <button onclick="msgSeleccionarTodos(true)" class="fb alt" style="margin:0;padding:9px;font-size:12px">Seleccionar todos</button>
+   <button onclick="msgSeleccionarTodos(false)" class="fb alt" style="margin:0;padding:9px;font-size:12px">Deseleccionar</button>
+  </div>
+ </div>
+ <div id="msg-lista"></div>
+ <div style="padding:14px 14px 30px;background:var(--white);border-top:1px solid var(--border)">
+  <div id="msg-count" style="font-size:12px;color:var(--mid);text-align:center;margin-bottom:10px">0 seleccionados</div>
+  <div style="display:flex;gap:8px">
+   <button onclick="enviarMasivo('wa')" class="fb green" style="margin:0">💬 WhatsApp</button>
+   <button onclick="enviarMasivo('email')" class="fb" style="margin:0;background:var(--blue)">✉️ Correo</button>
+  </div>
+ </div>
+</div>
+
+<!-- CUMPLEAÑOS -->
+<div class="screen" id="s-cumples">
+ <div class="bbar"><button class="bbtn" onclick="goBack()">←</button><div class="btitle">Cumpleaños 🎂</div></div>
+ <div id="cumples-cont"></div>
+</div>
+
+<!-- PERFIL -->
 <div class="screen" id="s-perfil">
-  <div class="back-bar">
-    <button class="back-btn" onclick="goBack()">←</button>
-    <div class="back-title">Mi perfil</div>
-  </div>
-  <div style="text-align:center;padding:28px 16px 20px;background:var(--white);border-bottom:1px solid var(--border);">
-    <div style="width:72px;height:72px;border-radius:18px;background:var(--dark);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;color:#fff;margin:0 auto 10px;" id="p-avatar">?</div>
-    <div style="font-size:18px;font-weight:800;" id="p-nombre-display">Agente</div>
-  </div>
-  <div class="info-card" style="margin-top:14px;">
-    <div class="info-row"><span class="info-k">Nombre</span><input class="perfil-input" id="p-nombre" placeholder="Tu nombre"></div>
-    <div class="info-row"><span class="info-k">Teléfono</span><input class="perfil-input" id="p-tel" placeholder="Tu teléfono" type="tel"></div>
-    <div class="info-row"><span class="info-k">Correo</span><input class="perfil-input" id="p-email" placeholder="Tu correo" type="email"></div>
-    <div class="info-row"><span class="info-k">Meta anual ($)</span><input class="perfil-input" id="p-meta" placeholder="0" type="number" style="color:var(--orange);"></div>
-    <div class="info-row"><span class="info-k">Clave de agente</span><input class="perfil-input" id="p-clave" placeholder="Clave"></div>
-  </div>
-  <div style="padding:16px;">
-    <button class="f-btn" onclick="guardarPerfil()">Guardar perfil</button>
-    <div style="height:10px;"></div>
-    <button onclick="probarNotificacion()" style="width:100%;padding:13px;background:#dde8ff;color:#1a3f8a;border:1px solid #aac4ee;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:10px;">🔔 Probar notificación</button>
-    <button onclick="borrarTodo()" style="width:100%;padding:13px;background:var(--red-bg);color:var(--red);border:1px solid #f5c2c7;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Borrar todos los datos</button>
-  </div>
-</div>
-
-<!-- ===== EDITAR CLIENTE ===== -->
-<div class="screen" id="s-editar-cliente">
-  <div class="back-bar">
-    <button class="back-btn" onclick="goBack()">←</button>
-    <div class="back-title">Editar Cliente</div>
-  </div>
-  <div class="form-scroll">
-    <div class="f-section">👤 Datos del cliente</div>
-    <div class="f-group"><label class="f-label">Nombre completo *</label><input class="f-input" id="ec-nombre"></div>
-    <div class="f-row">
-      <div class="f-group"><label class="f-label">Teléfono *</label><input class="f-input" type="tel" id="ec-tel"></div>
-      <div class="f-group"><label class="f-label">Nacimiento</label><input class="f-input" type="date" id="ec-nac"></div>
-    </div>
-    <div class="f-group"><label class="f-label">Correo electrónico</label><input class="f-input" type="email" id="ec-email"></div>
-    <div class="f-group"><label class="f-label">RFC</label><input class="f-input" id="ec-rfc"></div>
-    <div class="f-group"><label class="f-label">Dirección</label><input class="f-input" id="ec-dir"></div>
-    <div class="f-group"><label class="f-label">Notas</label><input class="f-input" id="ec-notas"></div>
-    <button class="f-btn" onclick="guardarEdicionCliente()">💾 Guardar cambios</button>
-    <div style="height:10px;"></div>
-    <div class="f-section">📋 Pólizas</div>
-    <div id="ec-polizas-lista"></div>
-    <button onclick="goScreen('s-nueva-poliza')" style="width:100%;padding:12px;background:var(--white);border:2px dashed var(--border);border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:600;color:var(--mid);cursor:pointer;margin-top:8px;">+ Agregar póliza</button>
-    <div style="height:20px;"></div>
-  </div>
-</div>
-
-<!-- ===== EDITAR PÓLIZA ===== -->
-<div class="screen" id="s-editar-poliza">
-  <div class="back-bar">
-    <button class="back-btn" onclick="goBack()">←</button>
-    <div class="back-title">Editar Póliza</div>
-  </div>
-  <div class="form-scroll">
-    <div class="f-group"><label class="f-label">Tipo de seguro *</label>
-      <select class="f-select" id="ep-tipo">
-        <option value="">— Seleccionar —</option>
-        <option>Automóvil</option><option>Vida</option><option>Gastos Médicos Mayores</option>
-        <option>Hogar</option><option>Negocio</option><option>Accidentes Personales</option><option>Retiro / Ahorro</option>
-      </select>
-    </div>
-    <div class="f-row">
-      <div class="f-group"><label class="f-label">Prima anual ($)</label><input class="f-input" type="number" id="ep-prima"></div>
-      <div class="f-group"><label class="f-label">Vencimiento</label><input class="f-input" type="date" id="ep-vigencia"></div>
-    </div>
-    <div class="f-row">
-      <div class="f-group"><label class="f-label">No. Póliza</label><input class="f-input" id="ep-num"></div>
-      <div class="f-group"><label class="f-label">Aseguradora</label>
-        <select class="f-select" id="ep-aseg">
-          <option value="">—</option>
-          <option>GNP</option><option>Qualitas</option><option>AXA</option><option>Mapfre</option>
-          <option>HDI</option><option>Metlife</option><option>Zurich</option><option>Allianz</option><option>Sura</option><option>Otra</option>
-        </select>
-      </div>
-    </div>
-    <div class="f-group"><label class="f-label">Coberturas</label><input class="f-input" id="ep-coberturas" placeholder="RC | GMM | Robo total..."></div>
-    <div class="f-group"><label class="f-label">Notas</label><input class="f-input" id="ep-nota"></div>
-    <button class="f-btn" onclick="guardarEdicionPoliza()">💾 Guardar póliza</button>
-    <div style="height:10px;"></div>
-    <button onclick="eliminarPoliza()" style="width:100%;padding:13px;background:#fde8ea;color:#b5192a;border:1px solid #f5c2c7;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;">🗑 Eliminar póliza</button>
-    <div style="height:20px;"></div>
-  </div>
+ <div class="bbar"><button class="bbtn" onclick="goBack()">←</button><div class="btitle">Mi perfil</div></div>
+ <div style="text-align:center;padding:24px 16px 16px;background:var(--white);border-bottom:1px solid var(--border)">
+  <input type="file" id="foto-input" accept="image/*" style="display:none" onchange="subirFoto(this)">
+  <div class="foto-up" id="p-avatar" onclick="document.getElementById('foto-input').click()">?<div class="foto-cam">📷</div></div>
+  <div style="font-size:18px;font-weight:800;margin-top:10px" id="p-nombre-display">Agente</div>
+  <div style="font-size:11px;color:var(--mid);margin-top:2px">Toca la foto para cambiarla</div>
+ </div>
+ <div class="card" style="margin-top:14px">
+  <div class="row"><span class="k">Nombre</span><input class="pi" id="p-nombre" placeholder="Tu nombre"></div>
+  <div class="row"><span class="k">Teléfono</span><input class="pi" id="p-tel" placeholder="Tu teléfono" type="tel"></div>
+  <div class="row"><span class="k">Correo</span><input class="pi" id="p-email" placeholder="Tu correo" type="email"></div>
+  <div class="row"><span class="k">Meta anual ($)</span><input class="pi" id="p-meta" placeholder="0" type="number" style="color:var(--orange)"></div>
+  <div class="row"><span class="k">Clave de agente</span><input class="pi" id="p-clave" placeholder="Clave"></div>
+ </div>
+ <div style="padding:14px">
+  <button class="fb" onclick="guardarPerfil()">💾 Guardar perfil</button>
+  <div style="height:8px"></div>
+  <button onclick="probarNotificacion()" class="fb alt">🔔 Probar notificación</button>
+  <div style="height:8px"></div>
+  <button onclick="confirmarBorrarTodo()" class="fb danger">🗑 Borrar todos los datos</button>
+ </div>
 </div>
 
 <!-- NAV -->
-<nav class="bottomnav">
-  <button class="nav-btn active" onclick="goScreen('s-home')">
-    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-    Inicio
-  </button>
-  <button class="nav-btn" onclick="goScreen('s-clientes')">
-    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
-    Clientes
-  </button>
-  <button class="nav-btn" onclick="goScreen('s-alertas')">
-    <div class="nav-ico-wrap">
-      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
-      <div class="nav-dot" id="nav-dot" style="display:none;"></div>
-    </div>
-    Alertas
-  </button>
-  <button class="nav-btn" onclick="goScreen('s-cobranza')">
-    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
-    Cobranza
-  </button>
+<nav class="bn">
+ <button class="nb active" data-nav="s-home" onclick="goScreen('s-home')">
+  <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Inicio
+ </button>
+ <button class="nb" data-nav="s-clientes" onclick="goScreen('s-clientes')">
+  <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>Clientes
+ </button>
+ <button class="nb" data-nav="s-mensajes" onclick="goScreen('s-mensajes')">
+  <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Mensajes
+ </button>
+ <button class="nb" data-nav="s-alertas" onclick="goScreen('s-alertas')">
+  <div class="nbico"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg><div class="nbdot" id="nbdot" style="display:none"></div></div>Alertas
+ </button>
+ <button class="nb" data-nav="s-cobranza" onclick="goScreen('s-cobranza')">
+  <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Cobranza
+ </button>
 </nav>
 <div class="toast" id="toast"></div>
+<div class="modal" id="modal"><div class="mbox"><div class="mtit" id="m-tit">Confirmar</div><div class="mtxt" id="m-txt">¿Continuar?</div><div class="mbtns"><button class="mb cancel" onclick="modalCerrar()">Cancelar</button><button class="mb ok" id="m-ok" onclick="modalOk()">OK</button></div></div></div>
 
 <script>
-// ============================================================
-// CONFIG
-// ============================================================
-var PROXY_URL = 'https://micartera-proxy.navarro-andres-c1f.workers.dev';
-var COLORES = ['#f0e6d3','#d3e8f0','#d3f0e0','#f0d3d3','#e8d3f0','#f0f0d3'];
-var COLORES_TEXT = ['#7a5c2e','#1a5f7a','#1a6b35','#7a1a1a','#5c1a7a','#5c5c1a'];
+// ============== CONFIG ==============
+var PROXY_URL='https://micartera-proxy.navarro-andres-c1f.workers.dev';
+var COLS=['#f0e6d3','#d3e8f0','#d3f0e0','#f0d3d3','#e8d3f0','#f0f0d3'];
+var COLT=['#7a5c2e','#1a5f7a','#1a6b35','#7a1a1a','#5c1a7a','#5c5c1a'];
+var RFC_BAD=new Set(['MTE440316E54','GNP9211244P0','ASE931116231','AXA920310953','AXA0805217D6','QSA931209G49','MMA0501105X4','HDI0708205F3','MET860605G14','ZUR000110ER8','ALL850604HK1','SAS900618SQ8']);
+var RFC_BPRE=['MTE','GNP','ASE','AXA','QSA','MMA','HDI','MET','ZUR','ALL','SAS','HSB','BBV','BAN'];
+var TIPOS_DICT={'auto':'Automóvil','automovil':'Automóvil','automóvil':'Automóvil','vehicular':'Automóvil','autos':'Automóvil','coche':'Automóvil','camioneta':'Automóvil','vehiculo':'Automóvil','vida':'Vida','vidaplus':'Vida','seguro de vida':'Vida','gmm':'Gastos Médicos Mayores','gastos medicos':'Gastos Médicos Mayores','gastos médicos':'Gastos Médicos Mayores','medicos mayores':'Gastos Médicos Mayores','salud':'Gastos Médicos Mayores','plan medico':'Gastos Médicos Mayores','hogar':'Hogar','casa':'Hogar','vivienda':'Hogar','negocio':'Negocio','empresa':'Negocio','comercial':'Negocio','pyme':'Negocio','accidentes':'Accidentes Personales','accidentes personales':'Accidentes Personales','ap':'Accidentes Personales','retiro':'Retiro / Ahorro','ahorro':'Retiro / Ahorro','dotal':'Retiro / Ahorro'};
+var ASEG_DICT={'gnp':'GNP','qualitas':'Qualitas','quálitas':'Qualitas','axa':'AXA','mapfre':'Mapfre','hdi':'HDI','metlife':'Metlife','met life':'Metlife','zurich':'Zurich','allianz':'Allianz','sura':'Sura','seguros sura':'Sura'};
+var MESES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+var MESES_ABR=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
 
-var RFC_ASEGURADORAS = new Set([
-  'MTE440316E54','GNP9211244P0','ASE931116231','AXA920310953',
-  'AXA0805217D6','QSA931209G49','MMA0501105X4','HDI0708205F3',
-  'MET860605G14','ZUR000110ER8','ALL850604HK1','SAS900618SQ8'
-]);
-var RFC_BAD_PREFIX = ['MTE','GNP','ASE','AXA','QSA','MMA','HDI','MET','ZUR','ALL','SAS','HSB','BBV','BAN'];
+// ============== STORAGE ==============
+function load(k,d){try{var v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
+function save(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){toast('⚠️ Error guardando');return false}}
+var clientes=load('mc2_clientes',[]);
+var perfil=load('mc2_perfil',{nombre:'',tel:'',email:'',meta:0,clave:'',foto:''});
+var tabActual='todos';
+var historial=['s-home'];
+var clienteIdx=null;
+var polizaIdx=null;
+var msgSel={};
 
-var TIPOS_DICT = {
-  'auto':'Automóvil','automovil':'Automóvil','automóvil':'Automóvil','vehicular':'Automóvil',
-  'autos':'Automóvil','coche':'Automóvil','camioneta':'Automóvil','vehiculo':'Automóvil',
-  'vida':'Vida','vidaplus':'Vida','vidaprotege':'Vida','seguro de vida':'Vida',
-  'gmm':'Gastos Médicos Mayores','gastos medicos':'Gastos Médicos Mayores',
-  'gastos médicos':'Gastos Médicos Mayores','medicos mayores':'Gastos Médicos Mayores',
-  'salud':'Gastos Médicos Mayores','plan medico':'Gastos Médicos Mayores',
-  'major medical':'Gastos Médicos Mayores',
-  'hogar':'Hogar','casa':'Hogar','vivienda':'Hogar',
-  'negocio':'Negocio','empresa':'Negocio','comercial':'Negocio','pyme':'Negocio',
-  'accidentes':'Accidentes Personales','accidentes personales':'Accidentes Personales','ap':'Accidentes Personales',
-  'retiro':'Retiro / Ahorro','ahorro':'Retiro / Ahorro','dotal':'Retiro / Ahorro','plan retiro':'Retiro / Ahorro'
-};
-var ASEG_DICT = {
-  'gnp':'GNP','qualitas':'Qualitas','quálitas':'Qualitas','axa':'AXA',
-  'mapfre':'Mapfre','hdi':'HDI','metlife':'Metlife','met life':'Metlife',
-  'zurich':'Zurich','allianz':'Allianz','sura':'Sura','seguros sura':'Sura'
-};
+// ============== UTILS ==============
+function ini(n){return (n||'?').split(' ').slice(0,2).map(function(p){return p[0]||''}).join('').toUpperCase()||'?'}
+function colA(i){return COLS[Math.abs(i||0)%COLS.length]}
+function colB(i){return COLT[Math.abs(i||0)%COLT.length]}
+function diasHasta(f){if(!f)return null;var d=new Date(f+'T00:00:00');var h=new Date();h.setHours(0,0,0,0);return Math.round((d-h)/86400000)}
+function estPol(p){if(!p.vigencia)return 'ok';var d=diasHasta(p.vigencia);if(d<0)return 'venc';if(d<=30)return 'prox';return 'ok'}
+function estCli(c){if(!(c.polizas||[]).length)return 'ok';if(c.polizas.some(function(p){return estPol(p)==='venc'}))return 'venc';if(c.polizas.some(function(p){return estPol(p)==='prox'}))return 'prox';return 'ok'}
+function bdg(e){return {ok:'<span class="bdg ok">Al día</span>',venc:'<span class="bdg venc">Vencido</span>',prox:'<span class="bdg prox">Por renovar</span>'}[e]||''}
+function bdgPol(e){return {ok:'<span class="bdg ok">Vigente</span>',venc:'<span class="bdg venc">Vencida</span>',prox:'<span class="bdg prox">Por renovar</span>'}[e]||''}
+function ico(t){return {'Automóvil':'🚗','Vida':'❤️','Gastos Médicos Mayores':'🏥','Hogar':'🏠','Negocio':'🏢','Accidentes Personales':'🛡️','Retiro / Ahorro':'💰'}[t]||'📋'}
+function fmtFecha(s){if(!s)return '—';var d=new Date(s+'T00:00:00');return d.getDate()+' '+MESES_ABR[d.getMonth()].toLowerCase()+' '+d.getFullYear()}
+function esc(s){return (s||'').toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,"&#39;")}
+function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(function(){t.classList.remove('show')},2500)}
 
-// ============================================================
-// DATOS Y STORAGE
-// ============================================================
-function load(k, def) { try { return JSON.parse(localStorage.getItem(k)) || def; } catch(e) { return def; } }
-function save(k, v) { localStorage.setItem(k, JSON.stringify(v)); }
-var clientes = load('mc2_clientes', []);
-var perfil = load('mc2_perfil', { nombre:'Laura Castillo', tel:'', email:'', meta:0, clave:'' });
-var tabActual = 'todos';
-var history = ['s-home'];
-var clienteIdx = null;
-var polizaEditandoIdx = null;
+// ============== MODAL CONFIRM (no usar window.confirm en WebView) ==============
+var modalCb=null;
+function modal(tit,txt,okTxt,onOk,danger){
+ document.getElementById('m-tit').textContent=tit;
+ document.getElementById('m-txt').textContent=txt;
+ var ok=document.getElementById('m-ok');
+ ok.textContent=okTxt||'Confirmar';
+ ok.className='mb '+(danger?'del':'ok');
+ modalCb=onOk;
+ document.getElementById('modal').classList.add('show');
+}
+function modalCerrar(){document.getElementById('modal').classList.remove('show');modalCb=null}
+function modalOk(){var cb=modalCb;modalCerrar();if(cb)try{cb()}catch(e){console.error(e)}}
 
-// ============================================================
-// NAVEGACIÓN
-// ============================================================
-var navMap = { 's-home':0, 's-clientes':1, 's-alertas':2, 's-cobranza':3 };
-function goScreen(id) {
-  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
-  document.getElementById(id).classList.add('active');
-  if (history[history.length-1] !== id) history.push(id);
-  document.querySelectorAll('.nav-btn').forEach(function(b,i){b.classList.toggle('active', navMap[id]===i);});
-  window.scrollTo(0,0);
-  if (id==='s-home') renderHome();
-  if (id==='s-clientes') { renderLista(clientes); document.getElementById('buscador').value=''; }
-  if (id==='s-alertas') renderAlertas();
-  if (id==='s-cobranza') renderCobranza();
-  if (id==='s-perfil') cargarPerfil();
-  if (id==='s-nuevo-cliente') limpiarFormularioNuevo();
-}
-function goBack() {
-  history.pop();
-  var prev = history[history.length-1] || 's-home';
-  history.pop();
-  goScreen(prev);
-}
+// ============== NAVEGACIÓN — robusta y simple ==============
+var SCREENS=['s-home','s-clientes','s-detalle','s-nuevo','s-editar','s-nueva-pol','s-alertas','s-cobranza','s-mensajes','s-cumples','s-perfil'];
+var NAV_MAP={'s-home':0,'s-clientes':1,'s-mensajes':2,'s-alertas':3,'s-cobranza':4};
 
-// ============================================================
-// UTILS
-// ============================================================
-function ini(n) { return (n||'?').split(' ').slice(0,2).map(function(p){return p[0]||'';}).join('').toUpperCase()||'?'; }
-function col(i) { return COLORES[Math.abs(i||0) % COLORES.length]; }
-function colT(i) { return COLORES_TEXT[Math.abs(i||0) % COLORES_TEXT.length]; }
-function diasHasta(fecha) { return Math.round((new Date(fecha) - new Date().setHours(0,0,0,0)) / 86400000); }
-function estadoPoliza(p) {
-  if (!p.vigencia) return 'ok';
-  var d = diasHasta(p.vigencia);
-  if (d < 0) return 'venc';
-  if (d <= 30) return 'prox';
-  return 'ok';
+function goScreen(id,reset){
+ if(SCREENS.indexOf(id)<0){console.warn('Pantalla no existe:',id);return}
+ if(reset)historial=['s-home'];
+ document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active')});
+ var el=document.getElementById(id);
+ if(!el){console.error('No el:',id);return}
+ el.classList.add('active');
+ if(historial[historial.length-1]!==id)historial.push(id);
+ // bottom nav highlight
+ document.querySelectorAll('.nb').forEach(function(b){
+  b.classList.toggle('active',b.getAttribute('data-nav')===id);
+ });
+ window.scrollTo(0,0);
+ // re-renders
+ if(id==='s-home')renderHome();
+ if(id==='s-clientes'){renderLista();var b=document.getElementById('buscador');if(b)b.value=''}
+ if(id==='s-alertas')renderAlertas();
+ if(id==='s-cobranza')renderCobranza();
+ if(id==='s-mensajes')renderMensajes();
+ if(id==='s-cumples')renderCumples();
+ if(id==='s-perfil')cargarPerfil();
+ if(id==='s-detalle'&&clienteIdx!==null)renderDetalle();
+ if(id==='s-editar'&&clienteIdx!==null)renderEditar();
+ if(id==='s-nuevo')limpiarNuevo();
+ if(id==='s-nueva-pol')limpiarNuevaPol();
 }
-function estadoCliente(c) {
-  if (!(c.polizas||[]).length) return 'ok';
-  if (c.polizas.some(function(p){return estadoPoliza(p)==='venc';})) return 'venc';
-  if (c.polizas.some(function(p){return estadoPoliza(p)==='prox';})) return 'prox';
-  return 'ok';
-}
-function badgeHTML(e) {
-  var m = { ok:'<span class="badge ok">Al día</span>', venc:'<span class="badge venc">Vencido</span>', prox:'<span class="badge prox">Por renovar</span>' };
-  return m[e] || '';
-}
-function polizaBadge(e) {
-  var m = { ok:'<span class="badge ok">Vigente</span>', venc:'<span class="badge venc">Vencida</span>', prox:'<span class="badge prox">Por renovar</span>' };
-  return m[e] || '';
-}
-function iconTipo(t) {
-  var m = {'Automóvil':'🚗','Vida':'❤️','Gastos Médicos Mayores':'🏥','Hogar':'🏠','Negocio':'🏢','Accidentes Personales':'🛡️','Retiro / Ahorro':'💰'};
-  return m[t]||'📋';
-}
-var meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
-var hoy = new Date();
-document.getElementById('h-fecha').textContent = hoy.getDate()+' de '+meses[hoy.getMonth()]+' '+hoy.getFullYear();
-document.getElementById('cobro-mes').textContent = meses[hoy.getMonth()]+' '+hoy.getFullYear();
-function toast(msg) {
-  var t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(function(){t.classList.remove('show');}, 2500);
+function goBack(){
+ if(historial.length<=1){goScreen('s-home',true);return}
+ historial.pop(); // saca actual
+ var prev=historial.pop()||'s-home'; // saca anterior, lo re-agrega goScreen
+ goScreen(prev);
 }
 
-// ============================================================
-// HOME
-// ============================================================
-function renderHome() {
-  perfil = load('mc2_perfil', perfil);
-  var totalP = clientes.reduce(function(a,c){return a+(c.polizas||[]).length;}, 0);
-  var vencidas = clientes.reduce(function(a,c){return a+(c.polizas||[]).filter(function(p){return estadoPoliza(p)==='venc';}).length;}, 0);
-  var prox = clientes.reduce(function(a,c){return a+(c.polizas||[]).filter(function(p){return estadoPoliza(p)==='prox';}).length;}, 0);
-  document.getElementById('h-nc').textContent = clientes.length;
-  document.getElementById('h-np').textContent = totalP;
-  document.getElementById('h-nv').textContent = vencidas;
-  document.getElementById('h-nr').textContent = prox;
-  var alertas = getAlertas().filter(function(a){return a.tipo==='rojo';});
-  var el = document.getElementById('home-alertas');
-  if (!alertas.length) {
-    el.innerHTML = '<div style="padding:16px;background:#fff;border-top:1px solid var(--border);border-bottom:1px solid var(--border);text-align:center;color:var(--mid);font-size:13px;">✅ Sin pendientes urgentes</div>';
-  } else {
-    el.innerHTML = alertas.slice(0,3).map(function(a){return '<div class="alerta-item" onclick="verCliente('+a.idx+')">' +
-        '<div class="alerta-dot" style="background:var(--red);"></div>' +
-        '<div><div class="alerta-txt">'+a.txt+'</div><div class="alerta-sub">'+a.sub+'</div></div>' +
-      '</div>';}).join('');
+// ============== DATE FORMAT ==============
+var hoy=new Date();
+document.getElementById('h-fecha').textContent=hoy.getDate()+' de '+MESES[hoy.getMonth()]+' '+hoy.getFullYear();
+document.getElementById('cobro-mes').textContent=MESES[hoy.getMonth()]+' '+hoy.getFullYear();
+
+// ============== HOME ==============
+function renderHome(){
+ perfil=load('mc2_perfil',perfil);
+ var totalP=clientes.reduce(function(a,c){return a+(c.polizas||[]).length},0);
+ var venc=clientes.reduce(function(a,c){return a+(c.polizas||[]).filter(function(p){return estPol(p)==='venc'}).length},0);
+ var prox=clientes.reduce(function(a,c){return a+(c.polizas||[]).filter(function(p){return estPol(p)==='prox'}).length},0);
+ document.getElementById('h-nc').textContent=clientes.length;
+ document.getElementById('h-np').textContent=totalP;
+ document.getElementById('h-nv').textContent=venc;
+ document.getElementById('h-nr').textContent=prox;
+ // Avatar perfil arriba
+ var hp=document.getElementById('h-perfil-av');
+ if(perfil.foto){hp.style.backgroundImage='url('+perfil.foto+')';hp.textContent=''}else{hp.style.backgroundImage='';hp.textContent='👤'}
+ // Alertas urgentes
+ var ur=getAlertas().filter(function(a){return a.tipo==='rojo'});
+ var el=document.getElementById('h-alertas');
+ if(!ur.length){el.innerHTML='<div style="padding:14px;background:#fff;border-top:1px solid var(--border);border-bottom:1px solid var(--border);text-align:center;color:var(--mid);font-size:13px">✅ Sin pendientes urgentes</div>'}
+ else el.innerHTML=ur.slice(0,3).map(function(a){return '<div class="ali" onclick="verCliente('+a.idx+')"><div class="adot" style="background:var(--red)"></div><div><div class="atxt">'+a.txt+'</div><div class="asub">'+a.sub+'</div></div></div>'}).join('');
+ // Cumpleaños próximos
+ var cumples=getCumples().slice(0,3);
+ var ec=document.getElementById('h-cumples');
+ if(!cumples.length)ec.innerHTML='<div style="padding:14px;background:#fff;border-top:1px solid var(--border);border-bottom:1px solid var(--border);text-align:center;color:var(--mid);font-size:13px">Sin cumpleaños próximos</div>';
+ else ec.innerHTML=cumples.map(function(c){
+  return '<div class="cumple-card" onclick="verCliente('+c.idx+')"><div class="cumple-fecha"><div class="cumple-dia">'+c.dia+'</div><div class="cumple-mes">'+MESES_ABR[c.mes]+'</div></div><div class="info"><div class="c-nombre">'+esc(c.nombre)+'</div><div class="c-det">'+(c.dias===0?'¡HOY!':'En '+c.dias+' días')+' · '+c.edad+' años</div></div></div>';
+ }).join('');
+ // Recientes
+ var rec=clientes.slice().reverse().slice(0,3);
+ var el2=document.getElementById('h-clientes');
+ if(!rec.length)el2.innerHTML='<div style="padding:16px;text-align:center;color:var(--mid);font-size:13px">Sin clientes aún</div>';
+ else el2.innerHTML=rec.map(function(c){
+  var idx=clientes.indexOf(c);var e=estCli(c);
+  return '<div class="cli" onclick="verCliente('+idx+')"><div class="av" style="background:'+colA(idx)+';color:'+colB(idx)+'">'+ini(c.nombre)+'</div><div class="info"><div class="c-nombre">'+esc(c.nombre)+'</div><div class="c-det">'+esc((c.polizas||[]).map(function(p){return p.tipo}).join(' · ')||'Sin pólizas')+'</div></div>'+bdg(e)+'</div>';
+ }).join('');
+ document.getElementById('nbdot').style.display=ur.length?'block':'none';
+}
+
+// ============== ALERTAS ==============
+function getAlertas(){
+ var arr=[];var h=new Date();h.setHours(0,0,0,0);
+ clientes.forEach(function(c,idx){
+  if(c.nac){
+   var n=new Date(c.nac+'T00:00:00');
+   if(!isNaN(n)){
+    var cu=new Date(h.getFullYear(),n.getMonth(),n.getDate());
+    if(cu<h)cu.setFullYear(h.getFullYear()+1);
+    var d=Math.round((cu-h)/86400000);
+    if(d<=7)arr.push({txt:'🎂 Cumpleaños de <b>'+esc(c.nombre)+'</b> '+(d===0?'HOY':'en '+d+' días'),sub:'Envía felicitación',tipo:d<=2?'rojo':'naranja',idx:idx});
+   }
   }
-  var el2 = document.getElementById('home-clientes');
-  var rec = clientes.slice().reverse().slice(0,3);
-  if (!rec.length) {
-    el2.innerHTML = '<div style="padding:16px;text-align:center;color:var(--mid);font-size:13px;">Sin clientes aún</div>';
-  } else {
-    el2.innerHTML = rec.map(function(c){
-      var idx = clientes.indexOf(c);
-      var e = estadoCliente(c);
-      return '<div class="cliente-card" onclick="verCliente('+idx+')">' +
-        '<div class="av" style="background:'+col(idx)+';color:'+colT(idx)+'">'+ini(c.nombre)+'</div>' +
-        '<div class="info"><div class="c-nombre">'+c.nombre+'</div><div class="c-det">'+((c.polizas||[]).map(function(p){return p.tipo;}).join(' · ')||'Sin pólizas')+'</div></div>' +
-        badgeHTML(e) +
-        '</div>';
-    }).join('');
-  }
-  document.getElementById('nav-dot').style.display = getAlertas().filter(function(a){return a.tipo==='rojo';}).length ? 'block':'none';
-}
-
-// ============================================================
-// ALERTAS
-// ============================================================
-function getAlertas() {
-  var alertas = [];
-  clientes.forEach(function(c, idx){
-    if (c.nac) {
-      var n = new Date(c.nac);
-      var cumple = new Date(hoy.getFullYear(), n.getMonth(), n.getDate());
-      if (cumple < hoy) cumple.setFullYear(hoy.getFullYear()+1);
-      var d = Math.round((cumple-hoy)/86400000);
-      if (d<=7) alertas.push({ txt:'🎂 Cumpleaños de <b>'+c.nombre+'</b> en '+(d===0?'HOY':d+' días'), sub:'Envía un mensaje de felicitación', tipo:d<=2?'rojo':'naranja', idx:idx });
-    }
-    (c.polizas||[]).forEach(function(p){
-      if (!p.vigencia) return;
-      var d = diasHasta(p.vigencia);
-      if (d<0) alertas.push({ txt:'<b>'+c.nombre+'</b> — Póliza '+p.tipo+' venció hace '+Math.abs(d)+' días', sub:(p.num||'')+' · '+(p.aseg||'')+' · Renovar urgente', tipo:'rojo', idx:idx });
-      else if (d<=30) alertas.push({ txt:'<b>'+c.nombre+'</b> — Póliza '+p.tipo+' vence en '+d+' días', sub:(p.num||'')+' · '+(p.aseg||''), tipo:d<=7?'rojo':'naranja', idx:idx });
-    });
+  (c.polizas||[]).forEach(function(p){
+   if(!p.vigencia)return;
+   var d=diasHasta(p.vigencia);
+   if(d<0)arr.push({txt:'<b>'+esc(c.nombre)+'</b> — '+esc(p.tipo)+' venció hace '+Math.abs(d)+' días',sub:esc((p.num||'')+' · '+(p.aseg||''))+' · Renovar urgente',tipo:'rojo',idx:idx});
+   else if(d<=30)arr.push({txt:'<b>'+esc(c.nombre)+'</b> — '+esc(p.tipo)+' vence en '+d+' días',sub:esc((p.num||'')+' · '+(p.aseg||'')),tipo:d<=7?'rojo':'naranja',idx:idx});
   });
-  return alertas;
+ });
+ return arr;
 }
-function renderAlertas() {
-  var alertas = getAlertas();
-  var el = document.getElementById('alertas-content');
-  if (!alertas.length) {
-    el.innerHTML = '<div class="empty"><div class="ico">🎉</div><p>¡Sin alertas!<br>Todos tus clientes están al día.</p></div>';
-    return;
-  }
-  var rojas = alertas.filter(function(a){return a.tipo==='rojo';});
-  var naranjas = alertas.filter(function(a){return a.tipo==='naranja';});
-  var html = '';
-  if (rojas.length) {
-    html += '<div style="padding:12px 16px 6px;font-size:11px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:.5px;">🔴 Urgente</div>';
-    html += rojas.map(function(a){return '<div class="alerta-item" onclick="verCliente('+a.idx+')">' +
-      '<div class="alerta-dot" style="background:var(--red);"></div>' +
-      '<div class="alerta-txt" style="flex:1;">'+a.txt+'<div class="alerta-sub">'+a.sub+'</div></div>' +
-      '<button class="av-btn" style="background:var(--red-bg);color:var(--red);" onclick="event.stopPropagation();verCliente('+a.idx+')">Ver</button>' +
-    '</div>';}).join('');
-  }
-  if (naranjas.length) {
-    html += '<div style="padding:12px 16px 6px;font-size:11px;font-weight:700;color:var(--orange);text-transform:uppercase;letter-spacing:.5px;margin-top:8px;">🟠 Próximo</div>';
-    html += naranjas.map(function(a){return '<div class="alerta-item" onclick="verCliente('+a.idx+')">' +
-      '<div class="alerta-dot" style="background:var(--orange);"></div>' +
-      '<div class="alerta-txt" style="flex:1;">'+a.txt+'<div class="alerta-sub">'+a.sub+'</div></div>' +
-      '<button class="av-btn" style="background:var(--orange-bg);color:var(--orange);" onclick="event.stopPropagation();verCliente('+a.idx+')">Ver</button>' +
-    '</div>';}).join('');
-  }
-  el.innerHTML = html;
-  document.getElementById('nav-dot').style.display = rojas.length?'block':'none';
+function renderAlertas(){
+ var arr=getAlertas();
+ var el=document.getElementById('alertas-cont');
+ if(!arr.length){el.innerHTML='<div class="empty"><div class="ico">🎉</div><p>¡Sin alertas!<br>Todos tus clientes están al día.</p></div>';return}
+ var rojas=arr.filter(function(a){return a.tipo==='rojo'});
+ var nar=arr.filter(function(a){return a.tipo==='naranja'});
+ var html='';
+ if(rojas.length){
+  html+='<div style="padding:12px 16px 6px;font-size:11px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:.5px">🔴 Urgente</div>';
+  html+=rojas.map(function(a){return '<div class="ali" onclick="verCliente('+a.idx+')"><div class="adot" style="background:var(--red)"></div><div class="atxt" style="flex:1">'+a.txt+'<div class="asub">'+a.sub+'</div></div></div>'}).join('');
+ }
+ if(nar.length){
+  html+='<div style="padding:12px 16px 6px;font-size:11px;font-weight:700;color:var(--orange);text-transform:uppercase;letter-spacing:.5px;margin-top:8px">🟠 Próximo</div>';
+  html+=nar.map(function(a){return '<div class="ali" onclick="verCliente('+a.idx+')"><div class="adot" style="background:var(--orange)"></div><div class="atxt" style="flex:1">'+a.txt+'<div class="asub">'+a.sub+'</div></div></div>'}).join('');
+ }
+ el.innerHTML=html;
+ document.getElementById('nbdot').style.display=rojas.length?'block':'none';
 }
 
-// ============================================================
-// LISTA CLIENTES
-// ============================================================
-function renderLista(lista) {
-  document.getElementById('sub-clientes').textContent = clientes.length+' cliente'+(clientes.length!==1?'s':'');
-  var el = document.getElementById('lista-clientes');
-  if (!lista.length) {
-    el.innerHTML = '<div class="empty"><div class="ico">📂</div><p>Sin clientes aún.<br>Toca <b>CSV</b> para importar tu cartera<br>o <b>+</b> para agregar manualmente.</p></div>';
-    return;
-  }
-  el.innerHTML = lista.map(function(c){
-    var idx = clientes.indexOf(c);
-    var e = estadoCliente(c);
-    var prima = (c.polizas||[]).reduce(function(a,p){return a+(parseFloat(p.prima)||0);},0);
-    return '<div class="cliente-card" onclick="verCliente('+idx+')">' +
-      '<div class="av" style="background:'+col(idx)+';color:'+colT(idx)+'">'+ini(c.nombre)+'</div>' +
-      '<div class="info">' +
-        '<div class="c-nombre">'+c.nombre+'</div>' +
-        '<div class="c-det">'+((c.polizas||[]).map(function(p){return p.tipo;}).join(' · ')||'Sin pólizas')+' · $'+prima.toLocaleString()+'/año</div>' +
-      '</div>' +
-      badgeHTML(e) +
-      '</div>';
-  }).join('');
+// ============== CUMPLEAÑOS ==============
+function getCumples(){
+ var h=new Date();h.setHours(0,0,0,0);
+ var arr=[];
+ clientes.forEach(function(c,idx){
+  if(!c.nac)return;
+  var n=new Date(c.nac+'T00:00:00');
+  if(isNaN(n))return;
+  var cu=new Date(h.getFullYear(),n.getMonth(),n.getDate());
+  if(cu<h)cu.setFullYear(h.getFullYear()+1);
+  var d=Math.round((cu-h)/86400000);
+  var edad=cu.getFullYear()-n.getFullYear();
+  arr.push({idx:idx,nombre:c.nombre,dias:d,dia:n.getDate(),mes:n.getMonth(),edad:edad});
+ });
+ arr.sort(function(a,b){return a.dias-b.dias});
+ return arr;
 }
-function filtrar(q) {
-  var lista = q ? clientes.filter(function(c){return (c.nombre||'').toLowerCase().includes(q.toLowerCase());}) : clientes;
-  if (tabActual!=='todos') lista = lista.filter(function(c){return estadoCliente(c)===tabActual;});
-  renderLista(lista);
-}
-function setTab(btn, tab) {
-  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
-  btn.classList.add('active');
-  tabActual = tab;
-  filtrar(document.getElementById('buscador').value);
-}
-
-// ============================================================
-// DETALLE CLIENTE
-// ============================================================
-function verCliente(idx) {
-  clienteIdx = idx;
-  var c = clientes[idx];
-  if (!c) return;
-  document.getElementById('det-titulo').textContent = c.nombre;
-  var prima = (c.polizas||[]).reduce(function(a,p){return a+(parseFloat(p.prima)||0);},0);
-  var e = estadoCliente(c);
-  var html = '<div class="det-hero">' +
-    '<div class="det-av" style="background:'+col(idx)+';color:'+colT(idx)+'">'+ini(c.nombre)+'</div>' +
-    '<div>' +
-      '<div class="det-nombre">'+c.nombre+'</div>' +
-      '<div class="det-sub">'+(c.tel||'Sin teléfono')+' · '+(c.email||'Sin correo')+'</div>' +
-      '<div style="margin-top:6px;">'+badgeHTML(e)+'</div>' +
-    '</div>' +
-  '</div>' +
-  '<div class="acciones">' +
-    (c.tel ? '<button class="ac-btn call" onclick="llamar(\''+c.tel+'\')"><span class="ico">📞</span>Llamar</button>' : '') +
-    (c.tel ? '<button class="ac-btn whats" onclick="abrirWhatsApp('+idx+')"><span class="ico">💬</span>WhatsApp</button>' : '') +
-    (c.email ? '<button class="ac-btn mail" onclick="abrirEmail('+idx+')"><span class="ico">✉️</span>Correo</button>' : '') +
-  '</div>' +
-  '<div class="seccion">Datos del cliente</div>' +
-  '<div class="info-card">' +
-    (c.rfc?'<div class="info-row"><span class="info-k">RFC</span><span class="info-v">'+c.rfc+'</span></div>':'') +
-    (c.nac?'<div class="info-row"><span class="info-k">Nacimiento</span><span class="info-v">'+c.nac+'</span></div>':'') +
-    (c.dir?'<div class="info-row"><span class="info-k">Dirección</span><span class="info-v" style="font-size:11px;">'+c.dir+'</span></div>':'') +
-    '<div class="info-row"><span class="info-k">Prima total</span><span class="info-v" style="color:var(--green);font-weight:800;">$'+prima.toLocaleString()+'/año</span></div>' +
-    (c.notas?'<div class="info-row"><span class="info-k">Notas</span><span class="info-v" style="font-size:12px;">'+c.notas+'</span></div>':'') +
-  '</div>' +
-  '<div class="seccion" style="display:flex;justify-content:space-between;align-items:center;">' +
-    '<span>Pólizas ('+(c.polizas||[]).length+')</span>' +
-    '<button onclick="goScreen(\'s-nueva-poliza\')" style="background:var(--dark);color:#fff;border:none;border-radius:6px;padding:4px 10px;font-family:\'Plus Jakarta Sans\',sans-serif;font-size:11px;font-weight:700;cursor:pointer;">+ Agregar</button>' +
-  '</div>' +
-  '<div style="height:6px;"></div>';
-  if (!(c.polizas||[]).length) {
-    html += '<div style="text-align:center;padding:20px;color:var(--mid);font-size:13px;">Sin pólizas. Toca + Agregar.</div>';
-  } else {
-    html += (c.polizas||[]).map(function(p, pi){
-      var ep = estadoPoliza(p);
-      var dias = p.vigencia ? diasHasta(p.vigencia) : null;
-      var diasTxt = dias===null ? '' : dias<0 ? 'Venció hace '+Math.abs(dias)+' días' : dias===0 ? 'Vence HOY' : 'Vence en '+dias+' días';
-      return '<div class="poliza-card">' +
-        '<div class="poliza-head">' +
-          '<div class="poliza-tipo">'+iconTipo(p.tipo)+' '+p.tipo+'</div>' +
-          polizaBadge(ep) +
-        '</div>' +
-        '<div class="poliza-body">' +
-          '<div class="info-row"><span class="info-k">No. Póliza</span><span class="info-v" style="font-family:monospace;font-size:12px;">'+(p.num||'—')+'</span></div>' +
-          '<div class="info-row"><span class="info-k">Aseguradora</span><span class="info-v">'+(p.aseg||'—')+'</span></div>' +
-          '<div class="info-row"><span class="info-k">Prima anual</span><span class="info-v" style="color:var(--orange);font-weight:800;">$'+(parseFloat(p.prima)||0).toLocaleString()+'</span></div>' +
-          '<div class="info-row"><span class="info-k">Vencimiento</span><span class="info-v" style="color:'+(ep==='venc'?'var(--red)':ep==='prox'?'var(--orange)':'var(--green)')+';">'+(p.vigencia||'—')+'<br><span style="font-size:10px;font-weight:400;">'+diasTxt+'</span></span></div>' +
-          (p.coberturas?'<div class="info-row"><span class="info-k">Coberturas</span><span class="info-v" style="font-size:11px;">'+p.coberturas+'</span></div>':'') +
-        '</div>' +
-        '<div style="display:flex;gap:8px;margin:10px 14px 14px;">' +
-          '<button onclick="enviarAvisoWA('+idx+','+pi+')" style="flex:1;padding:12px 6px;background:#25D366;color:#fff;border:none;border-radius:10px;font-family:\'Plus Jakarta Sans\',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">💬 WhatsApp</button>' +
-          '<button onclick="enviarAvisoEmail('+idx+','+pi+')" style="flex:1;padding:12px 6px;background:#1a73e8;color:#fff;border:none;border-radius:10px;font-family:\'Plus Jakarta Sans\',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">✉️ Gmail</button>' +
-        '</div>' +
-      '</div>';
-    }).join('');
-  }
-  html += '<div style="height:10px;"></div>';
-  document.getElementById('det-content').innerHTML = html;
-  goScreen('s-detalle');
+function renderCumples(){
+ var arr=getCumples();
+ var el=document.getElementById('cumples-cont');
+ if(!arr.length){el.innerHTML='<div class="empty"><div class="ico">🎂</div><p>Ningún cliente tiene fecha de nacimiento.<br>Edita un cliente y agrégasela.</p></div>';return}
+ // Agrupar: hoy / esta semana / este mes / próximos
+ var grupos={hoy:[],semana:[],mes:[],resto:[]};
+ arr.forEach(function(c){
+  if(c.dias===0)grupos.hoy.push(c);
+  else if(c.dias<=7)grupos.semana.push(c);
+  else if(c.dias<=30)grupos.mes.push(c);
+  else grupos.resto.push(c);
+ });
+ var html='';
+ function bloque(titulo,color,items){
+  if(!items.length)return '';
+  return '<div style="padding:12px 16px 6px;font-size:11px;font-weight:700;color:'+color+';text-transform:uppercase;letter-spacing:.5px">'+titulo+'</div>'+
+   items.map(function(c){
+    var sub=c.dias===0?'¡HOY! Cumple '+c.edad:'En '+c.dias+' días · cumple '+c.edad;
+    return '<div class="cumple-card" onclick="verCliente('+c.idx+')"><div class="cumple-fecha"><div class="cumple-dia">'+c.dia+'</div><div class="cumple-mes">'+MESES_ABR[c.mes]+'</div></div><div class="info"><div class="c-nombre">'+esc(c.nombre)+'</div><div class="c-det">'+sub+'</div></div></div>';
+   }).join('');
+ }
+ html+=bloque('🎉 Hoy','var(--red)',grupos.hoy);
+ html+=bloque('Esta semana','var(--orange)',grupos.semana);
+ html+=bloque('Este mes','var(--accent)',grupos.mes);
+ html+=bloque('Próximos','var(--mid)',grupos.resto);
+ el.innerHTML=html;
 }
 
-// ============================================================
-// WHATSAPP / CORREO / TEL — usa puentes nativos en la APK
-// ============================================================
-function abrirURLExterna(url) {
-  if (window.isMiCarteraApp && window.nativeOpenURL) { window.nativeOpenURL(url); return; }
-  if (url.indexOf('mailto:')===0 || url.indexOf('tel:')===0) { window.location.href = url; return; }
-  window.open(url, '_blank');
+// ============== LISTA + FILTROS ==============
+function renderLista(){
+ var q=(document.getElementById('buscador').value||'').toLowerCase().trim();
+ var lista=clientes;
+ if(q)lista=lista.filter(function(c){return (c.nombre||'').toLowerCase().indexOf(q)>=0||(c.tel||'').indexOf(q)>=0||(c.email||'').toLowerCase().indexOf(q)>=0});
+ if(tabActual!=='todos')lista=lista.filter(function(c){return matchTab(c,tabActual)});
+ document.getElementById('h-subc').textContent=lista.length+' cliente'+(lista.length!==1?'s':'');
+ var el=document.getElementById('lista');
+ if(!lista.length){el.innerHTML='<div class="empty"><div class="ico">📂</div><p>Sin clientes que coincidan.<br>Toca <b>+</b> para agregar uno o <b>📂 CSV</b> para importar.</p></div>';return}
+ el.innerHTML=lista.map(function(c){
+  var idx=clientes.indexOf(c);var e=estCli(c);
+  var prima=(c.polizas||[]).reduce(function(a,p){return a+(parseFloat(p.prima)||0)},0);
+  return '<div class="cli" onclick="verCliente('+idx+')"><div class="av" style="background:'+colA(idx)+';color:'+colB(idx)+'">'+ini(c.nombre)+'</div><div class="info"><div class="c-nombre">'+esc(c.nombre)+'</div><div class="c-det">'+esc((c.polizas||[]).map(function(p){return p.tipo}).join(' · ')||'Sin pólizas')+' · $'+prima.toLocaleString()+'/año</div></div>'+bdg(e)+'</div>';
+ }).join('');
 }
-function abrirWhatsAppURL(url) {
-  if (window.isMiCarteraApp && window.nativeOpenWhatsApp) { window.nativeOpenWhatsApp(url); return; }
-  window.open(url, '_blank');
+function matchTab(c,tab){
+ var pols=c.polizas||[];
+ if(tab==='ok')return estCli(c)==='ok';
+ if(tab==='venc')return pols.some(function(p){return estPol(p)==='venc'});
+ var dmax=tab==='5d'?5:tab==='15d'?15:tab==='30d'?30:9999;
+ return pols.some(function(p){var d=diasHasta(p.vigencia);return d!==null&&d>=0&&d<=dmax});
 }
-function abrirEmailURL(url) {
-  if (window.isMiCarteraApp && window.nativeOpenEmail) { window.nativeOpenEmail(url); return; }
-  window.location.href = url;
+function filtrar(){renderLista()}
+function setTab(btn,t){document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('active')});btn.classList.add('active');tabActual=t;renderLista()}
+
+// ============== DETALLE ==============
+function verCliente(idx){
+ if(idx<0||idx>=clientes.length){toast('Cliente no encontrado');return}
+ clienteIdx=idx;
+ goScreen('s-detalle');
+}
+function renderDetalle(){
+ var c=clientes[clienteIdx];
+ if(!c){goScreen('s-clientes');return}
+ document.getElementById('d-titulo').textContent=c.nombre;
+ var prima=(c.polizas||[]).reduce(function(a,p){return a+(parseFloat(p.prima)||0)},0);
+ var e=estCli(c);
+ var html='<div class="hero">';
+ if(c.foto)html+='<div class="hav" style="background-image:url('+c.foto+')"></div>';
+ else html+='<div class="hav" style="background:'+colA(clienteIdx)+';color:'+colB(clienteIdx)+'">'+ini(c.nombre)+'</div>';
+ html+='<div><div class="hnom">'+esc(c.nombre)+'</div><div class="hsub">'+esc(c.tel||'Sin tel')+' · '+esc(c.email||'Sin correo')+'</div><div style="margin-top:6px">'+bdg(e)+'</div></div></div>';
+ html+='<div class="acc">';
+ if(c.tel)html+='<button class="ac c" onclick="llamar(\''+esc(c.tel)+'\')"><span class="i">📞</span>Llamar</button>';
+ if(c.tel)html+='<button class="ac w" onclick="abrirWhatsApp('+clienteIdx+')"><span class="i">💬</span>WhatsApp</button>';
+ if(c.email)html+='<button class="ac m" onclick="abrirEmail('+clienteIdx+')"><span class="i">✉️</span>Correo</button>';
+ html+='</div>';
+ html+='<div class="sec">Datos del cliente</div><div class="card">';
+ if(c.rfc)html+='<div class="row"><span class="k">RFC</span><span class="v">'+esc(c.rfc)+'</span></div>';
+ if(c.nac)html+='<div class="row"><span class="k">Nacimiento</span><span class="v">'+fmtFecha(c.nac)+'</span></div>';
+ if(c.dir)html+='<div class="row"><span class="k">Dirección</span><span class="v" style="font-size:11px">'+esc(c.dir)+'</span></div>';
+ html+='<div class="row"><span class="k">Prima total</span><span class="v" style="color:var(--green);font-weight:800">$'+prima.toLocaleString()+'/año</span></div>';
+ if(c.notas)html+='<div class="row"><span class="k">Notas</span><span class="v" style="font-size:12px">'+esc(c.notas)+'</span></div>';
+ html+='</div>';
+ html+='<div class="sec" style="display:flex;justify-content:space-between;align-items:center"><span>Pólizas ('+(c.polizas||[]).length+')</span><button onclick="nuevaPolizaPara('+clienteIdx+')" style="background:var(--dark);color:#fff;border:none;border-radius:6px;padding:5px 10px;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer">+ Agregar</button></div><div style="height:6px"></div>';
+ if(!(c.polizas||[]).length)html+='<div style="text-align:center;padding:20px;color:var(--mid);font-size:13px">Sin pólizas. Toca + Agregar.</div>';
+ else html+=(c.polizas||[]).map(function(p,pi){
+  var ep=estPol(p);
+  var dias=p.vigencia?diasHasta(p.vigencia):null;
+  var diasTxt=dias===null?'':dias<0?'Venció hace '+Math.abs(dias)+' días':dias===0?'Vence HOY':'Vence en '+dias+' días';
+  return '<div class="pol"><div class="phead"><div class="ptipo">'+ico(p.tipo)+' '+esc(p.tipo)+'</div>'+bdgPol(ep)+'</div><div>'+
+   '<div class="row"><span class="k">No. Póliza</span><span class="v" style="font-family:monospace;font-size:12px">'+esc(p.num||'—')+'</span></div>'+
+   '<div class="row"><span class="k">Aseguradora</span><span class="v">'+esc(p.aseg||'—')+'</span></div>'+
+   '<div class="row"><span class="k">Forma de pago</span><span class="v">'+esc(p.pago||'—')+'</span></div>'+
+   '<div class="row"><span class="k">Prima anual</span><span class="v" style="color:var(--orange);font-weight:800">$'+(parseFloat(p.prima)||0).toLocaleString()+'</span></div>'+
+   '<div class="row"><span class="k">Vencimiento</span><span class="v" style="color:'+(ep==='venc'?'var(--red)':ep==='prox'?'var(--orange)':'var(--green)')+'">'+fmtFecha(p.vigencia)+'<br><span style="font-size:10px;font-weight:400">'+diasTxt+'</span></span></div>'+
+   (p.coberturas?'<div class="row"><span class="k">Coberturas</span><span class="v" style="font-size:11px">'+esc(p.coberturas)+'</span></div>':'')+
+   (p.nota?'<div class="row"><span class="k">Notas</span><span class="v" style="font-size:11px">'+esc(p.nota)+'</span></div>':'')+
+   '</div><div style="display:flex;gap:6px;margin:10px 12px 12px"><button onclick="editarPoliza('+pi+')" class="fb alt" style="margin:0;padding:10px;font-size:12px">✏️ Editar</button>'+
+   (c.tel?'<button onclick="enviarAvisoWA('+clienteIdx+','+pi+')" class="fb green" style="margin:0;padding:10px;font-size:12px;background:#25D366">💬</button>':'')+
+   (c.email?'<button onclick="enviarAvisoEmail('+clienteIdx+','+pi+')" class="fb" style="margin:0;padding:10px;font-size:12px;background:var(--blue)">✉️</button>':'')+
+   '</div></div>';
+ }).join('');
+ html+='<div style="height:14px"></div>';
+ document.getElementById('d-cont').innerHTML=html;
 }
 
-function enviarAvisoWA(idx, pi) {
-  var c = clientes[idx], p = c.polizas[pi];
-  if (!c.tel) { toast('Sin teléfono registrado'); return; }
-  var msj = buildMsj(c, p);
-  if (!confirm('Enviar este mensaje a ' + c.nombre + ' por WhatsApp?\n\n' + msj.substring(0,200) + (msj.length>200?'...':''))) return;
-  var tel = c.tel.replace(/\D/g,'');
-  abrirWhatsAppURL('https://wa.me/52' + tel + '?text=' + encodeURIComponent(msj));
+// ============== WHATSAPP / EMAIL / TEL ==============
+function abrirURL(url){if(window.isMiCarteraApp&&window.nativeOpenURL){window.nativeOpenURL(url);return}window.location.href=url}
+function abrirWA(url){if(window.isMiCarteraApp&&window.nativeOpenWhatsApp){window.nativeOpenWhatsApp(url);return}window.open(url,'_blank')}
+function abrirML(url){if(window.isMiCarteraApp&&window.nativeOpenEmail){window.nativeOpenEmail(url);return}window.location.href=url}
+function llamar(tel){abrirURL('tel:'+(tel||'').replace(/\D/g,''))}
+function abrirWhatsApp(idx){
+ var c=clientes[idx];if(!c||!c.tel){toast('Sin teléfono');return}
+ var msj='Hola '+c.nombre.split(' ')[0]+', soy tu agente de seguros. ¿En qué te puedo ayudar?';
+ abrirWA('https://wa.me/52'+c.tel.replace(/\D/g,'')+'?text='+encodeURIComponent(msj));
 }
-function enviarAvisoEmail(idx, pi) {
-  var c = clientes[idx], p = c.polizas[pi];
-  if (!c.email) { toast('Sin correo registrado'); return; }
-  var msj = buildMsj(c, p);
-  var dias = p.vigencia ? diasHasta(p.vigencia) : null;
-  var estadoTxt = dias===null ? 'próxima a vencer' : dias < 0 ? 'venció hace ' + Math.abs(dias) + ' días' : dias === 0 ? 'vence HOY' : 'vence en ' + dias + ' días';
-  var asunto = 'Aviso póliza ' + p.tipo + ' - ' + estadoTxt;
-  if (!confirm('Enviar correo a ' + c.email + '?\n\nAsunto: ' + asunto + '\n\n' + msj.substring(0,150) + (msj.length>150?'...':''))) return;
-  var url = 'mailto:' + c.email + '?subject=' + encodeURIComponent(asunto) + '&body=' + encodeURIComponent(msj);
-  abrirEmailURL(url);
+function abrirEmail(idx){
+ var c=clientes[idx];if(!c||!c.email){toast('Sin correo');return}
+ abrirML('mailto:'+c.email);
 }
-function buildMsj(c, p) {
-  var dias = p.vigencia ? diasHasta(p.vigencia) : null;
-  var estadoTxt = dias===null ? 'próxima a vencer' : dias < 0 ? 'venció hace ' + Math.abs(dias) + ' días' : dias === 0 ? 'vence HOY' : 'vence en ' + dias + ' días (' + p.vigencia + ')';
-  return 'Hola ' + c.nombre.split(' ')[0] + ', tu póliza de ' + p.tipo
-    + ' ' + estadoTxt + '.\nPóliza: ' + (p.num||'N/A')
-    + '\nAseguradora: ' + (p.aseg||'N/A')
-    + '\nPrima: $' + (parseFloat(p.prima)||0).toLocaleString() + ' MXN'
-    + '\nContáctame para renovarla. Saludos, tu agente de seguros.';
+function buildMsj(c,p){
+ var dias=p.vigencia?diasHasta(p.vigencia):null;
+ var estado=dias===null?'próxima a vencer':dias<0?'venció hace '+Math.abs(dias)+' días':dias===0?'vence HOY':'vence en '+dias+' días ('+fmtFecha(p.vigencia)+')';
+ return 'Hola '+c.nombre.split(' ')[0]+', tu póliza de '+p.tipo+' '+estado+'.\nPóliza: '+(p.num||'N/A')+'\nAseguradora: '+(p.aseg||'N/A')+'\nPrima: $'+(parseFloat(p.prima)||0).toLocaleString()+' MXN\nContáctame para renovarla. Saludos.';
 }
-function abrirWhatsApp(idx) {
-  var c = clientes[idx];
-  if (!c.tel) { toast('Sin teléfono'); return; }
-  var msj = 'Hola ' + c.nombre.split(' ')[0] + ', soy tu agente de seguros. ¿En qué te puedo ayudar?';
-  var tel = c.tel.replace(/\D/g,'');
-  abrirWhatsAppURL('https://wa.me/52' + tel + '?text=' + encodeURIComponent(msj));
+function enviarAvisoWA(idx,pi){
+ var c=clientes[idx];if(!c||!c.tel){toast('Sin teléfono');return}
+ var p=c.polizas[pi];var msj=buildMsj(c,p);
+ modal('Enviar WhatsApp a '+c.nombre,msj.substring(0,200)+(msj.length>200?'...':''),'Enviar',function(){
+  abrirWA('https://wa.me/52'+c.tel.replace(/\D/g,'')+'?text='+encodeURIComponent(msj));
+ });
 }
-function abrirEmail(idx) {
-  if (!clientes[idx].email) { toast('Sin correo'); return; }
-  abrirEmailURL('mailto:' + clientes[idx].email);
-}
-function llamar(tel) {
-  abrirURLExterna('tel:' + tel.replace(/\D/g,''));
+function enviarAvisoEmail(idx,pi){
+ var c=clientes[idx];if(!c||!c.email){toast('Sin correo');return}
+ var p=c.polizas[pi];var msj=buildMsj(c,p);
+ var dias=p.vigencia?diasHasta(p.vigencia):null;
+ var est=dias===null?'próxima a vencer':dias<0?'venció hace '+Math.abs(dias)+' días':dias===0?'vence HOY':'vence en '+dias+' días';
+ var asunto='Aviso póliza '+p.tipo+' - '+est;
+ modal('Enviar correo a '+c.email,'Asunto: '+asunto+'\n\n'+msj.substring(0,150)+(msj.length>150?'...':''),'Enviar',function(){
+  abrirML('mailto:'+c.email+'?subject='+encodeURIComponent(asunto)+'&body='+encodeURIComponent(msj));
+ });
 }
 
-// ============================================================
-// NOTIFICACIONES
-// ============================================================
-function programarNotificaciones() {
-  if (!window.nativeScheduleNotifications) return;
-  var notifs = [];
-  var ahora = new Date();
-  clientes.forEach(function(c){
-    (c.polizas||[]).forEach(function(p){
-      if (!p.vigencia) return;
-      var venc = new Date(p.vigencia + 'T09:00:00');
-      var t30 = new Date(venc); t30.setDate(t30.getDate() - 30);
-      if (t30 > ahora) notifs.push({ date:t30.toISOString(), title:'📋 Póliza por renovar', body:c.nombre+' — '+p.tipo+' vence en 30 días ('+p.vigencia+')' });
-      var t7 = new Date(venc); t7.setDate(t7.getDate() - 7);
-      if (t7 > ahora) notifs.push({ date:t7.toISOString(), title:'⚠️ Póliza vence en 7 días', body:c.nombre+' — '+p.tipo+' ('+p.vigencia+')' });
-      if (venc > ahora) notifs.push({ date:venc.toISOString(), title:'🔴 Póliza vence HOY', body:c.nombre+' — '+p.tipo+'. Contáctalo para renovar.' });
-    });
-    if (c.nac) {
-      var n = new Date(c.nac + 'T09:00:00');
-      var cumple = new Date(ahora.getFullYear(), n.getMonth(), n.getDate(), 9, 0, 0, 0);
-      if (cumple < ahora) cumple.setFullYear(cumple.getFullYear() + 1);
-      notifs.push({ date:cumple.toISOString(), title:'🎂 Cumpleaños', body:c.nombre.split(' ')[0]+' cumple años hoy. Envíale una felicitación.' });
-    }
-  });
-  if (notifs.length) {
-    try { window.nativeScheduleNotifications(notifs); }
-    catch(e) { console.warn('No se pudieron programar:', e); }
-  }
-}
-function probarNotificacion() {
-  if (!window.nativeScheduleNotifications) {
-    toast('⚠️ Recompila la APK para activar notificaciones');
-    return;
-  }
-  var en30s = new Date(Date.now() + 30000).toISOString();
-  try {
-    window.nativeScheduleNotifications([{ date:en30s, title:'🔔 Prueba MiCartera', body:'Las notificaciones están funcionando!' }]);
-    toast('✅ Te llegará una notificación en 30 segundos');
-  } catch(e) { toast('Error: '+e.message); }
+// ============== GUARDAR / EDITAR / BORRAR CLIENTE ==============
+function buscarDuplicado(nombre,tel,email,rfc,exceptIdx){
+ var nombreL=(nombre||'').toLowerCase().trim();
+ var telL=(tel||'').replace(/\D/g,'');
+ var emailL=(email||'').toLowerCase().trim();
+ var rfcL=(rfc||'').toUpperCase().trim();
+ for(var i=0;i<clientes.length;i++){
+  if(i===exceptIdx)continue;
+  var c=clientes[i];
+  if(rfcL&&c.rfc&&c.rfc.toUpperCase()===rfcL)return i;
+  if(nombreL&&(c.nombre||'').toLowerCase().trim()===nombreL)return i;
+  if(telL&&c.tel&&(c.tel||'').replace(/\D/g,'')===telL)return i;
+  if(emailL&&c.email&&(c.email||'').toLowerCase().trim()===emailL)return i;
+ }
+ return -1;
 }
 
-// ============================================================
-// LECTOR PDF — manda PDF directo a Claude
-// ============================================================
-function leerPDF(input) {
-  var file = input.files[0];
-  if (!file) return;
-  if (file.size > 30 * 1024 * 1024) { setStatus('❌ PDF muy grande (max 30MB)', 'red'); return; }
-  var btn = document.getElementById('pdf-btn');
-  btn.disabled = true;
-  btn.style.opacity = 0.5;
-  btn.textContent = '⏳ Procesando...';
-  setStatus('Leyendo PDF...', 'orange');
-  document.getElementById('pdf-result').classList.remove('show');
-
-  fileToBase64(file).then(function(base64){
-    setStatus('Analizando con Claude... (10-30s)', 'orange');
-    return extraerConClaude(base64);
-  }).then(function(datos){
-    var cuantos = llenarFormulario(datos);
-    if (cuantos > 0) {
-      setStatus('✅ ' + cuantos + ' campo' + (cuantos!==1?'s':'') + ' extraído' + (cuantos!==1?'s':'') + ' correctamente', 'green');
-      mostrarResultado(datos);
-      toast('✅ Datos cargados, revisa lo que falte');
-    } else {
-      setStatus('⚠️ No se encontraron datos en el PDF', 'red');
-    }
-  }).catch(function(err){
-    console.error(err);
-    setStatus('❌ ' + (err.message || err), 'red');
-    toast('Error al procesar PDF');
-  }).then(function(){
-    btn.disabled = false;
-    btn.style.opacity = 1;
-    btn.textContent = '📂 Seleccionar otro PDF';
-    input.value = '';
-  });
+function limpiarNuevo(){
+ ['nc-nombre','nc-tel','nc-email','nc-rfc','nc-nac','nc-dir','nc-notas','nc-prima','nc-vigencia','nc-num','nc-coberturas'].forEach(function(id){var el=document.getElementById(id);if(el)el.value=''});
+ ['nc-tipo','nc-aseg','nc-pago'].forEach(function(id){var el=document.getElementById(id);if(el)el.value=''});
+ var pr=document.getElementById('pdf-result');if(pr)pr.classList.remove('show');
+ var ps=document.getElementById('pdf-status');if(ps){ps.textContent='';ps.style.color='#888'}
+ var pb=document.getElementById('pdf-btn');if(pb)pb.textContent='📂 Seleccionar PDF';
 }
 
-function setStatus(msg, color) {
-  var el = document.getElementById('pdf-status');
-  el.textContent = msg;
-  el.style.color = color === 'green' ? '#2d6a4f' : color === 'red' ? '#b5192a' : '#c8622a';
-}
-
-function fileToBase64(file) {
-  return new Promise(function(res, rej){
-    var r = new FileReader();
-    r.onload = function(){ res(r.result.split(',')[1]); };
-    r.onerror = function(){ rej(new Error('No se pudo leer el archivo')); };
-    r.readAsDataURL(file);
-  });
-}
-
-function extraerConClaude(base64) {
-  var systemPrompt =
-    'Eres un experto en pólizas de seguros mexicanas (AXA, GNP, Qualitas, Mapfre, HDI, Metlife, Zurich, Allianz, Sura). ' +
-    'Recibes el PDF completo de una póliza. Extrae los datos del ASEGURADO/CONTRATANTE/TITULAR únicamente, NUNCA de la aseguradora ni del agente. ' +
-    'Devuelve EXCLUSIVAMENTE un objeto JSON válido (sin markdown, sin explicaciones, sin ```), con este esquema exacto:\n' +
-    '{"nombre":"","rfc":"","tel":"","email":"","direccion":"","nacimiento":"","numPoliza":"","tipo":"","aseg":"","vigencia":"","prima":"","coberturas":""}\n\n' +
-    'REGLAS ESTRICTAS:\n' +
-    '1. NOMBRE: del titular/contratante/asegurado. Ignora aseguradora y agente.\n' +
-    '2. RFC: del asegurado, 13 chars. Ignora MTE440316E54, GNP9211244P0, ASE931116231, AXA920310953, QSA931209G49, MMA0501105X4, HDI0708205F3, MET860605G14, ZUR000110ER8.\n' +
-    '3. TEL: del asegurado, 10 dígitos. Ignora 800-XXXX, 01-800-XXX (call centers).\n' +
-    '4. EMAIL: del asegurado. Ignora @axa.com, @gnp.com.mx, etc.\n' +
-    '5. DIRECCION: del asegurado, en una sola línea.\n' +
-    '6. NACIMIENTO: YYYY-MM-DD. "15 de marzo de 1985" → "1985-03-15".\n' +
-    '7. NUMPOLIZA: número de la póliza con guiones.\n' +
-    '8. TIPO: uno de: Automóvil, Vida, Gastos Médicos Mayores, Hogar, Negocio, Accidentes Personales, Retiro / Ahorro.\n' +
-    '9. ASEG: AXA, GNP, Qualitas, Mapfre, HDI, Metlife, Zurich, Allianz, Sura, o "Otra".\n' +
-    '10. VIGENCIA: fecha FIN (vencimiento) en YYYY-MM-DD.\n' +
-    '11. PRIMA: prima TOTAL ANUAL, número entero sin formato. $12,500.00 → 12500.\n' +
-    '12. COBERTURAS: lista corta separada por " | ".\n\n' +
-    'Si un dato NO está en el PDF, devuelve "" (vacío). NUNCA inventes.';
-
-  return fetch(PROXY_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'anthropic-version': '2023-06-01' },
-    body: JSON.stringify({
-      model: 'claude-opus-4-6',
-      max_tokens: 1500,
-      system: systemPrompt,
-      messages: [{
-        role: 'user',
-        content: [
-          { type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: base64 } },
-          { type: 'text', text: 'Extrae los datos del asegurado de esta póliza y devuelve SOLO el JSON.' }
-        ]
-      }]
-    })
-  }).then(function(resp){
-    if (!resp.ok) {
-      return resp.text().then(function(t){ throw new Error('API '+resp.status+': '+t.substring(0,200)); });
-    }
-    return resp.json();
-  }).then(function(data){
-    var texto = (data.content && data.content[0] && data.content[0].text) || '';
-    if (!texto) throw new Error('Respuesta vacía');
-    var limpio = texto.replace(/```json\s*|\s*```/gi, '').trim();
-    var m = limpio.match(/\{[\s\S]*\}/);
-    if (!m) throw new Error('No se encontró JSON');
-    var obj;
-    try { obj = JSON.parse(m[0]); } catch(e){ throw new Error('JSON inválido: '+e.message); }
-    return normalizar(obj);
-  });
-}
-
-function normalizar(d) {
-  var out = {
-    nombre: norm(d.nombre),
-    rfc: normRFC(d.rfc),
-    tel: normTel(d.tel),
-    email: normEmail(d.email),
-    direccion: norm(d.direccion || d.dir),
-    nacimiento: normFecha(d.nacimiento || d.nac),
-    numPoliza: norm(d.numPoliza || d.poliza || d.num),
-    tipo: normTipo(d.tipo),
-    aseg: normAseg(d.aseg || d.aseguradora),
-    vigencia: normFecha(d.vigencia || d.vencimiento),
-    prima: normPrima(d.prima),
-    coberturas: norm(d.coberturas)
+function guardarCliente(){
+ var nombre=document.getElementById('nc-nombre').value.trim();
+ var tel=document.getElementById('nc-tel').value.trim();
+ var email=document.getElementById('nc-email').value.trim();
+ if(!nombre){toast('⚠️ Nombre es obligatorio');document.getElementById('nc-nombre').focus();return}
+ if(!tel){toast('⚠️ Teléfono es obligatorio');document.getElementById('nc-tel').focus();return}
+ if(!email){toast('⚠️ Correo es obligatorio');document.getElementById('nc-email').focus();return}
+ if(!/^\S+@\S+\.\S+$/.test(email)){toast('⚠️ Correo inválido');return}
+ var rfc=document.getElementById('nc-rfc').value.trim().toUpperCase();
+ var nac=document.getElementById('nc-nac').value;
+ var dir=document.getElementById('nc-dir').value.trim();
+ var notas=document.getElementById('nc-notas').value.trim();
+ // Construir póliza si hay tipo
+ var poliza=null;
+ var tipo=document.getElementById('nc-tipo').value;
+ if(tipo){
+  poliza={
+   tipo:tipo,
+   prima:parseFloat(document.getElementById('nc-prima').value)||0,
+   vigencia:document.getElementById('nc-vigencia').value,
+   num:document.getElementById('nc-num').value.trim(),
+   aseg:document.getElementById('nc-aseg').value,
+   pago:document.getElementById('nc-pago').value,
+   coberturas:document.getElementById('nc-coberturas').value.trim()
   };
-  if (!out.nacimiento && out.rfc) {
-    var f = nacimientoDeRFC(out.rfc);
-    if (f) out.nacimiento = f;
+ }
+ // Buscar duplicado
+ var dup=buscarDuplicado(nombre,tel,email,rfc,-1);
+ if(dup>=0){
+  // Cliente ya existe — actualiza datos vacíos y agrega póliza
+  var c=clientes[dup];
+  if(rfc&&!c.rfc)c.rfc=rfc;
+  if(nac&&!c.nac)c.nac=nac;
+  if(dir&&!c.dir)c.dir=dir;
+  if(notas){c.notas=(c.notas?c.notas+' | ':'')+notas}
+  if(poliza){
+   var ya=c.polizas.find(function(p){return poliza.num&&p.num===poliza.num});
+   if(!ya){c.polizas=c.polizas||[];c.polizas.push(poliza);toast('✅ Póliza agregada a cliente existente: '+c.nombre)}
+   else toast('⚠️ Esta póliza ya existía');
+  } else {
+   toast('⚠️ Cliente ya existe: '+c.nombre);
   }
-  return out;
-}
-function norm(s) { return (s || '').toString().trim().replace(/\s+/g, ' '); }
-function normRFC(s) {
-  s = (s || '').toString().toUpperCase().trim().replace(/\s/g,'');
-  if (!s) return '';
-  if (RFC_ASEGURADORAS.has(s)) return '';
-  for (var i=0; i<RFC_BAD_PREFIX.length; i++) {
-    var p = RFC_BAD_PREFIX[i];
-    if (s.indexOf(p)===0 && /^\d/.test(s.substring(p.length))) return '';
-  }
-  if (!/^[A-ZÑ&]{3,4}\d{6}[A-Z\d]{2,3}$/.test(s)) return s.length >= 10 ? s : '';
-  return s;
-}
-function normTel(s) {
-  if (!s) return '';
-  var n = s.toString().replace(/\D/g,'');
-  if (n.indexOf('01800')===0 || n.indexOf('001800')===0 || (n.length===10 && n.indexOf('800')===0)) return '';
-  if (n.length === 12 && n.indexOf('52')===0) n = n.substring(2);
-  if (n.length === 13 && n.indexOf('521')===0) n = n.substring(3);
-  if (n.length === 10) return n;
-  if (n.length > 10) return n.substring(n.length-10);
-  return '';
-}
-function normEmail(s) {
-  if (!s) return '';
-  s = s.toString().trim().toLowerCase();
-  if (!/^\S+@\S+\.\S+$/.test(s)) return '';
-  if (/(^|\.)(axa|gnp|qualitas|mapfre|hdi|metlife|zurich|allianz|sura)\./.test('.'+s.split('@')[1]+'.')) return '';
-  return s;
-}
-function normFecha(s) {
-  if (!s) return '';
-  s = s.toString().trim();
-  var m = s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-  if (m) return s;
-  m = s.match(/^(\d{1,2})[\/\-\. ](\d{1,2})[\/\-\. ](\d{4})$/);
-  if (m) return m[3] + '-' + m[2].padStart(2,'0') + '-' + m[1].padStart(2,'0');
-  m = s.match(/^(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{2})$/);
-  if (m) {
-    var yy = parseInt(m[3]);
-    var yyyy = yy <= 30 ? 2000+yy : 1900+yy;
-    return yyyy + '-' + m[2].padStart(2,'0') + '-' + m[1].padStart(2,'0');
-  }
-  var mesNum = {ene:'01',feb:'02',mar:'03',abr:'04',may:'05',jun:'06',jul:'07',ago:'08',sep:'09',oct:'10',nov:'11',dic:'12'};
-  m = s.toLowerCase().match(/(\d{1,2})\s*(?:de\s+)?(ene|feb|mar|abr|may|jun|jul|ago|sep|oct|nov|dic)[a-z]*\s*(?:de\s+|del\s+)?(\d{4})/);
-  if (m) return m[3] + '-' + mesNum[m[2]] + '-' + m[1].padStart(2,'0');
-  return '';
-}
-function normPrima(s) {
-  if (!s && s !== 0) return '';
-  var n = s.toString().replace(/[^\d.]/g,'');
-  if (!n) return '';
-  var num = parseFloat(n);
-  if (isNaN(num)) return '';
-  return Math.round(num).toString();
-}
-function normTipo(s) {
-  if (!s) return '';
-  var k = s.toString().toLowerCase().trim();
-  for (var key in TIPOS_DICT) { if (k === key || k.indexOf(key) >= 0) return TIPOS_DICT[key]; }
-  var validos = ['Automóvil','Vida','Gastos Médicos Mayores','Hogar','Negocio','Accidentes Personales','Retiro / Ahorro'];
-  for (var i=0; i<validos.length; i++) if (k === validos[i].toLowerCase()) return validos[i];
-  return s.toString().trim();
-}
-function normAseg(s) {
-  if (!s) return '';
-  var k = s.toString().toLowerCase().trim();
-  for (var key in ASEG_DICT) { if (k === key || k.indexOf(key) >= 0) return ASEG_DICT[key]; }
-  return 'Otra';
-}
-function nacimientoDeRFC(rfc) {
-  if (!rfc || rfc.length < 10) return '';
-  var m = rfc.match(/^[A-ZÑ&]{3,4}(\d{2})(\d{2})(\d{2})/);
-  if (!m) return '';
-  var yy = parseInt(m[1]);
-  var mm = m[2], dd = m[3];
-  var yyyy = yy <= (new Date().getFullYear() % 100) - 5 ? 2000 + yy : 1900 + yy;
-  if (parseInt(mm) < 1 || parseInt(mm) > 12 || parseInt(dd) < 1 || parseInt(dd) > 31) return '';
-  return yyyy + '-' + mm + '-' + dd;
+  save('mc2_clientes',clientes);
+  programarNotificaciones();
+  clienteIdx=dup;
+  goScreen('s-detalle',true);
+  return;
+ }
+ // Cliente nuevo
+ var nuevo={id:Date.now(),nombre:nombre,tel:tel,email:email,rfc:rfc,nac:nac,dir:dir,notas:notas,polizas:poliza?[poliza]:[]};
+ clientes.push(nuevo);
+ save('mc2_clientes',clientes);
+ programarNotificaciones();
+ toast('✅ Cliente guardado');
+ clienteIdx=clientes.length-1;
+ goScreen('s-detalle',true);
 }
 
-// ============================================================
-// LLENAR FORMULARIO
-// ============================================================
-function llenarFormulario(d) {
-  var n = 0;
-  function set(id, val) {
-    if (val === null || val === undefined || val === '') return;
-    var el = document.getElementById(id);
-    if (!el) return;
-    el.value = val;
-    el.classList.add('flash');
-    setTimeout(function(){el.classList.remove('flash');}, 1500);
-    n++;
-  }
-  function setSelect(id, val) {
-    if (!val) return;
-    var sel = document.getElementById(id);
-    if (!sel) return;
-    for (var i=0; i<sel.options.length; i++) {
-      if (sel.options[i].text === val || sel.options[i].value === val) {
-        sel.selectedIndex = i;
-        sel.classList.add('flash');
-        setTimeout(function(){sel.classList.remove('flash');}, 1500);
-        n++;
-        return;
-      }
-    }
-  }
-  set('nc-nombre', d.nombre);
-  set('nc-rfc', d.rfc);
-  set('nc-tel', d.tel);
-  set('nc-email', d.email);
-  set('nc-dir', d.direccion);
-  set('nc-nac', d.nacimiento);
-  set('nc-num', d.numPoliza);
-  setSelect('nc-tipo', d.tipo);
-  setSelect('nc-aseg', d.aseg);
-  set('nc-vigencia', d.vigencia);
-  set('nc-prima', d.prima);
-  set('nc-coberturas', d.coberturas);
-  return n;
+function editarCliente(){if(clienteIdx===null)return;goScreen('s-editar')}
+function renderEditar(){
+ var c=clientes[clienteIdx];if(!c)return;
+ document.getElementById('ec-nombre').value=c.nombre||'';
+ document.getElementById('ec-tel').value=c.tel||'';
+ document.getElementById('ec-nac').value=c.nac||'';
+ document.getElementById('ec-email').value=c.email||'';
+ document.getElementById('ec-rfc').value=c.rfc||'';
+ document.getElementById('ec-dir').value=c.dir||'';
+ document.getElementById('ec-notas').value=c.notas||'';
+ var el=document.getElementById('ec-polizas');
+ if(!(c.polizas||[]).length){el.innerHTML='<div style="text-align:center;padding:14px;color:var(--mid);font-size:13px">Sin pólizas aún</div>';return}
+ el.innerHTML=c.polizas.map(function(p,pi){
+  return '<div style="background:var(--white);border:1px solid var(--border);border-radius:10px;padding:11px 14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;cursor:pointer" onclick="editarPoliza('+pi+')">'+
+   '<div><div style="font-size:13px;font-weight:700">'+ico(p.tipo)+' '+esc(p.tipo||'Sin tipo')+'</div>'+
+   '<div style="font-size:11px;color:var(--mid)">'+esc((p.aseg||'')+' · '+(p.num||'')+' · Vence: '+(p.vigencia?fmtFecha(p.vigencia):'—'))+'</div></div>'+
+   '<div style="font-size:20px;color:var(--mid)">›</div></div>';
+ }).join('');
 }
-function mostrarResultado(d) {
-  var el = document.getElementById('pdf-result');
-  var labels = {
-    nombre: 'Nombre', rfc: 'RFC', tel: 'Teléfono', email: 'Correo',
-    direccion: 'Dirección', nacimiento: 'Nacimiento', numPoliza: 'Póliza',
-    tipo: 'Tipo', aseg: 'Aseguradora', vigencia: 'Vencimiento',
-    prima: 'Prima', coberturas: 'Coberturas'
-  };
-  var html = '<div style="font-weight:700;color:#1a4f1a;margin-bottom:6px;">Datos extraídos:</div>';
-  for (var k in labels) {
-    var val = d[k];
-    if (val) html += '<div class="item"><span class="lbl">'+labels[k]+'</span><span class="val">'+val+'</span></div>';
-    else html += '<div class="item"><span class="lbl">'+labels[k]+'</span><span class="val empty">— vacío —</span></div>';
-  }
-  el.innerHTML = html;
-  el.classList.add('show');
+function guardarEdicion(){
+ if(clienteIdx===null)return;
+ var nombre=document.getElementById('ec-nombre').value.trim();
+ var tel=document.getElementById('ec-tel').value.trim();
+ var email=document.getElementById('ec-email').value.trim();
+ if(!nombre){toast('⚠️ Nombre obligatorio');return}
+ if(!tel){toast('⚠️ Teléfono obligatorio');return}
+ if(!email){toast('⚠️ Correo obligatorio');return}
+ if(!/^\S+@\S+\.\S+$/.test(email)){toast('⚠️ Correo inválido');return}
+ var rfc=document.getElementById('ec-rfc').value.trim().toUpperCase();
+ // Verificar duplicado (excluyendo a sí mismo)
+ var dup=buscarDuplicado(nombre,tel,email,rfc,clienteIdx);
+ if(dup>=0){toast('⚠️ Ya existe otro cliente con esos datos: '+clientes[dup].nombre);return}
+ var c=clientes[clienteIdx];
+ c.nombre=nombre;c.tel=tel;c.email=email;c.rfc=rfc;
+ c.nac=document.getElementById('ec-nac').value;
+ c.dir=document.getElementById('ec-dir').value.trim();
+ c.notas=document.getElementById('ec-notas').value.trim();
+ save('mc2_clientes',clientes);
+ programarNotificaciones();
+ toast('✅ Cliente actualizado');
+ goScreen('s-detalle');
 }
-function limpiarFormularioNuevo() {
-  ['nc-nombre','nc-tel','nc-email','nc-rfc','nc-nac','nc-dir','nc-notas','nc-prima','nc-vigencia','nc-num','nc-coberturas'].forEach(function(id){
-    var el=document.getElementById(id); if (el) el.value='';
-  });
-  ['nc-tipo','nc-aseg'].forEach(function(id){ var el=document.getElementById(id); if (el) el.value=''; });
-  document.getElementById('pdf-result').classList.remove('show');
-  setStatus('', 'orange');
-  document.getElementById('pdf-btn').textContent = '📂 Seleccionar PDF';
+function confirmarBorrarCliente(){
+ if(clienteIdx===null)return;
+ var c=clientes[clienteIdx];
+ modal('Eliminar cliente','¿Eliminar a '+c.nombre+'? Se perderán todas sus pólizas. No se puede deshacer.','Eliminar',function(){
+  clientes.splice(clienteIdx,1);
+  save('mc2_clientes',clientes);
+  programarNotificaciones();
+  toast('🗑 Cliente eliminado');
+  clienteIdx=null;
+  historial=['s-home'];
+  goScreen('s-clientes',true);
+ },true);
 }
 
-// ============================================================
-// GUARDAR / EDITAR / ELIMINAR
-// ============================================================
-function guardarCliente() {
-  var nombre = document.getElementById('nc-nombre').value.trim();
-  var tel = document.getElementById('nc-tel').value.trim();
-  if (!nombre) { toast('⚠️ El nombre es obligatorio'); return; }
-  if (!tel) { toast('⚠️ El teléfono es obligatorio'); return; }
-  var nuevo = {
-    id: Date.now(),
-    nombre: nombre, tel: tel,
-    email: document.getElementById('nc-email').value.trim(),
-    rfc: document.getElementById('nc-rfc').value.trim().toUpperCase(),
-    nac: document.getElementById('nc-nac').value,
-    dir: document.getElementById('nc-dir').value.trim(),
-    notas: document.getElementById('nc-notas').value.trim(),
-    polizas: []
-  };
-  var tipo = document.getElementById('nc-tipo').value;
-  if (tipo) nuevo.polizas.push({
-    tipo: tipo,
-    prima: document.getElementById('nc-prima').value,
-    vigencia: document.getElementById('nc-vigencia').value,
-    num: document.getElementById('nc-num').value.trim(),
-    aseg: document.getElementById('nc-aseg').value,
-    coberturas: document.getElementById('nc-coberturas').value.trim()
-  });
-  clientes.push(nuevo);
-  save('mc2_clientes', clientes);
-  programarNotificaciones();
-  toast('✅ Cliente guardado');
-  goScreen('s-clientes');
+// ============== PÓLIZAS ==============
+function nuevaPolizaPara(idx){
+ if(idx===null||idx<0||idx>=clientes.length)return;
+ clienteIdx=idx;polizaIdx=null;
+ goScreen('s-nueva-pol');
 }
-function eliminarCliente() {
-  if (clienteIdx===null) return;
-  if (confirm('¿Eliminar a '+clientes[clienteIdx].nombre+'? No se puede deshacer.')) {
-    clientes.splice(clienteIdx,1);
-    save('mc2_clientes',clientes);
-    programarNotificaciones();
-    toast('🗑 Cliente eliminado');
-    goBack();
+function limpiarNuevaPol(){
+ ['np-prima','np-vigencia','np-num','np-coberturas','np-nota'].forEach(function(id){var el=document.getElementById(id);if(el)el.value=''});
+ ['np-tipo','np-aseg','np-pago'].forEach(function(id){var el=document.getElementById(id);if(el)el.value=''});
+ var t=document.getElementById('np-titulo');
+ var d=document.getElementById('np-del-btn');
+ if(polizaIdx===null){
+  if(t)t.textContent='Nueva Póliza';
+  if(d)d.style.display='none';
+ } else {
+  if(t)t.textContent='Editar Póliza';
+  if(d)d.style.display='block';
+  // Llenar con datos existentes
+  var p=clientes[clienteIdx].polizas[polizaIdx];
+  if(!p)return;
+  var sel=document.getElementById('np-tipo');
+  for(var i=0;i<sel.options.length;i++)if(sel.options[i].text===p.tipo){sel.selectedIndex=i;break}
+  document.getElementById('np-prima').value=p.prima||'';
+  document.getElementById('np-vigencia').value=p.vigencia||'';
+  document.getElementById('np-num').value=p.num||'';
+  var sa=document.getElementById('np-aseg');
+  for(var j=0;j<sa.options.length;j++)if(sa.options[j].text===p.aseg){sa.selectedIndex=j;break}
+  var sp=document.getElementById('np-pago');
+  for(var k=0;k<sp.options.length;k++)if(sp.options[k].text===p.pago){sp.selectedIndex=k;break}
+  document.getElementById('np-coberturas').value=p.coberturas||'';
+  document.getElementById('np-nota').value=p.nota||'';
+ }
+}
+function editarPoliza(pi){
+ if(clienteIdx===null||pi<0||pi>=clientes[clienteIdx].polizas.length)return;
+ polizaIdx=pi;
+ goScreen('s-nueva-pol');
+}
+function guardarPoliza(){
+ if(clienteIdx===null)return;
+ var tipo=document.getElementById('np-tipo').value;
+ if(!tipo){toast('⚠️ Selecciona el tipo');return}
+ var datos={
+  tipo:tipo,
+  prima:parseFloat(document.getElementById('np-prima').value)||0,
+  vigencia:document.getElementById('np-vigencia').value,
+  num:document.getElementById('np-num').value.trim(),
+  aseg:document.getElementById('np-aseg').value,
+  pago:document.getElementById('np-pago').value,
+  coberturas:document.getElementById('np-coberturas').value.trim(),
+  nota:document.getElementById('np-nota').value.trim()
+ };
+ if(!clientes[clienteIdx].polizas)clientes[clienteIdx].polizas=[];
+ if(polizaIdx===null){
+  // Nueva — verificar no duplicado por número
+  if(datos.num){
+   var ya=clientes[clienteIdx].polizas.find(function(p){return p.num===datos.num});
+   if(ya){toast('⚠️ Ya existe una póliza con ese número');return}
   }
-}
-
-function editarCliente() {
-  if (clienteIdx === null) return;
-  var c = clientes[clienteIdx];
-  document.getElementById('ec-nombre').value = c.nombre || '';
-  document.getElementById('ec-tel').value = c.tel || '';
-  document.getElementById('ec-nac').value = c.nac || '';
-  document.getElementById('ec-email').value = c.email || '';
-  document.getElementById('ec-rfc').value = c.rfc || '';
-  document.getElementById('ec-dir').value = c.dir || '';
-  document.getElementById('ec-notas').value = c.notas || '';
-  renderPolizasEditar();
-  goScreen('s-editar-cliente');
-}
-function renderPolizasEditar() {
-  var c = clientes[clienteIdx];
-  var el = document.getElementById('ec-polizas-lista');
-  if (!(c.polizas||[]).length) {
-    el.innerHTML = '<div style="text-align:center;padding:16px;color:var(--mid);font-size:13px;">Sin pólizas aún</div>';
-    return;
-  }
-  el.innerHTML = c.polizas.map(function(p, pi){
-    return '<div style="background:var(--white);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;" onclick="editarPoliza('+pi+')">' +
-      '<div>' +
-        '<div style="font-size:13px;font-weight:700;">'+iconTipo(p.tipo)+' '+(p.tipo||'Sin tipo')+'</div>' +
-        '<div style="font-size:11px;color:var(--mid);">'+(p.aseg||'')+' · '+(p.num||'')+' · Vence: '+(p.vigencia||'—')+'</div>' +
-      '</div>' +
-      '<div style="font-size:20px;color:var(--mid);">›</div>' +
-    '</div>';
-  }).join('');
-}
-function guardarEdicionCliente() {
-  var nombre = document.getElementById('ec-nombre').value.trim();
-  var tel = document.getElementById('ec-tel').value.trim();
-  if (!nombre) { toast('⚠️ El nombre es obligatorio'); return; }
-  if (!tel) { toast('⚠️ El teléfono es obligatorio'); return; }
-  Object.assign(clientes[clienteIdx], {
-    nombre: nombre, tel: tel,
-    nac: document.getElementById('ec-nac').value,
-    email: document.getElementById('ec-email').value.trim(),
-    rfc: document.getElementById('ec-rfc').value.trim().toUpperCase(),
-    dir: document.getElementById('ec-dir').value.trim(),
-    notas: document.getElementById('ec-notas').value.trim()
-  });
-  save('mc2_clientes', clientes);
-  programarNotificaciones();
-  toast('✅ Cliente actualizado');
-  verCliente(clienteIdx);
-}
-function editarPoliza(pi) {
-  polizaEditandoIdx = pi;
-  var p = clientes[clienteIdx].polizas[pi];
-  var sel = document.getElementById('ep-tipo');
-  for (var i=0; i<sel.options.length; i++) {
-    if (sel.options[i].text === p.tipo) { sel.selectedIndex=i; break; }
-  }
-  document.getElementById('ep-prima').value = p.prima || '';
-  document.getElementById('ep-vigencia').value = p.vigencia || '';
-  document.getElementById('ep-num').value = p.num || '';
-  document.getElementById('ep-coberturas').value = p.coberturas || '';
-  document.getElementById('ep-nota').value = p.nota || '';
-  var selA = document.getElementById('ep-aseg');
-  for (var j=0; j<selA.options.length; j++) {
-    if (selA.options[j].text === p.aseg) { selA.selectedIndex=j; break; }
-  }
-  goScreen('s-editar-poliza');
-}
-function guardarEdicionPoliza() {
-  if (clienteIdx===null || polizaEditandoIdx===null) return;
-  var tipo = document.getElementById('ep-tipo').value;
-  if (!tipo) { toast('⚠️ Selecciona el tipo de seguro'); return; }
-  Object.assign(clientes[clienteIdx].polizas[polizaEditandoIdx], {
-    tipo: tipo,
-    prima: parseFloat(document.getElementById('ep-prima').value)||0,
-    vigencia: document.getElementById('ep-vigencia').value,
-    num: document.getElementById('ep-num').value.trim(),
-    aseg: document.getElementById('ep-aseg').value,
-    coberturas: document.getElementById('ep-coberturas').value.trim(),
-    nota: document.getElementById('ep-nota').value.trim()
-  });
-  save('mc2_clientes', clientes);
-  programarNotificaciones();
+  clientes[clienteIdx].polizas.push(datos);
+  toast('✅ Póliza agregada');
+ } else {
+  clientes[clienteIdx].polizas[polizaIdx]=datos;
   toast('✅ Póliza actualizada');
+ }
+ save('mc2_clientes',clientes);
+ programarNotificaciones();
+ polizaIdx=null;
+ goBack();
+}
+function confirmarBorrarPoliza(){
+ if(clienteIdx===null||polizaIdx===null)return;
+ var p=clientes[clienteIdx].polizas[polizaIdx];
+ modal('Eliminar póliza','¿Eliminar la póliza de '+p.tipo+'?','Eliminar',function(){
+  clientes[clienteIdx].polizas.splice(polizaIdx,1);
+  save('mc2_clientes',clientes);
+  programarNotificaciones();
+  toast('🗑 Póliza eliminada');
+  polizaIdx=null;
   goBack();
-  renderPolizasEditar();
-}
-function eliminarPoliza() {
-  if (clienteIdx===null || polizaEditandoIdx===null) return;
-  var tipo = clientes[clienteIdx].polizas[polizaEditandoIdx].tipo;
-  if (confirm('¿Eliminar póliza de ' + tipo + '?')) {
-    clientes[clienteIdx].polizas.splice(polizaEditandoIdx, 1);
-    save('mc2_clientes', clientes);
-    programarNotificaciones();
-    toast('🗑 Póliza eliminada');
-    polizaEditandoIdx = null;
-    goBack();
-    renderPolizasEditar();
-  }
+ },true);
 }
 
-// ============================================================
-// COBRANZA
-// ============================================================
-function renderCobranza() {
-  var porCobrar=0, cobrado=0, items=[];
-  var mes=hoy.getMonth(), anio=hoy.getFullYear();
-  clientes.forEach(function(c, idx){
-    (c.polizas||[]).forEach(function(p){
-      var prima=parseFloat(p.prima)||0;
-      var clave='cobro_'+c.id+'_'+(p.num||p.tipo)+'_'+mes+'_'+anio;
-      var pagado=localStorage.getItem(clave)==='1';
-      if (pagado) cobrado+=prima/12; else porCobrar+=prima/12;
-      items.push({nombre:c.nombre,tipo:p.tipo,monto:Math.round(prima/12),clave:clave,pagado:pagado,idx:idx});
-    });
+// ============== COBRANZA ==============
+function renderCobranza(){
+ var porCobrar=0,cobrado=0,items=[];
+ var mes=hoy.getMonth(),anio=hoy.getFullYear();
+ clientes.forEach(function(c,idx){
+  (c.polizas||[]).forEach(function(p){
+   var prima=parseFloat(p.prima)||0;
+   var clave='cobro_'+c.id+'_'+(p.num||p.tipo)+'_'+mes+'_'+anio;
+   var pagado=localStorage.getItem(clave)==='1';
+   if(pagado)cobrado+=prima/12;else porCobrar+=prima/12;
+   items.push({nombre:c.nombre,tipo:p.tipo,monto:Math.round(prima/12),clave:clave,pagado:pagado,idx:idx});
   });
-  var total=porCobrar+cobrado;
-  var pct=total>0?Math.round(cobrado/total*100):0;
-  document.getElementById('cobro-resumen').innerHTML =
-    '<div style="background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px;">' +
-      '<div style="display:flex;justify-content:space-between;margin-bottom:10px;">' +
-        '<div><div style="font-size:11px;color:var(--mid);">Por cobrar</div><div style="font-size:24px;font-weight:800;color:var(--orange);">$'+Math.round(porCobrar).toLocaleString()+'</div></div>' +
-        '<div style="text-align:right;"><div style="font-size:11px;color:var(--mid);">Cobrado</div><div style="font-size:24px;font-weight:800;color:var(--green);">$'+Math.round(cobrado).toLocaleString()+'</div></div>' +
-      '</div>' +
-      '<div style="height:8px;background:var(--border);border-radius:4px;overflow:hidden;">' +
-        '<div style="width:'+pct+'%;height:100%;background:var(--green);border-radius:4px;"></div>' +
-      '</div>' +
-      '<div style="font-size:11px;color:var(--mid);margin-top:5px;">'+pct+'% cobrado este mes</div>' +
-    '</div>';
-  var el=document.getElementById('lista-cobros');
-  if (!items.length) { el.innerHTML='<div class="empty"><div class="ico">💰</div><p>Agrega clientes con pólizas.</p></div>'; return; }
-  el.innerHTML = items.map(function(it){
-    return '<div class="cobro-item">' +
-      '<div class="cobro-check '+(it.pagado?'done':'')+'" onclick="toggleCobro(\''+it.clave+'\')">'+(it.pagado?'✓':'')+'</div>' +
-      '<div style="flex:1;cursor:pointer;" onclick="verCliente('+it.idx+')">' +
-        '<div style="font-size:13px;font-weight:700;'+(it.pagado?'text-decoration:line-through;color:var(--mid);':'')+'">'+it.nombre+'</div>' +
-        '<div style="font-size:11px;color:var(--mid);">'+it.tipo+'</div>' +
-      '</div>' +
-      '<div style="font-size:15px;font-weight:800;color:'+(it.pagado?'var(--green)':'var(--orange)')+';">$'+it.monto.toLocaleString()+'</div>' +
-    '</div>';
-  }).join('');
+ });
+ var total=porCobrar+cobrado;
+ var pct=total>0?Math.round(cobrado/total*100):0;
+ document.getElementById('cobro-resumen').innerHTML='<div style="background:#fff;border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px"><div style="display:flex;justify-content:space-between;margin-bottom:8px"><div><div style="font-size:11px;color:var(--mid)">Por cobrar</div><div style="font-size:22px;font-weight:800;color:var(--orange)">$'+Math.round(porCobrar).toLocaleString()+'</div></div><div style="text-align:right"><div style="font-size:11px;color:var(--mid)">Cobrado</div><div style="font-size:22px;font-weight:800;color:var(--green)">$'+Math.round(cobrado).toLocaleString()+'</div></div></div><div style="height:8px;background:var(--border);border-radius:4px;overflow:hidden"><div style="width:'+pct+'%;height:100%;background:var(--green);border-radius:4px"></div></div><div style="font-size:11px;color:var(--mid);margin-top:5px">'+pct+'% cobrado este mes</div></div>';
+ var el=document.getElementById('lista-cobros');
+ if(!items.length){el.innerHTML='<div class="empty"><div class="ico">💰</div><p>Agrega clientes con pólizas.</p></div>';return}
+ el.innerHTML=items.map(function(it){
+  return '<div class="cob"><div class="cck '+(it.pagado?'done':'')+'" onclick="toggleCobro(\''+it.clave+'\')">'+(it.pagado?'✓':'')+'</div><div style="flex:1;cursor:pointer" onclick="verCliente('+it.idx+')"><div style="font-size:13px;font-weight:700;'+(it.pagado?'text-decoration:line-through;color:var(--mid);':'')+'">'+esc(it.nombre)+'</div><div style="font-size:11px;color:var(--mid)">'+esc(it.tipo)+'</div></div><div style="font-size:14px;font-weight:800;color:'+(it.pagado?'var(--green)':'var(--orange)')+'">$'+it.monto.toLocaleString()+'</div></div>';
+ }).join('');
 }
-function toggleCobro(clave){
-  localStorage.setItem(clave, localStorage.getItem(clave)==='1' ? '0' : '1');
-  toast(localStorage.getItem(clave)==='1' ? '✅ Cobro registrado' : '↩️ Marcado como pendiente');
-  renderCobranza();
+function toggleCobro(clave){localStorage.setItem(clave,localStorage.getItem(clave)==='1'?'0':'1');toast(localStorage.getItem(clave)==='1'?'✅ Cobrado':'↩️ Pendiente');renderCobranza()}
+
+// ============== MENSAJES MASIVOS ==============
+function getClientesParaMensaje(filtro){
+ var res=[];
+ clientes.forEach(function(c,idx){
+  if(filtro==='todos'){
+   res.push({idx:idx,c:c,p:null,dias:null});return;
+  }
+  (c.polizas||[]).forEach(function(p){
+   var d=p.vigencia?diasHasta(p.vigencia):null;
+   if(filtro==='venc'&&d!==null&&d<0){res.push({idx:idx,c:c,p:p,dias:d})}
+   else if(filtro==='5d'&&d!==null&&d>=0&&d<=5){res.push({idx:idx,c:c,p:p,dias:d})}
+   else if(filtro==='15d'&&d!==null&&d>=0&&d<=15){res.push({idx:idx,c:c,p:p,dias:d})}
+   else if(filtro==='30d'&&d!==null&&d>=0&&d<=30){res.push({idx:idx,c:c,p:p,dias:d})}
+   else if(filtro==='60d'&&d!==null&&d>=0&&d<=60){res.push({idx:idx,c:c,p:p,dias:d})}
+  });
+ });
+ return res;
+}
+function renderMensajes(){
+ var f=document.getElementById('msg-filtro').value;
+ var arr=getClientesParaMensaje(f);
+ var el=document.getElementById('msg-lista');
+ if(!arr.length){el.innerHTML='<div class="empty" style="padding:30px 20px"><div class="ico">📭</div><p>Nadie coincide con este filtro.</p></div>';actualizarMsgCount();return}
+ el.innerHTML=arr.map(function(it){
+  var key=it.idx+'_'+(it.p?(it.p.num||it.p.tipo):'_');
+  var on=msgSel[key]?'on':'';
+  var sub=it.p?(ico(it.p.tipo)+' '+it.p.tipo+' · '+(it.dias<0?'Venció hace '+Math.abs(it.dias)+' días':it.dias===0?'HOY':'En '+it.dias+' días')):'Sin póliza';
+  return '<div class="msg-cli"><div class="chk '+on+'" onclick="msgToggle(\''+key+'\')">✓</div><div class="info"><div class="c-nombre">'+esc(it.c.nombre)+'</div><div class="c-det">'+esc(sub)+'</div></div><div class="acts">'+
+   (it.c.tel?'<button class="a w" onclick="msgEnviarUno(\'wa\','+it.idx+','+(it.p?clientes[it.idx].polizas.indexOf(it.p):-1)+')">💬</button>':'')+
+   (it.c.email?'<button class="a m" onclick="msgEnviarUno(\'email\','+it.idx+','+(it.p?clientes[it.idx].polizas.indexOf(it.p):-1)+')">✉️</button>':'')+
+   '</div></div>';
+ }).join('');
+ actualizarMsgCount();
+}
+function msgToggle(key){msgSel[key]=!msgSel[key];renderMensajes()}
+function msgSeleccionarTodos(b){
+ var f=document.getElementById('msg-filtro').value;
+ var arr=getClientesParaMensaje(f);
+ if(b){arr.forEach(function(it){var key=it.idx+'_'+(it.p?(it.p.num||it.p.tipo):'_');msgSel[key]=true})}
+ else{msgSel={}}
+ renderMensajes();
+}
+function actualizarMsgCount(){
+ var n=0;for(var k in msgSel)if(msgSel[k])n++;
+ document.getElementById('msg-count').textContent=n+' seleccionado'+(n!==1?'s':'');
+}
+function aplicarTemplate(t,c,p){
+ var d=p&&p.vigencia?diasHasta(p.vigencia):'';
+ return t.replace(/\{nombre\}/g,(c.nombre||'').split(' ')[0])
+   .replace(/\{tipo\}/g,p?p.tipo:'')
+   .replace(/\{dias\}/g,d===''?'':String(d))
+   .replace(/\{vence\}/g,p&&p.vigencia?fmtFecha(p.vigencia):'')
+   .replace(/\{prima\}/g,p?'$'+(parseFloat(p.prima)||0).toLocaleString():'')
+   .replace(/\{poliza\}/g,p?(p.num||''):'');
+}
+function msgEnviarUno(tipo,idx,pi){
+ var c=clientes[idx];if(!c)return;
+ var p=pi>=0?c.polizas[pi]:null;
+ var t=document.getElementById('msg-template').value;
+ var msj=aplicarTemplate(t,c,p);
+ if(tipo==='wa'){
+  if(!c.tel){toast('Sin tel');return}
+  abrirWA('https://wa.me/52'+c.tel.replace(/\D/g,'')+'?text='+encodeURIComponent(msj));
+ }else{
+  if(!c.email){toast('Sin correo');return}
+  abrirML('mailto:'+c.email+'?subject='+encodeURIComponent('Aviso póliza')+'&body='+encodeURIComponent(msj));
+ }
+}
+function enviarMasivo(tipo){
+ var f=document.getElementById('msg-filtro').value;
+ var arr=getClientesParaMensaje(f);
+ var sel=arr.filter(function(it){var key=it.idx+'_'+(it.p?(it.p.num||it.p.tipo):'_');return msgSel[key]});
+ if(!sel.length){toast('⚠️ Nadie seleccionado');return}
+ var t=document.getElementById('msg-template').value;
+ modal('Enviar a '+sel.length+' cliente(s)','Se abrirá '+(tipo==='wa'?'WhatsApp':'el correo')+' uno por uno. Confirma cada envío manualmente.','Continuar',function(){
+  enviarSecuencia(sel,tipo,t,0);
+ });
+}
+function enviarSecuencia(sel,tipo,t,i){
+ if(i>=sel.length){toast('✅ Listo, '+sel.length+' enviados');msgSel={};renderMensajes();return}
+ var it=sel[i];var c=it.c;var p=it.p;
+ var msj=aplicarTemplate(t,c,p);
+ if(tipo==='wa'){
+  if(c.tel)abrirWA('https://wa.me/52'+c.tel.replace(/\D/g,'')+'?text='+encodeURIComponent(msj));
+ } else {
+  if(c.email)abrirML('mailto:'+c.email+'?subject='+encodeURIComponent('Aviso póliza')+'&body='+encodeURIComponent(msj));
+ }
+ // Pedir al usuario seguir al siguiente
+ setTimeout(function(){
+  if(i+1<sel.length){
+   modal('¿Siguiente?','Listo el '+(i+1)+' de '+sel.length+'. ¿Continuar al siguiente?','Sí, siguiente',function(){
+    enviarSecuencia(sel,tipo,t,i+1);
+   });
+  } else toast('✅ Terminado, '+sel.length+' enviados');
+ },800);
 }
 
-// ============================================================
-// PERFIL
-// ============================================================
+// ============== PERFIL ==============
 function cargarPerfil(){
-  perfil = load('mc2_perfil', perfil);
-  document.getElementById('p-nombre').value = perfil.nombre || '';
-  document.getElementById('p-tel').value = perfil.tel || '';
-  document.getElementById('p-email').value = perfil.email || '';
-  document.getElementById('p-meta').value = perfil.meta || '';
-  document.getElementById('p-clave').value = perfil.clave || '';
-  document.getElementById('p-nombre-display').textContent = perfil.nombre || 'Agente';
-  document.getElementById('p-avatar').textContent = ini(perfil.nombre || 'A');
+ perfil=load('mc2_perfil',perfil);
+ document.getElementById('p-nombre').value=perfil.nombre||'';
+ document.getElementById('p-tel').value=perfil.tel||'';
+ document.getElementById('p-email').value=perfil.email||'';
+ document.getElementById('p-meta').value=perfil.meta||'';
+ document.getElementById('p-clave').value=perfil.clave||'';
+ document.getElementById('p-nombre-display').textContent=perfil.nombre||'Agente';
+ var av=document.getElementById('p-avatar');
+ if(perfil.foto){av.style.backgroundImage='url('+perfil.foto+')';av.firstChild.nodeValue=''}
+ else{av.style.backgroundImage='';av.firstChild.nodeValue=ini(perfil.nombre||'A')}
 }
 function guardarPerfil(){
-  perfil = {
-    nombre: document.getElementById('p-nombre').value.trim() || 'Agente',
-    tel: document.getElementById('p-tel').value.trim(),
-    email: document.getElementById('p-email').value.trim(),
-    meta: parseFloat(document.getElementById('p-meta').value) || 0,
-    clave: document.getElementById('p-clave').value.trim()
-  };
-  save('mc2_perfil', perfil);
-  toast('✅ Perfil guardado');
+ var nombre=document.getElementById('p-nombre').value.trim();
+ if(!nombre){toast('⚠️ Pon tu nombre');return}
+ perfil={
+  nombre:nombre,
+  tel:document.getElementById('p-tel').value.trim(),
+  email:document.getElementById('p-email').value.trim(),
+  meta:parseFloat(document.getElementById('p-meta').value)||0,
+  clave:document.getElementById('p-clave').value.trim(),
+  foto:perfil.foto||''
+ };
+ save('mc2_perfil',perfil);
+ toast('✅ Perfil guardado');
+ cargarPerfil();
 }
-function borrarTodo(){
-  if (confirm('¿Segura? Se borrarán TODOS los datos.')) {
-    localStorage.clear();
-    clientes = [];
-    perfil = {nombre:'Agente', tel:'', email:'', meta:0, clave:''};
-    toast('🗑 Datos borrados');
-    goScreen('s-home');
-  }
+function subirFoto(input){
+ var f=input.files[0];if(!f)return;
+ if(!f.type.startsWith('image/')){toast('⚠️ Debe ser imagen');return}
+ var r=new FileReader();
+ r.onload=function(e){
+  var img=new Image();
+  img.onload=function(){
+   var canvas=document.createElement('canvas');
+   canvas.width=canvas.height=240;
+   var ctx=canvas.getContext('2d');
+   var s=Math.max(240/img.width,240/img.height);
+   var w=img.width*s,h=img.height*s;
+   ctx.drawImage(img,(240-w)/2,(240-h)/2,w,h);
+   var dataUrl=canvas.toDataURL('image/jpeg',0.85);
+   perfil.foto=dataUrl;
+   save('mc2_perfil',perfil);
+   cargarPerfil();
+   toast('✅ Foto guardada');
+  };
+  img.onerror=function(){toast('⚠️ No se pudo cargar la imagen')};
+  img.src=e.target.result;
+ };
+ r.onerror=function(){toast('⚠️ No se pudo leer el archivo')};
+ r.readAsDataURL(f);
+ input.value='';
+}
+function confirmarBorrarTodo(){
+ modal('Borrar TODO','Se borrarán clientes, pólizas, perfil, cobranza. ¿Seguro? No se puede deshacer.','Borrar todo',function(){
+  localStorage.clear();
+  clientes=[];
+  perfil={nombre:'',tel:'',email:'',meta:0,clave:'',foto:''};
+  toast('🗑 Todo borrado');
+  goScreen('s-home',true);
+ },true);
 }
 
-// ============================================================
-// IMPORTAR CSV
-// ============================================================
-function importarCSV(input) {
-  var file = input.files[0];
-  if (!file) return;
-  var reader = new FileReader();
-  reader.onload = function(e) {
-    try {
-      var texto = e.target.result;
-      var lineas = texto.split(/\r?\n/).filter(function(l){return l.trim();});
-      if (lineas.length < 2) { toast('⚠️ CSV vacío'); return; }
-      var sep = lineas[0].indexOf(';') >= 0 ? ';' : ',';
-      var headers = lineas[0].split(sep).map(function(h){return h.trim().replace(/^"|"$/g,'').toLowerCase();});
-      var mapa = {
-        'nombre': 'nombre', 'name': 'nombre',
-        'rfc': 'rfc',
-        'tel': 'tel', 'telefono': 'tel', 'teléfono': 'tel', 'phone': 'tel',
-        'correo': 'email', 'email': 'email', 'mail': 'email',
-        'direccion': 'dir', 'dirección': 'dir', 'address': 'dir',
-        'nacimiento': 'nac', 'fecha_nacimiento': 'nac', 'dob': 'nac',
-        'poliza': 'numPoliza', 'póliza': 'numPoliza', 'num_poliza': 'numPoliza',
-        'tipo': 'tipo',
-        'aseguradora': 'aseg',
-        'vigencia_hasta': 'vigencia', 'vigencia': 'vigencia', 'vencimiento': 'vigencia',
-        'prima': 'prima',
-        'coberturas': 'coberturas', 'notas': 'notas'
-      };
-      var importados = 0, omitidos = 0;
-      for (var i = 1; i < lineas.length; i++) {
-        var vals = parsearLineaCSV(lineas[i], sep);
-        var row = {};
-        headers.forEach(function(h, idx){ row[h] = (vals[idx] || '').trim().replace(/^"|"$/g, ''); });
-        var datos = {};
-        headers.forEach(function(h){
-          var campo = mapa[h];
-          if (campo && row[h]) datos[campo] = row[h];
-        });
-        if (!datos.nombre) { omitidos++; continue; }
-        var existe = clientes.find(function(c){
-          return (datos.rfc && c.rfc === datos.rfc) || c.nombre.toLowerCase() === datos.nombre.toLowerCase();
-        });
-        var poliza = {};
-        if (datos.tipo) poliza.tipo = normTipo(datos.tipo);
-        if (datos.numPoliza) poliza.num = datos.numPoliza;
-        if (datos.aseg) poliza.aseg = normAseg(datos.aseg);
-        if (datos.prima) poliza.prima = parseFloat(datos.prima) || 0;
-        if (datos.vigencia) poliza.vigencia = normFecha(datos.vigencia) || datos.vigencia;
-        if (datos.coberturas) poliza.coberturas = datos.coberturas;
-        var tienePoliza = poliza.tipo || poliza.num;
-        if (existe) {
-          if (tienePoliza) {
-            var polizaExiste = existe.polizas.some(function(p){ return p.num === poliza.num; });
-            if (!polizaExiste) existe.polizas.push(poliza);
-          }
-        } else {
-          clientes.push({
-            id: Date.now() + i,
-            nombre: datos.nombre,
-            tel: datos.tel || '',
-            email: datos.email || '',
-            rfc: datos.rfc || '',
-            dir: datos.dir || '',
-            nac: normFecha(datos.nac) || datos.nac || '',
-            notas: datos.notas || '',
-            polizas: tienePoliza ? [poliza] : []
-          });
-          importados++;
-        }
-      }
-      save('mc2_clientes', clientes);
-      programarNotificaciones();
-      renderLista(clientes);
-      renderHome();
-      input.value = '';
-      var msg = importados > 0 ? '✅ '+importados+' cliente(s) importado(s)' : '✅ Pólizas actualizadas';
-      toast(omitidos > 0 ? msg+' ('+omitidos+' sin nombre omitidos)' : msg);
-    } catch(err) {
-      console.error('CSV error:', err);
-      toast('❌ Error: ' + err.message);
-    }
-  };
-  reader.readAsText(file, 'UTF-8');
-}
-function parsearLineaCSV(linea, sep) {
-  var vals = []; var actual = ''; var enComillas = false;
-  for (var i = 0; i < linea.length; i++) {
-    var ch = linea[i];
-    if (ch === '"') enComillas = !enComillas;
-    else if (ch === sep && !enComillas) { vals.push(actual); actual = ''; }
-    else actual += ch;
-  }
-  vals.push(actual);
-  return vals;
-}
-
-// ============================================================
-// NUEVA PÓLIZA (insertada al final)
-// ============================================================
-var sNuevaPoliza =
-'<div class="screen" id="s-nueva-poliza">' +
-  '<div class="back-bar">' +
-    '<button class="back-btn" onclick="goBack()">←</button>' +
-    '<div class="back-title">Nueva Póliza</div>' +
-  '</div>' +
-  '<div class="form-scroll">' +
-    '<div class="f-group"><label class="f-label">Tipo de seguro *</label>' +
-      '<select class="f-select" id="np-tipo">' +
-        '<option value="">— Seleccionar —</option>' +
-        '<option>Automóvil</option><option>Vida</option>' +
-        '<option>Gastos Médicos Mayores</option><option>Hogar</option>' +
-        '<option>Negocio</option><option>Accidentes Personales</option><option>Retiro / Ahorro</option>' +
-      '</select>' +
-    '</div>' +
-    '<div class="f-row">' +
-      '<div class="f-group"><label class="f-label">Prima anual ($)</label><input class="f-input" type="number" placeholder="0" id="np-prima"></div>' +
-      '<div class="f-group"><label class="f-label">Vencimiento</label><input class="f-input" type="date" id="np-vigencia"></div>' +
-    '</div>' +
-    '<div class="f-row">' +
-      '<div class="f-group"><label class="f-label">No. Póliza</label><input class="f-input" placeholder="Número" id="np-num"></div>' +
-      '<div class="f-group"><label class="f-label">Aseguradora</label>' +
-        '<select class="f-select" id="np-aseg">' +
-          '<option value="">—</option>' +
-          '<option>GNP</option><option>Qualitas</option><option>AXA</option>' +
-          '<option>Mapfre</option><option>HDI</option><option>Metlife</option>' +
-          '<option>Zurich</option><option>Allianz</option><option>Sura</option><option>Otra</option>' +
-        '</select>' +
-      '</div>' +
-    '</div>' +
-    '<div class="f-group"><label class="f-label">Coberturas</label><input class="f-input" id="np-coberturas" placeholder="RC | GMM | Robo total..."></div>' +
-    '<button class="f-btn" onclick="guardarPoliza()">Guardar póliza</button>' +
-  '</div>' +
-'</div>';
-document.body.insertAdjacentHTML('beforeend', sNuevaPoliza);
-function guardarPoliza() {
-  if (clienteIdx===null) return;
-  var tipo = document.getElementById('np-tipo').value;
-  if (!tipo) { toast('⚠️ Selecciona el tipo de seguro'); return; }
-  if (!clientes[clienteIdx].polizas) clientes[clienteIdx].polizas = [];
-  clientes[clienteIdx].polizas.push({
-    tipo: tipo,
-    prima: document.getElementById('np-prima').value,
-    vigencia: document.getElementById('np-vigencia').value,
-    num: document.getElementById('np-num').value,
-    aseg: document.getElementById('np-aseg').value,
-    coberturas: document.getElementById('np-coberturas').value
+// ============== NOTIFICACIONES ==============
+function programarNotificaciones(){
+ if(!window.nativeScheduleNotifications)return;
+ var notifs=[];var ahora=new Date();
+ clientes.forEach(function(c){
+  (c.polizas||[]).forEach(function(p){
+   if(!p.vigencia)return;
+   var venc=new Date(p.vigencia+'T09:00:00');
+   if(isNaN(venc))return;
+   [60,30,14,7,2].forEach(function(d){
+    var t=new Date(venc);t.setDate(t.getDate()-d);
+    if(t>ahora)notifs.push({date:t.toISOString(),title:'⚠️ Vence en '+d+' días',body:c.nombre+' — '+p.tipo+' (vence '+p.vigencia+')'});
+   });
+   if(venc>ahora)notifs.push({date:venc.toISOString(),title:'🔴 Póliza vence HOY',body:c.nombre+' — '+p.tipo+'. Contáctalo para renovar.'});
   });
-  save('mc2_clientes', clientes);
-  programarNotificaciones();
-  toast('✅ Póliza agregada');
-  ['np-tipo','np-aseg','np-prima','np-vigencia','np-num','np-coberturas'].forEach(function(id){document.getElementById(id).value='';});
-  verCliente(clienteIdx);
+  if(c.nac){
+   var n=new Date(c.nac+'T09:00:00');if(isNaN(n))return;
+   var cu=new Date(ahora.getFullYear(),n.getMonth(),n.getDate(),9,0,0,0);
+   if(cu<ahora)cu.setFullYear(cu.getFullYear()+1);
+   notifs.push({date:cu.toISOString(),title:'🎂 Cumpleaños',body:c.nombre.split(' ')[0]+' cumple años hoy. Felicítalo.'});
+  }
+ });
+ if(notifs.length)try{window.nativeScheduleNotifications(notifs)}catch(e){}
+}
+function probarNotificacion(){
+ if(!window.nativeScheduleNotifications){toast('⚠️ Recompila la APK para activar notificaciones');return}
+ var en30s=new Date(Date.now()+30000).toISOString();
+ try{window.nativeScheduleNotifications([{date:en30s,title:'🔔 Prueba MiCartera',body:'Notificaciones funcionando ✓'}]);toast('✅ En 30s te llega')}
+ catch(e){toast('Error: '+e.message)}
 }
 
-// ============================================================
-// INIT
-// ============================================================
-renderHome();
-setTimeout(function(){ programarNotificaciones(); }, 1500);
+// ============== PDF ==============
+function leerPDF(input){
+ var file=input.files[0];if(!file)return;
+ if(file.size>30*1024*1024){setStatus('❌ PDF muy grande','red');return}
+ var btn=document.getElementById('pdf-btn');
+ btn.disabled=true;btn.style.opacity=0.5;btn.textContent='⏳ Procesando...';
+ setStatus('Leyendo PDF...','orange');
+ document.getElementById('pdf-result').classList.remove('show');
+ fileToBase64(file).then(function(b64){setStatus('Analizando con Claude... (10-30s)','orange');return extraerConClaude(b64)})
+  .then(function(d){
+   var n=llenarFormulario(d);
+   if(n>0){setStatus('✅ '+n+' campo'+(n!==1?'s':'')+' extraído'+(n!==1?'s':''),'green');mostrarResultado(d);toast('✅ Datos cargados, revisa lo que falte')}
+   else setStatus('⚠️ No se encontraron datos','red');
+  })
+  .catch(function(err){console.error(err);setStatus('❌ '+(err.message||err),'red');toast('Error al procesar PDF')})
+  .then(function(){btn.disabled=false;btn.style.opacity=1;btn.textContent='📂 Seleccionar otro PDF';input.value=''});
+}
+function setStatus(m,c){var el=document.getElementById('pdf-status');el.textContent=m;el.style.color=c==='green'?'#2d6a4f':c==='red'?'#b5192a':'#c8622a'}
+function fileToBase64(f){return new Promise(function(res,rej){var r=new FileReader();r.onload=function(){res(r.result.split(',')[1])};r.onerror=function(){rej(new Error('No se pudo leer'))};r.readAsDataURL(f)})}
+function extraerConClaude(b64){
+ var sys='Eres experto en pólizas de seguros mexicanas. Extrae datos del ASEGURADO/CONTRATANTE únicamente, NUNCA de la aseguradora ni del agente. Devuelve SOLO JSON sin markdown: {"nombre":"","rfc":"","tel":"","email":"","direccion":"","nacimiento":"","numPoliza":"","tipo":"","aseg":"","vigencia":"","prima":"","pago":"","coberturas":""}\n\nREGLAS:\n1. NOMBRE del asegurado (no aseguradora ni agente).\n2. RFC del asegurado (13 chars). Ignora MTE440316E54, GNP9211244P0, ASE931116231, AXA920310953, QSA931209G49, MMA0501105X4, HDI0708205F3, MET860605G14.\n3. TEL del asegurado, 10 dígitos. Ignora 800-XXX, 01-800.\n4. EMAIL del asegurado. Ignora @axa.com, @gnp.com.mx.\n5. DIRECCION en una línea.\n6. NACIMIENTO YYYY-MM-DD.\n7. NUMPOLIZA con guiones.\n8. TIPO: Automóvil | Vida | Gastos Médicos Mayores | Hogar | Negocio | Accidentes Personales | Retiro / Ahorro.\n9. ASEG: AXA | GNP | Qualitas | Mapfre | HDI | Metlife | Zurich | Allianz | Sura | Otra.\n10. VIGENCIA fecha FIN YYYY-MM-DD.\n11. PRIMA total anual entero (sin $ ni comas).\n12. PAGO: Anual | Semestral | Trimestral | Mensual | Contado.\n13. COBERTURAS separadas por " | ".\nSi un dato no está, devuelve "". NUNCA inventes.';
+ return fetch(PROXY_URL,{method:'POST',headers:{'Content-Type':'application/json','anthropic-version':'2023-06-01'},body:JSON.stringify({model:'claude-opus-4-6',max_tokens:1500,system:sys,messages:[{role:'user',content:[{type:'document',source:{type:'base64',media_type:'application/pdf',data:b64}},{type:'text',text:'Extrae los datos del asegurado. Devuelve SOLO el JSON.'}]}]})})
+ .then(function(r){if(!r.ok)return r.text().then(function(t){throw new Error('API '+r.status+': '+t.substring(0,200))});return r.json()})
+ .then(function(d){var t=(d.content&&d.content[0]&&d.content[0].text)||'';if(!t)throw new Error('Respuesta vacía');var l=t.replace(/```json\s*|\s*```/gi,'').trim();var m=l.match(/\{[\s\S]*\}/);if(!m)throw new Error('No JSON');var o;try{o=JSON.parse(m[0])}catch(e){throw new Error('JSON inválido: '+e.message)}return normalizar(o)});
+}
+function normalizar(d){
+ var out={nombre:nm(d.nombre),rfc:nmRFC(d.rfc),tel:nmTel(d.tel),email:nmEmail(d.email),direccion:nm(d.direccion||d.dir),nacimiento:nmFecha(d.nacimiento||d.nac),numPoliza:nm(d.numPoliza||d.poliza||d.num),tipo:nmTipo(d.tipo),aseg:nmAseg(d.aseg||d.aseguradora),vigencia:nmFecha(d.vigencia||d.vencimiento),prima:nmPrima(d.prima),pago:nmPago(d.pago),coberturas:nm(d.coberturas)};
+ if(!out.nacimiento&&out.rfc){var f=nacFromRFC(out.rfc);if(f)out.nacimiento=f}
+ return out;
+}
+function nm(s){return (s||'').toString().trim().replace(/\s+/g,' ')}
+function nmRFC(s){s=(s||'').toString().toUpperCase().trim().replace(/\s/g,'');if(!s)return '';if(RFC_BAD.has(s))return '';for(var i=0;i<RFC_BPRE.length;i++){var p=RFC_BPRE[i];if(s.indexOf(p)===0&&/^\d/.test(s.substring(p.length)))return ''}if(!/^[A-ZÑ&]{3,4}\d{6}[A-Z\d]{2,3}$/.test(s))return s.length>=10?s:'';return s}
+function nmTel(s){if(!s)return '';var n=s.toString().replace(/\D/g,'');if(n.indexOf('01800')===0||n.indexOf('001800')===0||(n.length===10&&n.indexOf('800')===0))return '';if(n.length===12&&n.indexOf('52')===0)n=n.substring(2);if(n.length===13&&n.indexOf('521')===0)n=n.substring(3);if(n.length===10)return n;if(n.length>10)return n.substring(n.length-10);return ''}
+function nmEmail(s){if(!s)return '';s=s.toString().trim().toLowerCase();if(!/^\S+@\S+\.\S+$/.test(s))return '';if(/(^|\.)(axa|gnp|qualitas|mapfre|hdi|metlife|zurich|allianz|sura)\./.test('.'+s.split('@')[1]+'.'))return '';return s}
+function nmFecha(s){if(!s)return '';s=s.toString().trim();var m=s.match(/^(\d{4})-(\d{2})-(\d{2})$/);if(m)return s;m=s.match(/^(\d{1,2})[\/\-\. ](\d{1,2})[\/\-\. ](\d{4})$/);if(m)return m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0');m=s.match(/^(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{2})$/);if(m){var yy=parseInt(m[3]);var yyyy=yy<=30?2000+yy:1900+yy;return yyyy+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0')}var mn={ene:'01',feb:'02',mar:'03',abr:'04',may:'05',jun:'06',jul:'07',ago:'08',sep:'09',oct:'10',nov:'11',dic:'12'};m=s.toLowerCase().match(/(\d{1,2})\s*(?:de\s+)?(ene|feb|mar|abr|may|jun|jul|ago|sep|oct|nov|dic)[a-z]*\s*(?:de\s+|del\s+)?(\d{4})/);if(m)return m[3]+'-'+mn[m[2]]+'-'+m[1].padStart(2,'0');return ''}
+function nmPrima(s){if(!s&&s!==0)return '';var n=s.toString().replace(/[^\d.]/g,'');if(!n)return '';var num=parseFloat(n);if(isNaN(num))return '';return Math.round(num).toString()}
+function nmTipo(s){if(!s)return '';var k=s.toString().toLowerCase().trim();for(var key in TIPOS_DICT)if(k===key||k.indexOf(key)>=0)return TIPOS_DICT[key];var v=['Automóvil','Vida','Gastos Médicos Mayores','Hogar','Negocio','Accidentes Personales','Retiro / Ahorro'];for(var i=0;i<v.length;i++)if(k===v[i].toLowerCase())return v[i];return s.toString().trim()}
+function nmAseg(s){if(!s)return '';var k=s.toString().toLowerCase().trim();for(var key in ASEG_DICT)if(k===key||k.indexOf(key)>=0)return ASEG_DICT[key];return 'Otra'}
+function nmPago(s){if(!s)return '';var k=s.toString().toLowerCase().trim();var map={'anual':'Anual','semestral':'Semestral','trimestral':'Trimestral','mensual':'Mensual','contado':'Contado','una sola exhibicion':'Contado','una exhibicion':'Contado'};for(var key in map)if(k===key||k.indexOf(key)>=0)return map[key];return ''}
+function nacFromRFC(rfc){if(!rfc||rfc.length<10)return '';var m=rfc.match(/^[A-ZÑ&]{3,4}(\d{2})(\d{2})(\d{2})/);if(!m)return '';var yy=parseInt(m[1]);var mm=m[2],dd=m[3];var yyyy=yy<=(new Date().getFullYear()%100)-5?2000+yy:1900+yy;if(parseInt(mm)<1||parseInt(mm)>12||parseInt(dd)<1||parseInt(dd)>31)return '';return yyyy+'-'+mm+'-'+dd}
+function llenarFormulario(d){
+ var n=0;
+ function set(id,v){if(v==null||v==='')return;var el=document.getElementById(id);if(!el)return;el.value=v;el.classList.add('flash');setTimeout(function(){el.classList.remove('flash')},1500);n++}
+ function setSel(id,v){if(!v)return;var s=document.getElementById(id);if(!s)return;for(var i=0;i<s.options.length;i++){if(s.options[i].text===v||s.options[i].value===v){s.selectedIndex=i;s.classList.add('flash');setTimeout(function(){s.classList.remove('flash')},1500);n++;return}}}
+ set('nc-nombre',d.nombre);set('nc-rfc',d.rfc);set('nc-tel',d.tel);set('nc-email',d.email);set('nc-dir',d.direccion);set('nc-nac',d.nacimiento);set('nc-num',d.numPoliza);
+ setSel('nc-tipo',d.tipo);setSel('nc-aseg',d.aseg);setSel('nc-pago',d.pago);
+ set('nc-vigencia',d.vigencia);set('nc-prima',d.prima);set('nc-coberturas',d.coberturas);
+ return n;
+}
+function mostrarResultado(d){
+ var el=document.getElementById('pdf-result');
+ var labels={nombre:'Nombre',rfc:'RFC',tel:'Teléfono',email:'Correo',direccion:'Dirección',nacimiento:'Nacimiento',numPoliza:'Póliza',tipo:'Tipo',aseg:'Aseguradora',vigencia:'Vencimiento',prima:'Prima',pago:'Forma pago',coberturas:'Coberturas'};
+ var html='<div style="font-weight:700;color:#1a4f1a;margin-bottom:6px">Datos extraídos:</div>';
+ for(var k in labels){var v=d[k];html+='<div class="it"><span class="l">'+labels[k]+'</span><span class="v'+(v?'':' e')+'">'+(v?esc(v):'— vacío —')+'</span></div>'}
+ el.innerHTML=html;el.classList.add('show');
+}
+
+// ============== CSV ==============
+function importarCSV(input){
+ var f=input.files[0];if(!f)return;
+ var r=new FileReader();
+ r.onload=function(e){
+  try{
+   var txt=e.target.result;
+   var lineas=txt.split(/\r?\n/).filter(function(l){return l.trim()});
+   if(lineas.length<2){toast('⚠️ CSV vacío');return}
+   var sep=lineas[0].indexOf(';')>=0?';':',';
+   var headers=lineas[0].split(sep).map(function(h){return h.trim().replace(/^"|"$/g,'').toLowerCase()});
+   var mapa={'nombre':'nombre','name':'nombre','rfc':'rfc','tel':'tel','telefono':'tel','teléfono':'tel','phone':'tel','correo':'email','email':'email','mail':'email','direccion':'dir','dirección':'dir','address':'dir','nacimiento':'nac','fecha_nacimiento':'nac','dob':'nac','poliza':'numPoliza','póliza':'numPoliza','num_poliza':'numPoliza','tipo':'tipo','aseguradora':'aseg','vigencia_hasta':'vigencia','vigencia':'vigencia','vencimiento':'vigencia','prima':'prima','coberturas':'coberturas','notas':'notas','forma_pago':'pago','pago':'pago','forma_de_pago':'pago'};
+   var importados=0,actualizados=0,polizasNuevas=0,omitidos=0;
+   for(var i=1;i<lineas.length;i++){
+    var vals=parseCSVLine(lineas[i],sep);
+    var row={};headers.forEach(function(h,idx){row[h]=(vals[idx]||'').trim().replace(/^"|"$/g,'')});
+    var datos={};headers.forEach(function(h){var c=mapa[h];if(c&&row[h])datos[c]=row[h]});
+    if(!datos.nombre){omitidos++;continue}
+    var poliza=null;
+    if(datos.tipo||datos.numPoliza){
+     poliza={tipo:nmTipo(datos.tipo)||datos.tipo||'',num:datos.numPoliza||'',aseg:nmAseg(datos.aseg)||datos.aseg||'',prima:parseFloat(datos.prima)||0,vigencia:nmFecha(datos.vigencia)||datos.vigencia||'',coberturas:datos.coberturas||'',pago:nmPago(datos.pago)||datos.pago||''};
+    }
+    var dup=buscarDuplicado(datos.nombre,datos.tel||'',datos.email||'',datos.rfc||'',-1);
+    if(dup>=0){
+     var c=clientes[dup];
+     if(datos.rfc&&!c.rfc)c.rfc=datos.rfc;
+     if(datos.nac&&!c.nac)c.nac=nmFecha(datos.nac)||datos.nac;
+     if(datos.dir&&!c.dir)c.dir=datos.dir;
+     if(datos.tel&&!c.tel)c.tel=nmTel(datos.tel)||datos.tel;
+     if(datos.email&&!c.email)c.email=nmEmail(datos.email)||datos.email;
+     if(datos.notas){c.notas=(c.notas?c.notas+' | ':'')+datos.notas}
+     if(poliza){
+      var ya=c.polizas.some(function(p){return poliza.num&&p.num===poliza.num});
+      if(!ya){c.polizas.push(poliza);polizasNuevas++}
+     }
+     actualizados++;
+    } else {
+     clientes.push({id:Date.now()+i,nombre:datos.nombre,tel:nmTel(datos.tel)||datos.tel||'',email:nmEmail(datos.email)||datos.email||'',rfc:(datos.rfc||'').toUpperCase(),dir:datos.dir||'',nac:nmFecha(datos.nac)||datos.nac||'',notas:datos.notas||'',polizas:poliza?[poliza]:[]});
+     importados++;
+    }
+   }
+   save('mc2_clientes',clientes);
+   programarNotificaciones();
+   renderLista();renderHome();
+   input.value='';
+   var partes=[];
+   if(importados)partes.push(importados+' nuevos');
+   if(actualizados)partes.push(actualizados+' actualizados');
+   if(polizasNuevas)partes.push(polizasNuevas+' pólizas nuevas');
+   toast('✅ '+(partes.join(', ')||'Sin cambios')+(omitidos>0?' ('+omitidos+' omitidos)':''));
+  }catch(err){console.error(err);toast('❌ Error CSV: '+err.message)}
+ };
+ r.readAsText(f,'UTF-8');
+}
+function parseCSVLine(linea,sep){
+ var vals=[],actual='',enComillas=false;
+ for(var i=0;i<linea.length;i++){
+  var ch=linea[i];
+  if(ch==='"')enComillas=!enComillas;
+  else if(ch===sep&&!enComillas){vals.push(actual);actual=''}
+  else actual+=ch;
+ }
+ vals.push(actual);
+ return vals;
+}
+
+// ============== INIT ==============
+function init(){
+ // Bind global event listeners
+ document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)modalCerrar()});
+ // Render initial
+ renderHome();
+ // Schedule notifications after bridge loads
+ setTimeout(function(){programarNotificaciones()},1500);
+}
+init();
 </script>
 </body>
 </html>
