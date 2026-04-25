@@ -158,6 +158,18 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .pdfres .v{color:#1a4f1a;font-weight:700;max-width:60%;text-align:right;word-break:break-word}
 .pdfres .v.e{color:#999;font-style:italic}
 
+.comi-block{margin:10px 14px 14px;padding:10px 12px;background:#f8f4ee;border:1px solid var(--border);border-radius:10px}
+.comi-tit{font-size:11px;font-weight:700;color:var(--mid);margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
+.comi-tit .estado{font-size:11px;font-weight:700}
+.comi-tit .estado.verde{color:var(--green)} .comi-tit .estado.naranja{color:var(--orange)} .comi-tit .estado.rojo{color:var(--red)}
+.comi-grid{display:flex;flex-wrap:wrap;gap:6px}
+.comi-chip{width:38px;height:38px;border-radius:50%;border:2px solid var(--border);background:#fff;font-family:inherit;font-weight:700;font-size:13px;cursor:pointer;color:var(--mid);display:flex;align-items:center;justify-content:center;transition:.15s;padding:0}
+.comi-chip:active{transform:scale(.95)}
+.comi-chip.on{background:#10b981;color:#fff;border-color:#10b981}
+.comi-chip.on::before{content:"✓ "}
+.bdg.comi-ok{background:#d8f3dc;color:#1a6b35}
+.bdg.comi-mid{background:#fff3b0;color:#7a5c2e}
+.bdg.comi-pend{background:#fde8ea;color:#b5192a}
 .foto-up{position:relative;width:90px;height:90px;border-radius:22px;background:var(--dark);display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:800;color:#fff;margin:0 auto;background-size:cover;background-position:center;cursor:pointer;border:3px solid var(--white);box-shadow:0 2px 10px #0002}
 .foto-cam{position:absolute;bottom:-4px;right:-4px;width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;border:2px solid var(--white)}
 
@@ -582,6 +594,51 @@ function colA(i){return COLS[Math.abs(i||0)%COLS.length]}
 function colB(i){return COLT[Math.abs(i||0)%COLT.length]}
 function diasHasta(f){if(!f)return null;var d=new Date(f+'T00:00:00');var h=new Date();h.setHours(0,0,0,0);return Math.round((d-h)/86400000)}
 function polActiva(p){return p.estado!=='renovada'&&p.estado!=='cancelada'}
+
+// ============== COMISIONES ==============
+function numPagosForma(pago){
+ if(!pago)return 1;
+ var p=pago.toLowerCase();
+ if(p==='mensual')return 12;
+ if(p==='bimestral')return 6;
+ if(p==='trimestral')return 4;
+ if(p==='cuatrimestral')return 3;
+ if(p==='semestral')return 2;
+ return 1; // Anual, Contado, sin pago
+}
+function comisionStatus(p){
+ var n=numPagosForma(p.pago);
+ var arr=p.pagosComision||[];
+ var pagados=0;
+ for(var i=0;i<n;i++)if(arr[i])pagados++;
+ return {pagados:pagados,total:n,completo:pagados===n&&n>0,nada:pagados===0,parcial:pagados>0&&pagados<n};
+}
+function clienteComisionStatus(c){
+ var total=0,pagados=0,polizasConPago=0;
+ (c.polizas||[]).filter(polActiva).forEach(function(p){
+  var s=comisionStatus(p);
+  total+=s.total;pagados+=s.pagados;
+  if(s.total>0)polizasConPago++;
+ });
+ return {pagados:pagados,total:total,polizasConPago:polizasConPago};
+}
+function bdgComision(c){
+ var s=clienteComisionStatus(c);
+ if(s.total===0||s.polizasConPago===0)return '';
+ if(s.pagados===s.total)return '<span class="bdg comi-ok">💰 '+s.pagados+'/'+s.total+'</span>';
+ if(s.pagados===0)return '<span class="bdg comi-pend">💰 0/'+s.total+'</span>';
+ return '<span class="bdg comi-mid">💰 '+s.pagados+'/'+s.total+'</span>';
+}
+function toggleComision(pi,ci){
+ if(clienteIdx===null)return;
+ var p=clientes[clienteIdx].polizas[pi];if(!p)return;
+ var n=numPagosForma(p.pago);
+ if(!p.pagosComision)p.pagosComision=[];
+ while(p.pagosComision.length<n)p.pagosComision.push(false);
+ p.pagosComision[ci]=!p.pagosComision[ci];
+ save('mc2_clientes',clientes);
+ renderDetalle();
+}
 function estPol(p){if(!polActiva(p))return 'ok';if(!p.vigencia)return 'ok';var d=diasHasta(p.vigencia);if(d<0)return 'venc';if(d<=30)return 'prox';return 'ok'}
 function estCli(c){var pa=(c.polizas||[]).filter(polActiva);if(!pa.length)return 'ok';if(pa.some(function(p){return estPol(p)==='venc'}))return 'venc';if(pa.some(function(p){return estPol(p)==='prox'}))return 'prox';return 'ok'}
 function bdg(e){return {ok:'<span class="bdg ok">Al día</span>',venc:'<span class="bdg venc">Vencido</span>',prox:'<span class="bdg prox">Por renovar</span>'}[e]||''}
@@ -788,7 +845,7 @@ function renderLista(){
    var on=selectedIds[c.id]?'on':'';
    return '<div class="cli" onclick="toggleSelectCli('+idx+')" style="'+(selectedIds[c.id]?'background:#fff8e1':'')+'"><div class="chk '+on+'">✓</div><div class="av" style="background:'+colA(idx)+';color:'+colB(idx)+'">'+ini(c.nombre)+'</div><div class="info"><div class="c-nombre">'+esc(c.nombre)+'</div><div class="c-det">'+esc(pa.map(function(p){return p.tipo}).join(' · ')||'Sin pólizas')+'</div></div></div>';
   }
-  return '<div class="cli" onclick="verCliente('+idx+')"><div class="av" style="background:'+colA(idx)+';color:'+colB(idx)+'">'+ini(c.nombre)+'</div><div class="info"><div class="c-nombre">'+esc(c.nombre)+'</div><div class="c-det">'+esc(pa.map(function(p){return p.tipo}).join(' · ')||'Sin pólizas')+' · $'+prima.toLocaleString()+'/año</div></div>'+bdg(e)+'</div>';
+  return '<div class="cli" onclick="verCliente('+idx+')"><div class="av" style="background:'+colA(idx)+';color:'+colB(idx)+'">'+ini(c.nombre)+'</div><div class="info"><div class="c-nombre">'+esc(c.nombre)+'</div><div class="c-det">'+esc(pa.map(function(p){return p.tipo}).join(' · ')||'Sin pólizas')+' · $'+prima.toLocaleString()+'/año</div></div><div style="display:flex;flex-direction:column;gap:3px;align-items:flex-end">'+bdg(e)+bdgComision(c)+'</div></div>';
  }).join('');
 }
 function matchTab(c,tab){
@@ -894,6 +951,25 @@ function renderDetalle(){
  document.getElementById('d-cont').innerHTML=html;
 }
 
+// ============== RENDER COMISIÓN BLOCK ==============
+function renderComisionBlock(p,pi){
+ var n=numPagosForma(p.pago);
+ if(n<=0)return '';
+ var pagosArr=p.pagosComision||[];
+ var pagados=0;for(var i=0;i<n;i++)if(pagosArr[i])pagados++;
+ var estadoCls='rojo',estadoTxt='Sin cobrar';
+ if(pagados===n){estadoCls='verde';estadoTxt='✅ Cobrada completa'}
+ else if(pagados>0){estadoCls='naranja';estadoTxt='En curso'}
+ var pagoLabel=p.pago||'Anual/Contado';
+ var html='<div class="comi-block"><div class="comi-tit"><span>💰 Comisión ('+pagoLabel+'): '+pagados+' de '+n+'</span><span class="estado '+estadoCls+'">'+estadoTxt+'</span></div><div class="comi-grid">';
+ for(var ci=0;ci<n;ci++){
+  var on=pagosArr[ci]?'on':'';
+  html+='<button class="comi-chip '+on+'" onclick="event.stopPropagation();toggleComision('+pi+','+ci+')">'+(ci+1)+'</button>';
+ }
+ html+='</div></div>';
+ return html;
+}
+
 // ============== WHATSAPP / EMAIL / TEL ==============
 function abrirURL(url){if(window.isMiCarteraApp&&window.nativeOpenURL){window.nativeOpenURL(url);return}window.location.href=url}
 function abrirWA(url){if(window.isMiCarteraApp&&window.nativeOpenWhatsApp){window.nativeOpenWhatsApp(url);return}window.open(url,'_blank')}
@@ -973,6 +1049,7 @@ function guardarCliente(){
  var poliza=null;
  var tipo=document.getElementById('nc-tipo').value;
  if(tipo){
+  var pagoVal=document.getElementById('nc-pago').value;
   poliza={
    id:Date.now()+Math.random(),
    tipo:tipo,
@@ -980,10 +1057,11 @@ function guardarCliente(){
    vigencia:document.getElementById('nc-vigencia').value,
    num:document.getElementById('nc-num').value.trim(),
    aseg:document.getElementById('nc-aseg').value,
-   pago:document.getElementById('nc-pago').value,
+   pago:pagoVal,
    coberturas:document.getElementById('nc-coberturas').value.trim(),
    estado:'activa',
-   fechaCreacion:new Date().toISOString()
+   fechaCreacion:new Date().toISOString(),
+   pagosComision:new Array(numPagosForma(pagoVal)).fill(false)
   };
   if(tipo==='Automóvil'){
    poliza.vehiculo={
@@ -1173,6 +1251,7 @@ function guardarPoliza(){
  if(clienteIdx===null)return;
  var tipo=document.getElementById('np-tipo').value;
  if(!tipo){toast('⚠️ Selecciona el tipo');return}
+ var pagoVal=document.getElementById('np-pago').value;
  var datos={
   id:Date.now()+Math.random(),
   tipo:tipo,
@@ -1180,11 +1259,12 @@ function guardarPoliza(){
   vigencia:document.getElementById('np-vigencia').value,
   num:document.getElementById('np-num').value.trim(),
   aseg:document.getElementById('np-aseg').value,
-  pago:document.getElementById('np-pago').value,
+  pago:pagoVal,
   coberturas:document.getElementById('np-coberturas').value.trim(),
   nota:document.getElementById('np-nota').value.trim(),
   estado:'activa',
-  fechaCreacion:new Date().toISOString()
+  fechaCreacion:new Date().toISOString(),
+  pagosComision:new Array(numPagosForma(pagoVal)).fill(false)
  };
  if(tipo==='Automóvil'){
   datos.vehiculo={
@@ -1218,7 +1298,7 @@ function guardarPoliza(){
  }
  // EDITAR existente
  if(polizaIdx!==null){
-  // Preservar id y estado original al editar
+  // Preservar id, estado y pagos cobrados al editar
   var orig=clientes[clienteIdx].polizas[polizaIdx];
   if(orig){
    datos.id=orig.id||datos.id;
@@ -1227,6 +1307,11 @@ function guardarPoliza(){
    if(orig.renovacionDe)datos.renovacionDe=orig.renovacionDe;
    if(orig.renovadaPor)datos.renovadaPor=orig.renovadaPor;
    if(orig.fechaRenovacion)datos.fechaRenovacion=orig.fechaRenovacion;
+   // Ajustar pagosComision al nuevo número de pagos preservando los marcados
+   var nuevaArr=new Array(numPagosForma(datos.pago)).fill(false);
+   var viejaArr=orig.pagosComision||[];
+   for(var pi=0;pi<Math.min(nuevaArr.length,viejaArr.length);pi++)nuevaArr[pi]=!!viejaArr[pi];
+   datos.pagosComision=nuevaArr;
   }
   clientes[clienteIdx].polizas[polizaIdx]=datos;
   toast('✅ Póliza actualizada');
@@ -1661,12 +1746,17 @@ function parseCSVLine(linea,sep){
 
 // ============== INIT ==============
 function migrarPolizas(){
- // Asegurar que cada póliza tenga estado e id (para datos viejos)
+ // Asegurar que cada póliza tenga estado, id y pagosComision (para datos viejos)
  var cambios=false;
  clientes.forEach(function(c){
   (c.polizas||[]).forEach(function(p){
    if(!p.estado){p.estado='activa';cambios=true}
    if(!p.id){p.id=Date.now()+Math.random();cambios=true}
+   if(!p.pagosComision){
+    var n=numPagosForma(p.pago);
+    p.pagosComision=new Array(n).fill(false);
+    cambios=true;
+   }
   });
  });
  if(cambios)save('mc2_clientes',clientes);
