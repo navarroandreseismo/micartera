@@ -24,7 +24,7 @@ exports.handler = async function(event) {
       return { statusCode: 400, headers, body: JSON.stringify({ error: 'sin texto recibido', bodyRecibido: event.body ? event.body.substring(0,100) : 'vacio' }) };
     }
 
-    const APIKEY = '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';
+    const APIKEY = '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';
 
     const respuesta = await new Promise((resolve, reject) => {
       const payload = JSON.stringify({
