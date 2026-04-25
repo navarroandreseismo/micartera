@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>MiCartera</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -23,6 +23,7 @@
   --blue: #1a4f8a;
   --blue-bg: #ddeeff;
   --accent: #c8622a;
+  --safe-top: env(safe-area-inset-top, 0px);
 }
 body {
   font-family: 'Plus Jakarta Sans', sans-serif;
@@ -31,6 +32,7 @@ body {
   min-height: 100vh;
   max-width: 430px;
   margin: 0 auto;
+  padding-top: var(--safe-top);
 }
 .screen { display:none; min-height:100vh; padding-bottom:80px; }
 .screen.active { display:block; }
@@ -106,16 +108,33 @@ body {
 .badge.ok { background:var(--green-bg); color:var(--green); }
 .badge.venc { background:var(--red-bg); color:var(--red); }
 .badge.prox { background:var(--orange-bg); color:var(--orange); }
+/* BACK-BAR — con padding extra arriba para que los botones no queden tapados */
 .back-bar {
   background:var(--white); border-bottom:1px solid var(--border);
-  padding:14px 16px; display:flex; align-items:center; gap:12px;
+  padding:18px 12px 14px;
+  display:flex; align-items:center; gap:8px;
   position:sticky; top:0; z-index:40;
 }
 .back-btn {
-  background:none; border:none; font-size:20px; cursor:pointer; padding:0;
-  color:var(--dark); line-height:1;
+  background:var(--bg); border:1px solid var(--border);
+  font-size:22px; cursor:pointer;
+  width:40px; height:40px; border-radius:10px;
+  display:flex; align-items:center; justify-content:center;
+  color:var(--dark); flex-shrink:0;
+  padding:0;
 }
-.back-title { font-size:15px; font-weight:700; }
+.back-btn:active { background:#e8ddd0; }
+.back-title { font-size:15px; font-weight:700; flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.icon-btn {
+  background:var(--bg); border:1px solid var(--border);
+  width:40px; height:40px; border-radius:10px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:18px; cursor:pointer; flex-shrink:0;
+  padding:0;
+}
+.icon-btn:active { background:#e8ddd0; }
+.icon-btn.delete { background:#fde8ea; border-color:#f5c2c7; color:#b5192a; }
+.icon-btn.delete:active { background:#f5c2c7; }
 .det-hero {
   background:var(--dark); color:#fff;
   padding:20px 16px 16px;
@@ -224,6 +243,7 @@ body {
   width:100%; max-width:430px;
   background:var(--white); border-top:1px solid var(--border);
   display:flex; z-index:100;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 .nav-btn {
   flex:1; display:flex; flex-direction:column; align-items:center;
@@ -271,6 +291,7 @@ body {
 </style>
 </head>
 <body>
+
 <!-- ===== HOME ===== -->
 <div class="screen active" id="s-home">
   <div class="header">
@@ -331,9 +352,8 @@ body {
   <div class="back-bar">
     <button class="back-btn" onclick="goBack()">←</button>
     <div class="back-title" id="det-titulo">Cliente</div>
-    <div style="flex:1;"></div>
-    <button onclick="editarCliente()" style="background:none;border:none;font-size:18px;cursor:pointer;margin-right:4px;">✏️</button>
-    <button onclick="eliminarCliente()" style="background:none;border:none;font-size:18px;cursor:pointer;">🗑</button>
+    <button class="icon-btn" onclick="editarCliente()" title="Editar">✏️</button>
+    <button class="icon-btn delete" onclick="eliminarCliente()" title="Eliminar">🗑</button>
   </div>
   <div id="det-content"></div>
 </div>
@@ -480,6 +500,7 @@ body {
   <div style="padding:16px;">
     <button class="f-btn" onclick="guardarPerfil()">Guardar perfil</button>
     <div style="height:10px;"></div>
+    <button onclick="probarNotificacion()" style="width:100%;padding:13px;background:#dde8ff;color:#1a3f8a;border:1px solid #aac4ee;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:10px;">🔔 Probar notificación</button>
     <button onclick="borrarTodo()" style="width:100%;padding:13px;background:var(--red-bg);color:var(--red);border:1px solid #f5c2c7;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Borrar todos los datos</button>
   </div>
 </div>
@@ -503,7 +524,7 @@ body {
     <div class="f-group"><label class="f-label">Notas</label><input class="f-input" id="ec-notas"></div>
     <button class="f-btn" onclick="guardarEdicionCliente()">💾 Guardar cambios</button>
     <div style="height:10px;"></div>
-    <div class="f-section" id="ec-polizas-title">📋 Pólizas</div>
+    <div class="f-section">📋 Pólizas</div>
     <div id="ec-polizas-lista"></div>
     <button onclick="goScreen('s-nueva-poliza')" style="width:100%;padding:12px;background:var(--white);border:2px dashed var(--border);border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:600;color:var(--mid);cursor:pointer;margin-top:8px;">+ Agregar póliza</button>
     <div style="height:20px;"></div>
@@ -575,21 +596,18 @@ body {
 // ============================================================
 // CONFIG
 // ============================================================
-const PROXY_URL = 'https://micartera-proxy.navarro-andres-c1f.workers.dev';
-const COLORES = ['#f0e6d3','#d3e8f0','#d3f0e0','#f0d3d3','#e8d3f0','#f0f0d3'];
-const COLORES_TEXT = ['#7a5c2e','#1a5f7a','#1a6b35','#7a1a1a','#5c1a7a','#5c5c1a'];
+var PROXY_URL = 'https://micartera-proxy.navarro-andres-c1f.workers.dev';
+var COLORES = ['#f0e6d3','#d3e8f0','#d3f0e0','#f0d3d3','#e8d3f0','#f0f0d3'];
+var COLORES_TEXT = ['#7a5c2e','#1a5f7a','#1a6b35','#7a1a1a','#5c1a7a','#5c5c1a'];
 
-// RFCs y teléfonos de aseguradoras a IGNORAR (extender según haga falta)
-const RFC_ASEGURADORAS = new Set([
+var RFC_ASEGURADORAS = new Set([
   'MTE440316E54','GNP9211244P0','ASE931116231','AXA920310953',
   'AXA0805217D6','QSA931209G49','MMA0501105X4','HDI0708205F3',
   'MET860605G14','ZUR000110ER8','ALL850604HK1','SAS900618SQ8'
 ]);
+var RFC_BAD_PREFIX = ['MTE','GNP','ASE','AXA','QSA','MMA','HDI','MET','ZUR','ALL','SAS','HSB','BBV','BAN'];
 
-const RFC_BAD_PREFIX = ['MTE','GNP','ASE','AXA','QSA','MMA','HDI','MET','ZUR','ALL','SAS','HSB','BBV','BAN'];
-
-// Diccionario de tipos de seguro (sinónimos → valor del select)
-const TIPOS_DICT = {
+var TIPOS_DICT = {
   'auto':'Automóvil','automovil':'Automóvil','automóvil':'Automóvil','vehicular':'Automóvil',
   'autos':'Automóvil','coche':'Automóvil','camioneta':'Automóvil','vehiculo':'Automóvil',
   'vida':'Vida','vidaplus':'Vida','vidaprotege':'Vida','seguro de vida':'Vida',
@@ -600,50 +618,46 @@ const TIPOS_DICT = {
   'hogar':'Hogar','casa':'Hogar','vivienda':'Hogar',
   'negocio':'Negocio','empresa':'Negocio','comercial':'Negocio','pyme':'Negocio',
   'accidentes':'Accidentes Personales','accidentes personales':'Accidentes Personales','ap':'Accidentes Personales',
-  'retiro':'Retiro / Ahorro','ahorro':'Retiro / Ahorro','dotal':'Retiro / Ahorro','plan retiro':'Retiro / Ahorro',
+  'retiro':'Retiro / Ahorro','ahorro':'Retiro / Ahorro','dotal':'Retiro / Ahorro','plan retiro':'Retiro / Ahorro'
 };
-
-// Aseguradoras (sinónimos → valor del select)
-const ASEG_DICT = {
+var ASEG_DICT = {
   'gnp':'GNP','qualitas':'Qualitas','quálitas':'Qualitas','axa':'AXA',
   'mapfre':'Mapfre','hdi':'HDI','metlife':'Metlife','met life':'Metlife',
-  'zurich':'Zurich','allianz':'Allianz','sura':'Sura','seguros sura':'Sura',
-  'inbursa':'Otra','banorte':'Otra','atlas':'Otra','elpotosi':'Otra','el potosi':'Otra',
-  'monterrey':'Otra','seguros monterrey':'Otra','interacciones':'Otra'
+  'zurich':'Zurich','allianz':'Allianz','sura':'Sura','seguros sura':'Sura'
 };
 
 // ============================================================
 // DATOS Y STORAGE
 // ============================================================
-function load(k, def) { try { return JSON.parse(localStorage.getItem(k)) || def; } catch { return def; } }
+function load(k, def) { try { return JSON.parse(localStorage.getItem(k)) || def; } catch(e) { return def; } }
 function save(k, v) { localStorage.setItem(k, JSON.stringify(v)); }
-let clientes = load('mc2_clientes', []);
-let perfil = load('mc2_perfil', { nombre:'Laura Castillo', tel:'', email:'', meta:0, clave:'' });
-let tabActual = 'todos';
-let history = ['s-home'];
-let clienteIdx = null;
-let polizaEditandoIdx = null;
+var clientes = load('mc2_clientes', []);
+var perfil = load('mc2_perfil', { nombre:'Laura Castillo', tel:'', email:'', meta:0, clave:'' });
+var tabActual = 'todos';
+var history = ['s-home'];
+var clienteIdx = null;
+var polizaEditandoIdx = null;
 
 // ============================================================
 // NAVEGACIÓN
 // ============================================================
-const navMap = { 's-home':0, 's-clientes':1, 's-alertas':2, 's-cobranza':3 };
+var navMap = { 's-home':0, 's-clientes':1, 's-alertas':2, 's-cobranza':3 };
 function goScreen(id) {
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
   document.getElementById(id).classList.add('active');
   if (history[history.length-1] !== id) history.push(id);
-  document.querySelectorAll('.nav-btn').forEach((b,i)=>b.classList.toggle('active', navMap[id]===i));
+  document.querySelectorAll('.nav-btn').forEach(function(b,i){b.classList.toggle('active', navMap[id]===i);});
   window.scrollTo(0,0);
   if (id==='s-home') renderHome();
   if (id==='s-clientes') { renderLista(clientes); document.getElementById('buscador').value=''; }
   if (id==='s-alertas') renderAlertas();
   if (id==='s-cobranza') renderCobranza();
   if (id==='s-perfil') cargarPerfil();
-  if (id==='s-nuevo-cliente') { limpiarFormularioNuevo(); }
+  if (id==='s-nuevo-cliente') limpiarFormularioNuevo();
 }
 function goBack() {
   history.pop();
-  const prev = history[history.length-1] || 's-home';
+  var prev = history[history.length-1] || 's-home';
   history.pop();
   goScreen(prev);
 }
@@ -651,43 +665,43 @@ function goBack() {
 // ============================================================
 // UTILS
 // ============================================================
-function ini(n) { return (n||'?').split(' ').slice(0,2).map(p=>p[0]||'').join('').toUpperCase()||'?'; }
+function ini(n) { return (n||'?').split(' ').slice(0,2).map(function(p){return p[0]||'';}).join('').toUpperCase()||'?'; }
 function col(i) { return COLORES[Math.abs(i||0) % COLORES.length]; }
 function colT(i) { return COLORES_TEXT[Math.abs(i||0) % COLORES_TEXT.length]; }
 function diasHasta(fecha) { return Math.round((new Date(fecha) - new Date().setHours(0,0,0,0)) / 86400000); }
 function estadoPoliza(p) {
   if (!p.vigencia) return 'ok';
-  const d = diasHasta(p.vigencia);
+  var d = diasHasta(p.vigencia);
   if (d < 0) return 'venc';
   if (d <= 30) return 'prox';
   return 'ok';
 }
 function estadoCliente(c) {
   if (!(c.polizas||[]).length) return 'ok';
-  if (c.polizas.some(p=>estadoPoliza(p)==='venc')) return 'venc';
-  if (c.polizas.some(p=>estadoPoliza(p)==='prox')) return 'prox';
+  if (c.polizas.some(function(p){return estadoPoliza(p)==='venc';})) return 'venc';
+  if (c.polizas.some(function(p){return estadoPoliza(p)==='prox';})) return 'prox';
   return 'ok';
 }
 function badgeHTML(e) {
-  const m = { ok:'<span class="badge ok">Al día</span>', venc:'<span class="badge venc">Vencido</span>', prox:'<span class="badge prox">Por renovar</span>' };
+  var m = { ok:'<span class="badge ok">Al día</span>', venc:'<span class="badge venc">Vencido</span>', prox:'<span class="badge prox">Por renovar</span>' };
   return m[e] || '';
 }
 function polizaBadge(e) {
-  const m = { ok:'<span class="badge ok">Vigente</span>', venc:'<span class="badge venc">Vencida</span>', prox:'<span class="badge prox">Por renovar</span>' };
+  var m = { ok:'<span class="badge ok">Vigente</span>', venc:'<span class="badge venc">Vencida</span>', prox:'<span class="badge prox">Por renovar</span>' };
   return m[e] || '';
 }
 function iconTipo(t) {
-  const m = {'Automóvil':'🚗','Vida':'❤️','Gastos Médicos Mayores':'🏥','Hogar':'🏠','Negocio':'🏢','Accidentes Personales':'🛡️','Retiro / Ahorro':'💰'};
+  var m = {'Automóvil':'🚗','Vida':'❤️','Gastos Médicos Mayores':'🏥','Hogar':'🏠','Negocio':'🏢','Accidentes Personales':'🛡️','Retiro / Ahorro':'💰'};
   return m[t]||'📋';
 }
-const meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
-const hoy = new Date();
+var meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+var hoy = new Date();
 document.getElementById('h-fecha').textContent = hoy.getDate()+' de '+meses[hoy.getMonth()]+' '+hoy.getFullYear();
 document.getElementById('cobro-mes').textContent = meses[hoy.getMonth()]+' '+hoy.getFullYear();
 function toast(msg) {
-  const t = document.getElementById('toast');
+  var t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'), 2500);
+  setTimeout(function(){t.classList.remove('show');}, 2500);
 }
 
 // ============================================================
@@ -695,89 +709,88 @@ function toast(msg) {
 // ============================================================
 function renderHome() {
   perfil = load('mc2_perfil', perfil);
-  const totalP = clientes.reduce((a,c)=>a+(c.polizas||[]).length, 0);
-  const vencidas = clientes.reduce((a,c)=>a+(c.polizas||[]).filter(p=>estadoPoliza(p)==='venc').length, 0);
-  const prox = clientes.reduce((a,c)=>a+(c.polizas||[]).filter(p=>estadoPoliza(p)==='prox').length, 0);
+  var totalP = clientes.reduce(function(a,c){return a+(c.polizas||[]).length;}, 0);
+  var vencidas = clientes.reduce(function(a,c){return a+(c.polizas||[]).filter(function(p){return estadoPoliza(p)==='venc';}).length;}, 0);
+  var prox = clientes.reduce(function(a,c){return a+(c.polizas||[]).filter(function(p){return estadoPoliza(p)==='prox';}).length;}, 0);
   document.getElementById('h-nc').textContent = clientes.length;
   document.getElementById('h-np').textContent = totalP;
   document.getElementById('h-nv').textContent = vencidas;
   document.getElementById('h-nr').textContent = prox;
-  const alertas = getAlertas().filter(a=>a.tipo==='rojo');
-  const el = document.getElementById('home-alertas');
+  var alertas = getAlertas().filter(function(a){return a.tipo==='rojo';});
+  var el = document.getElementById('home-alertas');
   if (!alertas.length) {
     el.innerHTML = '<div style="padding:16px;background:#fff;border-top:1px solid var(--border);border-bottom:1px solid var(--border);text-align:center;color:var(--mid);font-size:13px;">✅ Sin pendientes urgentes</div>';
   } else {
-    el.innerHTML = alertas.slice(0,3).map(a=>`
-      <div class="alerta-item" onclick="verCliente(${a.idx})">
-        <div class="alerta-dot" style="background:var(--red);"></div>
-        <div><div class="alerta-txt">${a.txt}</div><div class="alerta-sub">${a.sub}</div></div>
-      </div>`).join('');
+    el.innerHTML = alertas.slice(0,3).map(function(a){return '<div class="alerta-item" onclick="verCliente('+a.idx+')">' +
+        '<div class="alerta-dot" style="background:var(--red);"></div>' +
+        '<div><div class="alerta-txt">'+a.txt+'</div><div class="alerta-sub">'+a.sub+'</div></div>' +
+      '</div>';}).join('');
   }
-  const el2 = document.getElementById('home-clientes');
-  const rec = [...clientes].reverse().slice(0,3);
+  var el2 = document.getElementById('home-clientes');
+  var rec = clientes.slice().reverse().slice(0,3);
   if (!rec.length) {
     el2.innerHTML = '<div style="padding:16px;text-align:center;color:var(--mid);font-size:13px;">Sin clientes aún</div>';
   } else {
-    el2.innerHTML = rec.map(c=>{
-      const idx = clientes.indexOf(c);
-      const e = estadoCliente(c);
-      return `<div class="cliente-card" onclick="verCliente(${idx})">
-        <div class="av" style="background:${col(idx)};color:${colT(idx)}">${ini(c.nombre)}</div>
-        <div class="info"><div class="c-nombre">${c.nombre}</div><div class="c-det">${(c.polizas||[]).map(p=>p.tipo).join(' · ')||'Sin pólizas'}</div></div>
-        ${badgeHTML(e)}
-      </div>`;
+    el2.innerHTML = rec.map(function(c){
+      var idx = clientes.indexOf(c);
+      var e = estadoCliente(c);
+      return '<div class="cliente-card" onclick="verCliente('+idx+')">' +
+        '<div class="av" style="background:'+col(idx)+';color:'+colT(idx)+'">'+ini(c.nombre)+'</div>' +
+        '<div class="info"><div class="c-nombre">'+c.nombre+'</div><div class="c-det">'+((c.polizas||[]).map(function(p){return p.tipo;}).join(' · ')||'Sin pólizas')+'</div></div>' +
+        badgeHTML(e) +
+        '</div>';
     }).join('');
   }
-  document.getElementById('nav-dot').style.display = getAlertas().filter(a=>a.tipo==='rojo').length ? 'block':'none';
+  document.getElementById('nav-dot').style.display = getAlertas().filter(function(a){return a.tipo==='rojo';}).length ? 'block':'none';
 }
 
 // ============================================================
 // ALERTAS
 // ============================================================
 function getAlertas() {
-  const alertas = [];
-  clientes.forEach((c,idx)=>{
+  var alertas = [];
+  clientes.forEach(function(c, idx){
     if (c.nac) {
-      const n = new Date(c.nac);
-      const cumple = new Date(hoy.getFullYear(), n.getMonth(), n.getDate());
+      var n = new Date(c.nac);
+      var cumple = new Date(hoy.getFullYear(), n.getMonth(), n.getDate());
       if (cumple < hoy) cumple.setFullYear(hoy.getFullYear()+1);
-      const d = Math.round((cumple-hoy)/86400000);
-      if (d<=7) alertas.push({ txt:`🎂 Cumpleaños de <b>${c.nombre}</b> en ${d===0?'HOY':d+' días'}`, sub:'Envía un mensaje de felicitación', tipo:d<=2?'rojo':'naranja', idx });
+      var d = Math.round((cumple-hoy)/86400000);
+      if (d<=7) alertas.push({ txt:'🎂 Cumpleaños de <b>'+c.nombre+'</b> en '+(d===0?'HOY':d+' días'), sub:'Envía un mensaje de felicitación', tipo:d<=2?'rojo':'naranja', idx:idx });
     }
-    (c.polizas||[]).forEach(p=>{
+    (c.polizas||[]).forEach(function(p){
       if (!p.vigencia) return;
-      const d = diasHasta(p.vigencia);
-      if (d<0) alertas.push({ txt:`<b>${c.nombre}</b> — Póliza ${p.tipo} venció hace ${Math.abs(d)} días`, sub:`${p.num||''} · ${p.aseg||''} · Renovar urgente`, tipo:'rojo', idx });
-      else if (d<=30) alertas.push({ txt:`<b>${c.nombre}</b> — Póliza ${p.tipo} vence en ${d} días`, sub:`${p.num||''} · ${p.aseg||''}`, tipo:d<=7?'rojo':'naranja', idx });
+      var d = diasHasta(p.vigencia);
+      if (d<0) alertas.push({ txt:'<b>'+c.nombre+'</b> — Póliza '+p.tipo+' venció hace '+Math.abs(d)+' días', sub:(p.num||'')+' · '+(p.aseg||'')+' · Renovar urgente', tipo:'rojo', idx:idx });
+      else if (d<=30) alertas.push({ txt:'<b>'+c.nombre+'</b> — Póliza '+p.tipo+' vence en '+d+' días', sub:(p.num||'')+' · '+(p.aseg||''), tipo:d<=7?'rojo':'naranja', idx:idx });
     });
   });
   return alertas;
 }
 function renderAlertas() {
-  const alertas = getAlertas();
-  const el = document.getElementById('alertas-content');
+  var alertas = getAlertas();
+  var el = document.getElementById('alertas-content');
   if (!alertas.length) {
     el.innerHTML = '<div class="empty"><div class="ico">🎉</div><p>¡Sin alertas!<br>Todos tus clientes están al día.</p></div>';
     return;
   }
-  const rojas = alertas.filter(a=>a.tipo==='rojo');
-  const naranjas = alertas.filter(a=>a.tipo==='naranja');
-  let html = '';
+  var rojas = alertas.filter(function(a){return a.tipo==='rojo';});
+  var naranjas = alertas.filter(function(a){return a.tipo==='naranja';});
+  var html = '';
   if (rojas.length) {
-    html += `<div style="padding:12px 16px 6px;font-size:11px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:.5px;">🔴 Urgente</div>`;
-    html += rojas.map(a=>`<div class="alerta-item" onclick="verCliente(${a.idx})">
-      <div class="alerta-dot" style="background:var(--red);"></div>
-      <div class="alerta-txt" style="flex:1;">${a.txt}<div class="alerta-sub">${a.sub}</div></div>
-      <button class="av-btn" style="background:var(--red-bg);color:var(--red);" onclick="event.stopPropagation();verCliente(${a.idx})">Ver</button>
-    </div>`).join('');
+    html += '<div style="padding:12px 16px 6px;font-size:11px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:.5px;">🔴 Urgente</div>';
+    html += rojas.map(function(a){return '<div class="alerta-item" onclick="verCliente('+a.idx+')">' +
+      '<div class="alerta-dot" style="background:var(--red);"></div>' +
+      '<div class="alerta-txt" style="flex:1;">'+a.txt+'<div class="alerta-sub">'+a.sub+'</div></div>' +
+      '<button class="av-btn" style="background:var(--red-bg);color:var(--red);" onclick="event.stopPropagation();verCliente('+a.idx+')">Ver</button>' +
+    '</div>';}).join('');
   }
   if (naranjas.length) {
-    html += `<div style="padding:12px 16px 6px;font-size:11px;font-weight:700;color:var(--orange);text-transform:uppercase;letter-spacing:.5px;margin-top:8px;">🟠 Próximo</div>`;
-    html += naranjas.map(a=>`<div class="alerta-item" onclick="verCliente(${a.idx})">
-      <div class="alerta-dot" style="background:var(--orange);"></div>
-      <div class="alerta-txt" style="flex:1;">${a.txt}<div class="alerta-sub">${a.sub}</div></div>
-      <button class="av-btn" style="background:var(--orange-bg);color:var(--orange);" onclick="event.stopPropagation();verCliente(${a.idx})">Ver</button>
-    </div>`).join('');
+    html += '<div style="padding:12px 16px 6px;font-size:11px;font-weight:700;color:var(--orange);text-transform:uppercase;letter-spacing:.5px;margin-top:8px;">🟠 Próximo</div>';
+    html += naranjas.map(function(a){return '<div class="alerta-item" onclick="verCliente('+a.idx+')">' +
+      '<div class="alerta-dot" style="background:var(--orange);"></div>' +
+      '<div class="alerta-txt" style="flex:1;">'+a.txt+'<div class="alerta-sub">'+a.sub+'</div></div>' +
+      '<button class="av-btn" style="background:var(--orange-bg);color:var(--orange);" onclick="event.stopPropagation();verCliente('+a.idx+')">Ver</button>' +
+    '</div>';}).join('');
   }
   el.innerHTML = html;
   document.getElementById('nav-dot').style.display = rojas.length?'block':'none';
@@ -788,32 +801,32 @@ function renderAlertas() {
 // ============================================================
 function renderLista(lista) {
   document.getElementById('sub-clientes').textContent = clientes.length+' cliente'+(clientes.length!==1?'s':'');
-  const el = document.getElementById('lista-clientes');
+  var el = document.getElementById('lista-clientes');
   if (!lista.length) {
     el.innerHTML = '<div class="empty"><div class="ico">📂</div><p>Sin clientes aún.<br>Toca <b>CSV</b> para importar tu cartera<br>o <b>+</b> para agregar manualmente.</p></div>';
     return;
   }
-  el.innerHTML = lista.map(c=>{
-    const idx = clientes.indexOf(c);
-    const e = estadoCliente(c);
-    const prima = (c.polizas||[]).reduce((a,p)=>a+(parseFloat(p.prima)||0),0);
-    return `<div class="cliente-card" onclick="verCliente(${idx})">
-      <div class="av" style="background:${col(idx)};color:${colT(idx)}">${ini(c.nombre)}</div>
-      <div class="info">
-        <div class="c-nombre">${c.nombre}</div>
-        <div class="c-det">${(c.polizas||[]).map(p=>p.tipo).join(' · ')||'Sin pólizas'} · $${prima.toLocaleString()}/año</div>
-      </div>
-      ${badgeHTML(e)}
-    </div>`;
+  el.innerHTML = lista.map(function(c){
+    var idx = clientes.indexOf(c);
+    var e = estadoCliente(c);
+    var prima = (c.polizas||[]).reduce(function(a,p){return a+(parseFloat(p.prima)||0);},0);
+    return '<div class="cliente-card" onclick="verCliente('+idx+')">' +
+      '<div class="av" style="background:'+col(idx)+';color:'+colT(idx)+'">'+ini(c.nombre)+'</div>' +
+      '<div class="info">' +
+        '<div class="c-nombre">'+c.nombre+'</div>' +
+        '<div class="c-det">'+((c.polizas||[]).map(function(p){return p.tipo;}).join(' · ')||'Sin pólizas')+' · $'+prima.toLocaleString()+'/año</div>' +
+      '</div>' +
+      badgeHTML(e) +
+      '</div>';
   }).join('');
 }
 function filtrar(q) {
-  let lista = q ? clientes.filter(c=>(c.nombre||'').toLowerCase().includes(q.toLowerCase())) : clientes;
-  if (tabActual!=='todos') lista = lista.filter(c=>estadoCliente(c)===tabActual);
+  var lista = q ? clientes.filter(function(c){return (c.nombre||'').toLowerCase().includes(q.toLowerCase());}) : clientes;
+  if (tabActual!=='todos') lista = lista.filter(function(c){return estadoCliente(c)===tabActual;});
   renderLista(lista);
 }
 function setTab(btn, tab) {
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
   btn.classList.add('active');
   tabActual = tab;
   filtrar(document.getElementById('buscador').value);
@@ -824,62 +837,61 @@ function setTab(btn, tab) {
 // ============================================================
 function verCliente(idx) {
   clienteIdx = idx;
-  const c = clientes[idx];
+  var c = clientes[idx];
   if (!c) return;
   document.getElementById('det-titulo').textContent = c.nombre;
-  const prima = (c.polizas||[]).reduce((a,p)=>a+(parseFloat(p.prima)||0),0);
-  const e = estadoCliente(c);
-  let html = `
-    <div class="det-hero">
-      <div class="det-av" style="background:${col(idx)};color:${colT(idx)}">${ini(c.nombre)}</div>
-      <div>
-        <div class="det-nombre">${c.nombre}</div>
-        <div class="det-sub">${c.tel||'Sin teléfono'} · ${c.email||'Sin correo'}</div>
-        <div style="margin-top:6px;">${badgeHTML(e)}</div>
-      </div>
-    </div>
-    <div class="acciones">
-      ${c.tel ? `<button class="ac-btn call" onclick="window.location='tel:${c.tel}'"><span class="ico">📞</span>Llamar</button>` : ''}
-      ${c.tel ? `<button class="ac-btn whats" onclick="abrirWhatsApp(${idx})"><span class="ico">💬</span>WhatsApp</button>` : ''}
-      ${c.email ? `<button class="ac-btn mail" onclick="abrirEmail(${idx})"><span class="ico">✉️</span>Correo</button>` : ''}
-    </div>
-    <div class="seccion">Datos del cliente</div>
-    <div class="info-card">
-      ${c.rfc?`<div class="info-row"><span class="info-k">RFC</span><span class="info-v">${c.rfc}</span></div>`:''}
-      ${c.nac?`<div class="info-row"><span class="info-k">Nacimiento</span><span class="info-v">${c.nac}</span></div>`:''}
-      ${c.dir?`<div class="info-row"><span class="info-k">Dirección</span><span class="info-v" style="font-size:11px;">${c.dir}</span></div>`:''}
-      <div class="info-row"><span class="info-k">Prima total</span><span class="info-v" style="color:var(--green);font-weight:800;">$${prima.toLocaleString()}/año</span></div>
-      ${c.notas?`<div class="info-row"><span class="info-k">Notas</span><span class="info-v" style="font-size:12px;">${c.notas}</span></div>`:''}
-    </div>
-    <div class="seccion" style="display:flex;justify-content:space-between;align-items:center;">
-      <span>Pólizas (${(c.polizas||[]).length})</span>
-      <button onclick="goScreen('s-nueva-poliza')" style="background:var(--dark);color:#fff;border:none;border-radius:6px;padding:4px 10px;font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:700;cursor:pointer;">+ Agregar</button>
-    </div>
-    <div style="height:6px;"></div>`;
+  var prima = (c.polizas||[]).reduce(function(a,p){return a+(parseFloat(p.prima)||0);},0);
+  var e = estadoCliente(c);
+  var html = '<div class="det-hero">' +
+    '<div class="det-av" style="background:'+col(idx)+';color:'+colT(idx)+'">'+ini(c.nombre)+'</div>' +
+    '<div>' +
+      '<div class="det-nombre">'+c.nombre+'</div>' +
+      '<div class="det-sub">'+(c.tel||'Sin teléfono')+' · '+(c.email||'Sin correo')+'</div>' +
+      '<div style="margin-top:6px;">'+badgeHTML(e)+'</div>' +
+    '</div>' +
+  '</div>' +
+  '<div class="acciones">' +
+    (c.tel ? '<button class="ac-btn call" onclick="llamar(\''+c.tel+'\')"><span class="ico">📞</span>Llamar</button>' : '') +
+    (c.tel ? '<button class="ac-btn whats" onclick="abrirWhatsApp('+idx+')"><span class="ico">💬</span>WhatsApp</button>' : '') +
+    (c.email ? '<button class="ac-btn mail" onclick="abrirEmail('+idx+')"><span class="ico">✉️</span>Correo</button>' : '') +
+  '</div>' +
+  '<div class="seccion">Datos del cliente</div>' +
+  '<div class="info-card">' +
+    (c.rfc?'<div class="info-row"><span class="info-k">RFC</span><span class="info-v">'+c.rfc+'</span></div>':'') +
+    (c.nac?'<div class="info-row"><span class="info-k">Nacimiento</span><span class="info-v">'+c.nac+'</span></div>':'') +
+    (c.dir?'<div class="info-row"><span class="info-k">Dirección</span><span class="info-v" style="font-size:11px;">'+c.dir+'</span></div>':'') +
+    '<div class="info-row"><span class="info-k">Prima total</span><span class="info-v" style="color:var(--green);font-weight:800;">$'+prima.toLocaleString()+'/año</span></div>' +
+    (c.notas?'<div class="info-row"><span class="info-k">Notas</span><span class="info-v" style="font-size:12px;">'+c.notas+'</span></div>':'') +
+  '</div>' +
+  '<div class="seccion" style="display:flex;justify-content:space-between;align-items:center;">' +
+    '<span>Pólizas ('+(c.polizas||[]).length+')</span>' +
+    '<button onclick="goScreen(\'s-nueva-poliza\')" style="background:var(--dark);color:#fff;border:none;border-radius:6px;padding:4px 10px;font-family:\'Plus Jakarta Sans\',sans-serif;font-size:11px;font-weight:700;cursor:pointer;">+ Agregar</button>' +
+  '</div>' +
+  '<div style="height:6px;"></div>';
   if (!(c.polizas||[]).length) {
     html += '<div style="text-align:center;padding:20px;color:var(--mid);font-size:13px;">Sin pólizas. Toca + Agregar.</div>';
   } else {
-    html += (c.polizas||[]).map((p,pi)=>{
-      const ep = estadoPoliza(p);
-      const dias = p.vigencia ? diasHasta(p.vigencia) : null;
-      const diasTxt = dias===null ? '' : dias<0 ? `Venció hace ${Math.abs(dias)} días` : dias===0 ? 'Vence HOY' : `Vence en ${dias} días`;
-      return `<div class="poliza-card">
-        <div class="poliza-head">
-          <div class="poliza-tipo">${iconTipo(p.tipo)} ${p.tipo}</div>
-          ${polizaBadge(ep)}
-        </div>
-        <div class="poliza-body">
-          <div class="info-row"><span class="info-k">No. Póliza</span><span class="info-v" style="font-family:monospace;font-size:12px;">${p.num||'—'}</span></div>
-          <div class="info-row"><span class="info-k">Aseguradora</span><span class="info-v">${p.aseg||'—'}</span></div>
-          <div class="info-row"><span class="info-k">Prima anual</span><span class="info-v" style="color:var(--orange);font-weight:800;">$${(parseFloat(p.prima)||0).toLocaleString()}</span></div>
-          <div class="info-row"><span class="info-k">Vencimiento</span><span class="info-v" style="color:${ep==='venc'?'var(--red)':ep==='prox'?'var(--orange)':'var(--green)'};">${p.vigencia||'—'}<br><span style="font-size:10px;font-weight:400;">${diasTxt}</span></span></div>
-          ${p.coberturas?`<div class="info-row"><span class="info-k">Coberturas</span><span class="info-v" style="font-size:11px;">${p.coberturas}</span></div>`:''}
-        </div>
-        <div style="display:flex;gap:8px;margin:10px 14px 14px;">
-          <button onclick="enviarAvisoWA(${idx},${pi})" style="flex:1;padding:12px 6px;background:#25D366;color:#fff;border:none;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">💬 WhatsApp</button>
-          <button onclick="enviarAvisoEmail(${idx},${pi})" style="flex:1;padding:12px 6px;background:#1a73e8;color:#fff;border:none;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">✉️ Gmail</button>
-        </div>
-      </div>`;
+    html += (c.polizas||[]).map(function(p, pi){
+      var ep = estadoPoliza(p);
+      var dias = p.vigencia ? diasHasta(p.vigencia) : null;
+      var diasTxt = dias===null ? '' : dias<0 ? 'Venció hace '+Math.abs(dias)+' días' : dias===0 ? 'Vence HOY' : 'Vence en '+dias+' días';
+      return '<div class="poliza-card">' +
+        '<div class="poliza-head">' +
+          '<div class="poliza-tipo">'+iconTipo(p.tipo)+' '+p.tipo+'</div>' +
+          polizaBadge(ep) +
+        '</div>' +
+        '<div class="poliza-body">' +
+          '<div class="info-row"><span class="info-k">No. Póliza</span><span class="info-v" style="font-family:monospace;font-size:12px;">'+(p.num||'—')+'</span></div>' +
+          '<div class="info-row"><span class="info-k">Aseguradora</span><span class="info-v">'+(p.aseg||'—')+'</span></div>' +
+          '<div class="info-row"><span class="info-k">Prima anual</span><span class="info-v" style="color:var(--orange);font-weight:800;">$'+(parseFloat(p.prima)||0).toLocaleString()+'</span></div>' +
+          '<div class="info-row"><span class="info-k">Vencimiento</span><span class="info-v" style="color:'+(ep==='venc'?'var(--red)':ep==='prox'?'var(--orange)':'var(--green)')+';">'+(p.vigencia||'—')+'<br><span style="font-size:10px;font-weight:400;">'+diasTxt+'</span></span></div>' +
+          (p.coberturas?'<div class="info-row"><span class="info-k">Coberturas</span><span class="info-v" style="font-size:11px;">'+p.coberturas+'</span></div>':'') +
+        '</div>' +
+        '<div style="display:flex;gap:8px;margin:10px 14px 14px;">' +
+          '<button onclick="enviarAvisoWA('+idx+','+pi+')" style="flex:1;padding:12px 6px;background:#25D366;color:#fff;border:none;border-radius:10px;font-family:\'Plus Jakarta Sans\',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">💬 WhatsApp</button>' +
+          '<button onclick="enviarAvisoEmail('+idx+','+pi+')" style="flex:1;padding:12px 6px;background:#1a73e8;color:#fff;border:none;border-radius:10px;font-family:\'Plus Jakarta Sans\',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">✉️ Gmail</button>' +
+        '</div>' +
+      '</div>';
     }).join('');
   }
   html += '<div style="height:10px;"></div>';
@@ -888,28 +900,44 @@ function verCliente(idx) {
 }
 
 // ============================================================
-// WHATSAPP / CORREO
+// WHATSAPP / CORREO / TEL — usa puentes nativos en la APK
 // ============================================================
-function enviarAvisoWA(idx, pi) {
-  const c = clientes[idx], p = c.polizas[pi];
-  if (!c.tel) { toast('Sin teléfono registrado'); return; }
-  const msj = buildMsj(c, p);
-  const tel = c.tel.replace(/\D/g,'');
-  window.open('https://wa.me/52' + tel + '?text=' + encodeURIComponent(msj), '_blank');
+function abrirURLExterna(url) {
+  if (window.isMiCarteraApp && window.nativeOpenURL) { window.nativeOpenURL(url); return; }
+  if (url.indexOf('mailto:')===0 || url.indexOf('tel:')===0) { window.location.href = url; return; }
+  window.open(url, '_blank');
 }
-function enviarAvisoEmail(idx, pi) {
-  const c = clientes[idx], p = c.polizas[pi];
-  if (!c.email) { toast('Sin correo registrado'); return; }
-  const msj = buildMsj(c, p);
-  const dias = p.vigencia ? diasHasta(p.vigencia) : null;
-  const estadoTxt = dias===null ? 'próxima a vencer' : dias < 0 ? 'venció hace ' + Math.abs(dias) + ' días' : dias === 0 ? 'vence HOY' : 'vence en ' + dias + ' días';
-  const asunto = 'Aviso póliza ' + p.tipo + ' - ' + estadoTxt;
-  const url = 'mailto:' + c.email + '?subject=' + encodeURIComponent(asunto) + '&body=' + encodeURIComponent(msj);
+function abrirWhatsAppURL(url) {
+  if (window.isMiCarteraApp && window.nativeOpenWhatsApp) { window.nativeOpenWhatsApp(url); return; }
+  window.open(url, '_blank');
+}
+function abrirEmailURL(url) {
+  if (window.isMiCarteraApp && window.nativeOpenEmail) { window.nativeOpenEmail(url); return; }
   window.location.href = url;
 }
+
+function enviarAvisoWA(idx, pi) {
+  var c = clientes[idx], p = c.polizas[pi];
+  if (!c.tel) { toast('Sin teléfono registrado'); return; }
+  var msj = buildMsj(c, p);
+  if (!confirm('Enviar este mensaje a ' + c.nombre + ' por WhatsApp?\n\n' + msj.substring(0,200) + (msj.length>200?'...':''))) return;
+  var tel = c.tel.replace(/\D/g,'');
+  abrirWhatsAppURL('https://wa.me/52' + tel + '?text=' + encodeURIComponent(msj));
+}
+function enviarAvisoEmail(idx, pi) {
+  var c = clientes[idx], p = c.polizas[pi];
+  if (!c.email) { toast('Sin correo registrado'); return; }
+  var msj = buildMsj(c, p);
+  var dias = p.vigencia ? diasHasta(p.vigencia) : null;
+  var estadoTxt = dias===null ? 'próxima a vencer' : dias < 0 ? 'venció hace ' + Math.abs(dias) + ' días' : dias === 0 ? 'vence HOY' : 'vence en ' + dias + ' días';
+  var asunto = 'Aviso póliza ' + p.tipo + ' - ' + estadoTxt;
+  if (!confirm('Enviar correo a ' + c.email + '?\n\nAsunto: ' + asunto + '\n\n' + msj.substring(0,150) + (msj.length>150?'...':''))) return;
+  var url = 'mailto:' + c.email + '?subject=' + encodeURIComponent(asunto) + '&body=' + encodeURIComponent(msj);
+  abrirEmailURL(url);
+}
 function buildMsj(c, p) {
-  const dias = p.vigencia ? diasHasta(p.vigencia) : null;
-  const estadoTxt = dias===null ? 'próxima a vencer' : dias < 0 ? 'venció hace ' + Math.abs(dias) + ' días' : dias === 0 ? 'vence HOY' : 'vence en ' + dias + ' días (' + p.vigencia + ')';
+  var dias = p.vigencia ? diasHasta(p.vigencia) : null;
+  var estadoTxt = dias===null ? 'próxima a vencer' : dias < 0 ? 'venció hace ' + Math.abs(dias) + ' días' : dias === 0 ? 'vence HOY' : 'vence en ' + dias + ' días (' + p.vigencia + ')';
   return 'Hola ' + c.nombre.split(' ')[0] + ', tu póliza de ' + p.tipo
     + ' ' + estadoTxt + '.\nPóliza: ' + (p.num||'N/A')
     + '\nAseguradora: ' + (p.aseg||'N/A')
@@ -917,38 +945,80 @@ function buildMsj(c, p) {
     + '\nContáctame para renovarla. Saludos, tu agente de seguros.';
 }
 function abrirWhatsApp(idx) {
-  const c = clientes[idx];
-  const msj = 'Hola ' + c.nombre.split(' ')[0] + ', soy tu agente de seguros. ¿En qué te puedo ayudar?';
-  const tel = c.tel.replace(/\D/g,'');
-  window.open('https://wa.me/52' + tel + '?text=' + encodeURIComponent(msj), '_blank');
+  var c = clientes[idx];
+  if (!c.tel) { toast('Sin teléfono'); return; }
+  var msj = 'Hola ' + c.nombre.split(' ')[0] + ', soy tu agente de seguros. ¿En qué te puedo ayudar?';
+  var tel = c.tel.replace(/\D/g,'');
+  abrirWhatsAppURL('https://wa.me/52' + tel + '?text=' + encodeURIComponent(msj));
 }
 function abrirEmail(idx) {
-  window.location.href = 'mailto:' + clientes[idx].email;
+  if (!clientes[idx].email) { toast('Sin correo'); return; }
+  abrirEmailURL('mailto:' + clientes[idx].email);
+}
+function llamar(tel) {
+  abrirURLExterna('tel:' + tel.replace(/\D/g,''));
+}
+
+// ============================================================
+// NOTIFICACIONES
+// ============================================================
+function programarNotificaciones() {
+  if (!window.nativeScheduleNotifications) return;
+  var notifs = [];
+  var ahora = new Date();
+  clientes.forEach(function(c){
+    (c.polizas||[]).forEach(function(p){
+      if (!p.vigencia) return;
+      var venc = new Date(p.vigencia + 'T09:00:00');
+      var t30 = new Date(venc); t30.setDate(t30.getDate() - 30);
+      if (t30 > ahora) notifs.push({ date:t30.toISOString(), title:'📋 Póliza por renovar', body:c.nombre+' — '+p.tipo+' vence en 30 días ('+p.vigencia+')' });
+      var t7 = new Date(venc); t7.setDate(t7.getDate() - 7);
+      if (t7 > ahora) notifs.push({ date:t7.toISOString(), title:'⚠️ Póliza vence en 7 días', body:c.nombre+' — '+p.tipo+' ('+p.vigencia+')' });
+      if (venc > ahora) notifs.push({ date:venc.toISOString(), title:'🔴 Póliza vence HOY', body:c.nombre+' — '+p.tipo+'. Contáctalo para renovar.' });
+    });
+    if (c.nac) {
+      var n = new Date(c.nac + 'T09:00:00');
+      var cumple = new Date(ahora.getFullYear(), n.getMonth(), n.getDate(), 9, 0, 0, 0);
+      if (cumple < ahora) cumple.setFullYear(cumple.getFullYear() + 1);
+      notifs.push({ date:cumple.toISOString(), title:'🎂 Cumpleaños', body:c.nombre.split(' ')[0]+' cumple años hoy. Envíale una felicitación.' });
+    }
+  });
+  if (notifs.length) {
+    try { window.nativeScheduleNotifications(notifs); }
+    catch(e) { console.warn('No se pudieron programar:', e); }
+  }
+}
+function probarNotificacion() {
+  if (!window.nativeScheduleNotifications) {
+    toast('⚠️ Recompila la APK para activar notificaciones');
+    return;
+  }
+  var en30s = new Date(Date.now() + 30000).toISOString();
+  try {
+    window.nativeScheduleNotifications([{ date:en30s, title:'🔔 Prueba MiCartera', body:'Las notificaciones están funcionando!' }]);
+    toast('✅ Te llegará una notificación en 30 segundos');
+  } catch(e) { toast('Error: '+e.message); }
 }
 
 // ============================================================
 // LECTOR PDF — manda PDF directo a Claude
 // ============================================================
-async function leerPDF(input) {
-  const file = input.files[0];
+function leerPDF(input) {
+  var file = input.files[0];
   if (!file) return;
-  if (file.size > 30 * 1024 * 1024) {
-    setStatus('❌ PDF muy grande (max 30MB)', 'red');
-    return;
-  }
-
-  const btn = document.getElementById('pdf-btn');
+  if (file.size > 30 * 1024 * 1024) { setStatus('❌ PDF muy grande (max 30MB)', 'red'); return; }
+  var btn = document.getElementById('pdf-btn');
   btn.disabled = true;
   btn.style.opacity = 0.5;
   btn.textContent = '⏳ Procesando...';
   setStatus('Leyendo PDF...', 'orange');
   document.getElementById('pdf-result').classList.remove('show');
 
-  try {
-    const base64 = await fileToBase64(file);
+  fileToBase64(file).then(function(base64){
     setStatus('Analizando con Claude... (10-30s)', 'orange');
-    const datos = await extraerConClaude(base64);
-    const cuantos = llenarFormulario(datos);
+    return extraerConClaude(base64);
+  }).then(function(datos){
+    var cuantos = llenarFormulario(datos);
     if (cuantos > 0) {
       setStatus('✅ ' + cuantos + ' campo' + (cuantos!==1?'s':'') + ' extraído' + (cuantos!==1?'s':'') + ' correctamente', 'green');
       mostrarResultado(datos);
@@ -956,67 +1026,57 @@ async function leerPDF(input) {
     } else {
       setStatus('⚠️ No se encontraron datos en el PDF', 'red');
     }
-  } catch (err) {
+  }).catch(function(err){
     console.error(err);
     setStatus('❌ ' + (err.message || err), 'red');
     toast('Error al procesar PDF');
-  } finally {
+  }).then(function(){
     btn.disabled = false;
     btn.style.opacity = 1;
     btn.textContent = '📂 Seleccionar otro PDF';
     input.value = '';
-  }
+  });
 }
 
 function setStatus(msg, color) {
-  const el = document.getElementById('pdf-status');
+  var el = document.getElementById('pdf-status');
   el.textContent = msg;
   el.style.color = color === 'green' ? '#2d6a4f' : color === 'red' ? '#b5192a' : '#c8622a';
 }
 
 function fileToBase64(file) {
-  return new Promise((res, rej) => {
-    const r = new FileReader();
-    r.onload = () => res(r.result.split(',')[1]);
-    r.onerror = () => rej(new Error('No se pudo leer el archivo'));
+  return new Promise(function(res, rej){
+    var r = new FileReader();
+    r.onload = function(){ res(r.result.split(',')[1]); };
+    r.onerror = function(){ rej(new Error('No se pudo leer el archivo')); };
     r.readAsDataURL(file);
   });
 }
 
-async function extraerConClaude(base64) {
-  const systemPrompt =
+function extraerConClaude(base64) {
+  var systemPrompt =
     'Eres un experto en pólizas de seguros mexicanas (AXA, GNP, Qualitas, Mapfre, HDI, Metlife, Zurich, Allianz, Sura). ' +
     'Recibes el PDF completo de una póliza. Extrae los datos del ASEGURADO/CONTRATANTE/TITULAR únicamente, NUNCA de la aseguradora ni del agente. ' +
     'Devuelve EXCLUSIVAMENTE un objeto JSON válido (sin markdown, sin explicaciones, sin ```), con este esquema exacto:\n' +
     '{"nombre":"","rfc":"","tel":"","email":"","direccion":"","nacimiento":"","numPoliza":"","tipo":"","aseg":"","vigencia":"","prima":"","coberturas":""}\n\n' +
     'REGLAS ESTRICTAS:\n' +
-    '1. NOMBRE: del titular/contratante/asegurado, formato "Nombre(s) Apellido Apellido". Si dice "ASEGURADO:" o "CONTRATANTE:" busca debajo. Ignora "AXA SEGUROS, S.A. DE C.V.", "GRUPO NACIONAL PROVINCIAL", agentes ("Agente:", "Promotor:").\n' +
-    '2. RFC: del asegurado, 13 caracteres (4 letras + 6 dígitos + 3 alfanuméricos). NUNCA RFCs de aseguradoras (MTE440316E54, GNP9211244P0, ASE931116231, AXA920310953, QSA931209G49, MMA0501105X4, HDI0708205F3, MET860605G14, ZUR000110ER8). NUNCA RFCs que empiezan con AXA, GNP, ASE, QSA, MMA, HDI, MET, ZUR, ALL, SAS, HSB, BBV, BAN seguidos de números.\n' +
-    '3. TEL: del asegurado, 10 dígitos. NUNCA 800-XXXX, 01-800-XXX, 55-5169-XXXX (call centers de aseguradoras). Si hay varios, prefiere celular.\n' +
-    '4. EMAIL: del asegurado. NUNCA emails @axa.com, @gnp.com.mx, @qualitas.com.mx, @atencionclientes.\n' +
-    '5. DIRECCION: del asegurado, formato "Calle Número, Colonia, Ciudad, Estado". Junta todo en una línea.\n' +
-    '6. NACIMIENTO: YYYY-MM-DD. Si solo hay día/mes/año en español o como "DD/MM/AAAA", conviértelo. Ej: "15 de marzo de 1985" → "1985-03-15".\n' +
-    '7. NUMPOLIZA: número o clave de la póliza. Conserva guiones y formato.\n' +
-    '8. TIPO: exactamente uno de:\n' +
-    '   - "Automóvil" (auto, vehicular, autos, coche, camioneta)\n' +
-    '   - "Vida" (vida, vidaPlus, dotal de vida)\n' +
-    '   - "Gastos Médicos Mayores" (GMM, gastos médicos, plan médico, salud)\n' +
-    '   - "Hogar" (casa, vivienda, hogar)\n' +
-    '   - "Negocio" (empresa, comercial, pyme)\n' +
-    '   - "Accidentes Personales" (AP, accidentes)\n' +
-    '   - "Retiro / Ahorro" (retiro, ahorro, dotal)\n' +
-    '9. ASEG: aseguradora exactamente como aparece. Una de: AXA, GNP, Qualitas, Mapfre, HDI, Metlife, Zurich, Allianz, Sura. Si es otra (Inbursa, Banorte, El Potosí, Atlas, Monterrey...), pon "Otra".\n' +
-    '10. VIGENCIA: fecha FIN de la póliza en YYYY-MM-DD. Busca "Hasta", "Fin de vigencia", "Vencimiento", "Fin de cobertura". NO confundir con inicio.\n' +
-    '11. PRIMA: prima TOTAL ANUAL en pesos, número entero sin formato. Ej: $12,500.00 → 12500. Si solo hay prima neta + IVA, suma el total.\n' +
-    '12. COBERTURAS: lista corta separada por " | ". Ej: "RC bienes 3MDP | GMM 50K | Robo total".\n\n' +
-    'Si un dato NO está en el PDF, devuelve "" (string vacío). NUNCA INVENTES.';
+    '1. NOMBRE: del titular/contratante/asegurado. Ignora aseguradora y agente.\n' +
+    '2. RFC: del asegurado, 13 chars. Ignora MTE440316E54, GNP9211244P0, ASE931116231, AXA920310953, QSA931209G49, MMA0501105X4, HDI0708205F3, MET860605G14, ZUR000110ER8.\n' +
+    '3. TEL: del asegurado, 10 dígitos. Ignora 800-XXXX, 01-800-XXX (call centers).\n' +
+    '4. EMAIL: del asegurado. Ignora @axa.com, @gnp.com.mx, etc.\n' +
+    '5. DIRECCION: del asegurado, en una sola línea.\n' +
+    '6. NACIMIENTO: YYYY-MM-DD. "15 de marzo de 1985" → "1985-03-15".\n' +
+    '7. NUMPOLIZA: número de la póliza con guiones.\n' +
+    '8. TIPO: uno de: Automóvil, Vida, Gastos Médicos Mayores, Hogar, Negocio, Accidentes Personales, Retiro / Ahorro.\n' +
+    '9. ASEG: AXA, GNP, Qualitas, Mapfre, HDI, Metlife, Zurich, Allianz, Sura, o "Otra".\n' +
+    '10. VIGENCIA: fecha FIN (vencimiento) en YYYY-MM-DD.\n' +
+    '11. PRIMA: prima TOTAL ANUAL, número entero sin formato. $12,500.00 → 12500.\n' +
+    '12. COBERTURAS: lista corta separada por " | ".\n\n' +
+    'Si un dato NO está en el PDF, devuelve "" (vacío). NUNCA inventes.';
 
-  const resp = await fetch(PROXY_URL, {
+  return fetch(PROXY_URL, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'anthropic-version': '2023-06-01'
-    },
+    headers: { 'Content-Type': 'application/json', 'anthropic-version': '2023-06-01' },
     body: JSON.stringify({
       model: 'claude-opus-4-6',
       max_tokens: 1500,
@@ -1029,41 +1089,25 @@ async function extraerConClaude(base64) {
         ]
       }]
     })
-  });
-
-  if (!resp.ok) {
-    let errMsg;
-    try {
-      const j = await resp.json();
-      errMsg = j.error?.message || j.error || JSON.stringify(j).substring(0,200);
-    } catch {
-      errMsg = await resp.text();
+  }).then(function(resp){
+    if (!resp.ok) {
+      return resp.text().then(function(t){ throw new Error('API '+resp.status+': '+t.substring(0,200)); });
     }
-    throw new Error('API ' + resp.status + ': ' + (errMsg || 'sin detalle').substring(0,200));
-  }
-
-  const data = await resp.json();
-  const texto = data.content?.[0]?.text || '';
-  if (!texto) throw new Error('Respuesta vacía de Claude');
-
-  // Limpiar y parsear JSON
-  let limpio = texto.replace(/```json\s*|\s*```/gi, '').trim();
-  const m = limpio.match(/\{[\s\S]*\}/);
-  if (!m) throw new Error('No se encontró JSON en la respuesta');
-  let obj;
-  try {
-    obj = JSON.parse(m[0]);
-  } catch (e) {
-    throw new Error('JSON inválido: ' + e.message);
-  }
-  return normalizar(obj);
+    return resp.json();
+  }).then(function(data){
+    var texto = (data.content && data.content[0] && data.content[0].text) || '';
+    if (!texto) throw new Error('Respuesta vacía');
+    var limpio = texto.replace(/```json\s*|\s*```/gi, '').trim();
+    var m = limpio.match(/\{[\s\S]*\}/);
+    if (!m) throw new Error('No se encontró JSON');
+    var obj;
+    try { obj = JSON.parse(m[0]); } catch(e){ throw new Error('JSON inválido: '+e.message); }
+    return normalizar(obj);
+  });
 }
 
-// ============================================================
-// NORMALIZACIÓN — limpia los datos crudos antes de meterlos
-// ============================================================
 function normalizar(d) {
-  const out = {
+  var out = {
     nombre: norm(d.nombre),
     rfc: normRFC(d.rfc),
     tel: normTel(d.tel),
@@ -1075,35 +1119,32 @@ function normalizar(d) {
     aseg: normAseg(d.aseg || d.aseguradora),
     vigencia: normFecha(d.vigencia || d.vencimiento),
     prima: normPrima(d.prima),
-    coberturas: norm(d.coberturas),
+    coberturas: norm(d.coberturas)
   };
-  // Fallback: si no hay nacimiento pero hay RFC, derívalo
   if (!out.nacimiento && out.rfc) {
-    const f = nacimientoDeRFC(out.rfc);
+    var f = nacimientoDeRFC(out.rfc);
     if (f) out.nacimiento = f;
   }
   return out;
 }
-function norm(s) {
-  return (s || '').toString().trim().replace(/\s+/g, ' ');
-}
+function norm(s) { return (s || '').toString().trim().replace(/\s+/g, ' '); }
 function normRFC(s) {
   s = (s || '').toString().toUpperCase().trim().replace(/\s/g,'');
   if (!s) return '';
   if (RFC_ASEGURADORAS.has(s)) return '';
-  if (RFC_BAD_PREFIX.some(p => s.startsWith(p) && /^\d/.test(s.substring(p.length)))) return '';
+  for (var i=0; i<RFC_BAD_PREFIX.length; i++) {
+    var p = RFC_BAD_PREFIX[i];
+    if (s.indexOf(p)===0 && /^\d/.test(s.substring(p.length))) return '';
+  }
   if (!/^[A-ZÑ&]{3,4}\d{6}[A-Z\d]{2,3}$/.test(s)) return s.length >= 10 ? s : '';
   return s;
 }
 function normTel(s) {
   if (!s) return '';
-  let n = s.toString().replace(/\D/g,'');
-  // Quitar 800/01800
-  if (n.startsWith('01800') || n.startsWith('001800') || n.startsWith('800')) return '';
-  // Si empieza con 52 y tiene 12 dígitos, quita el 52
-  if (n.length === 12 && n.startsWith('52')) n = n.substring(2);
-  if (n.length === 13 && n.startsWith('521')) n = n.substring(3);
-  // Acepta 10 dígitos
+  var n = s.toString().replace(/\D/g,'');
+  if (n.indexOf('01800')===0 || n.indexOf('001800')===0 || (n.length===10 && n.indexOf('800')===0)) return '';
+  if (n.length === 12 && n.indexOf('52')===0) n = n.substring(2);
+  if (n.length === 13 && n.indexOf('521')===0) n = n.substring(3);
   if (n.length === 10) return n;
   if (n.length > 10) return n.substring(n.length-10);
   return '';
@@ -1112,103 +1153,88 @@ function normEmail(s) {
   if (!s) return '';
   s = s.toString().trim().toLowerCase();
   if (!/^\S+@\S+\.\S+$/.test(s)) return '';
-  const dominio = s.split('@')[1];
-  if (/(^|\.)(axa|gnp|qualitas|mapfre|hdi|metlife|zurich|allianz|sura|atencionclientes|seguros)\./.test('.'+dominio+'.')) return '';
+  if (/(^|\.)(axa|gnp|qualitas|mapfre|hdi|metlife|zurich|allianz|sura)\./.test('.'+s.split('@')[1]+'.')) return '';
   return s;
 }
 function normFecha(s) {
   if (!s) return '';
   s = s.toString().trim();
-  // YYYY-MM-DD ya bien
-  let m = s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  var m = s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
   if (m) return s;
-  // DD/MM/YYYY o DD-MM-YYYY
   m = s.match(/^(\d{1,2})[\/\-\. ](\d{1,2})[\/\-\. ](\d{4})$/);
   if (m) return m[3] + '-' + m[2].padStart(2,'0') + '-' + m[1].padStart(2,'0');
-  // DD/MM/YY
   m = s.match(/^(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{2})$/);
   if (m) {
-    const yy = parseInt(m[3]);
-    const yyyy = yy <= 30 ? 2000+yy : 1900+yy;
+    var yy = parseInt(m[3]);
+    var yyyy = yy <= 30 ? 2000+yy : 1900+yy;
     return yyyy + '-' + m[2].padStart(2,'0') + '-' + m[1].padStart(2,'0');
   }
-  // "15 de marzo de 1985"
-  const mesNum = {ene:'01',feb:'02',mar:'03',abr:'04',may:'05',jun:'06',jul:'07',ago:'08',sep:'09',oct:'10',nov:'11',dic:'12'};
+  var mesNum = {ene:'01',feb:'02',mar:'03',abr:'04',may:'05',jun:'06',jul:'07',ago:'08',sep:'09',oct:'10',nov:'11',dic:'12'};
   m = s.toLowerCase().match(/(\d{1,2})\s*(?:de\s+)?(ene|feb|mar|abr|may|jun|jul|ago|sep|oct|nov|dic)[a-z]*\s*(?:de\s+|del\s+)?(\d{4})/);
   if (m) return m[3] + '-' + mesNum[m[2]] + '-' + m[1].padStart(2,'0');
   return '';
 }
 function normPrima(s) {
   if (!s && s !== 0) return '';
-  let n = s.toString().replace(/[^\d.]/g,'');
+  var n = s.toString().replace(/[^\d.]/g,'');
   if (!n) return '';
-  const num = parseFloat(n);
+  var num = parseFloat(n);
   if (isNaN(num)) return '';
   return Math.round(num).toString();
 }
 function normTipo(s) {
   if (!s) return '';
-  const k = s.toString().toLowerCase().trim();
-  // Buscar match exacto o parcial en el diccionario
-  for (const [key, val] of Object.entries(TIPOS_DICT)) {
-    if (k === key || k.includes(key)) return val;
-  }
-  // Match contra valores válidos directos
-  const validos = ['Automóvil','Vida','Gastos Médicos Mayores','Hogar','Negocio','Accidentes Personales','Retiro / Ahorro'];
-  for (const v of validos) if (k === v.toLowerCase()) return v;
+  var k = s.toString().toLowerCase().trim();
+  for (var key in TIPOS_DICT) { if (k === key || k.indexOf(key) >= 0) return TIPOS_DICT[key]; }
+  var validos = ['Automóvil','Vida','Gastos Médicos Mayores','Hogar','Negocio','Accidentes Personales','Retiro / Ahorro'];
+  for (var i=0; i<validos.length; i++) if (k === validos[i].toLowerCase()) return validos[i];
   return s.toString().trim();
 }
 function normAseg(s) {
   if (!s) return '';
-  const k = s.toString().toLowerCase().trim();
-  for (const [key, val] of Object.entries(ASEG_DICT)) {
-    if (k === key || k.includes(key)) return val;
-  }
+  var k = s.toString().toLowerCase().trim();
+  for (var key in ASEG_DICT) { if (k === key || k.indexOf(key) >= 0) return ASEG_DICT[key]; }
   return 'Otra';
 }
 function nacimientoDeRFC(rfc) {
   if (!rfc || rfc.length < 10) return '';
-  // Letras al inicio (3 o 4) + 6 dígitos = AAMMDD
-  const m = rfc.match(/^[A-ZÑ&]{3,4}(\d{2})(\d{2})(\d{2})/);
+  var m = rfc.match(/^[A-ZÑ&]{3,4}(\d{2})(\d{2})(\d{2})/);
   if (!m) return '';
-  const yy = parseInt(m[1]);
-  const mm = m[2], dd = m[3];
-  const yyyy = yy <= (new Date().getFullYear() % 100) - 5 ? 2000 + yy : 1900 + yy;
+  var yy = parseInt(m[1]);
+  var mm = m[2], dd = m[3];
+  var yyyy = yy <= (new Date().getFullYear() % 100) - 5 ? 2000 + yy : 1900 + yy;
   if (parseInt(mm) < 1 || parseInt(mm) > 12 || parseInt(dd) < 1 || parseInt(dd) > 31) return '';
   return yyyy + '-' + mm + '-' + dd;
 }
 
 // ============================================================
-// LLENAR FORMULARIO + RESALTAR
+// LLENAR FORMULARIO
 // ============================================================
 function llenarFormulario(d) {
-  let n = 0;
-  const set = (id, val) => {
-    if (val === null || val === undefined || val === '') return false;
-    const el = document.getElementById(id);
-    if (!el) return false;
+  var n = 0;
+  function set(id, val) {
+    if (val === null || val === undefined || val === '') return;
+    var el = document.getElementById(id);
+    if (!el) return;
     el.value = val;
     el.classList.add('flash');
-    setTimeout(()=>el.classList.remove('flash'), 1500);
+    setTimeout(function(){el.classList.remove('flash');}, 1500);
     n++;
-    return true;
-  };
-  const setSelect = (id, val) => {
-    if (!val) return false;
-    const sel = document.getElementById(id);
-    if (!sel) return false;
-    for (let i=0; i<sel.options.length; i++) {
+  }
+  function setSelect(id, val) {
+    if (!val) return;
+    var sel = document.getElementById(id);
+    if (!sel) return;
+    for (var i=0; i<sel.options.length; i++) {
       if (sel.options[i].text === val || sel.options[i].value === val) {
         sel.selectedIndex = i;
         sel.classList.add('flash');
-        setTimeout(()=>sel.classList.remove('flash'), 1500);
+        setTimeout(function(){sel.classList.remove('flash');}, 1500);
         n++;
-        return true;
+        return;
       }
     }
-    return false;
-  };
-
+  }
   set('nc-nombre', d.nombre);
   set('nc-rfc', d.rfc);
   set('nc-tel', d.tel);
@@ -1221,52 +1247,46 @@ function llenarFormulario(d) {
   set('nc-vigencia', d.vigencia);
   set('nc-prima', d.prima);
   set('nc-coberturas', d.coberturas);
-
   return n;
 }
-
 function mostrarResultado(d) {
-  const el = document.getElementById('pdf-result');
-  const labels = {
+  var el = document.getElementById('pdf-result');
+  var labels = {
     nombre: 'Nombre', rfc: 'RFC', tel: 'Teléfono', email: 'Correo',
     direccion: 'Dirección', nacimiento: 'Nacimiento', numPoliza: 'Póliza',
     tipo: 'Tipo', aseg: 'Aseguradora', vigencia: 'Vencimiento',
     prima: 'Prima', coberturas: 'Coberturas'
   };
-  let html = '<div style="font-weight:700;color:#1a4f1a;margin-bottom:6px;">Datos extraídos:</div>';
-  for (const k of Object.keys(labels)) {
-    const val = d[k];
-    if (val) {
-      html += `<div class="item"><span class="lbl">${labels[k]}</span><span class="val">${val}</span></div>`;
-    } else {
-      html += `<div class="item"><span class="lbl">${labels[k]}</span><span class="val empty">— vacío —</span></div>`;
-    }
+  var html = '<div style="font-weight:700;color:#1a4f1a;margin-bottom:6px;">Datos extraídos:</div>';
+  for (var k in labels) {
+    var val = d[k];
+    if (val) html += '<div class="item"><span class="lbl">'+labels[k]+'</span><span class="val">'+val+'</span></div>';
+    else html += '<div class="item"><span class="lbl">'+labels[k]+'</span><span class="val empty">— vacío —</span></div>';
   }
   el.innerHTML = html;
   el.classList.add('show');
 }
-
 function limpiarFormularioNuevo() {
-  ['nc-nombre','nc-tel','nc-email','nc-rfc','nc-nac','nc-dir','nc-notas','nc-prima','nc-vigencia','nc-num','nc-coberturas'].forEach(id=>{
-    const el=document.getElementById(id); if (el) el.value='';
+  ['nc-nombre','nc-tel','nc-email','nc-rfc','nc-nac','nc-dir','nc-notas','nc-prima','nc-vigencia','nc-num','nc-coberturas'].forEach(function(id){
+    var el=document.getElementById(id); if (el) el.value='';
   });
-  ['nc-tipo','nc-aseg'].forEach(id=>{ const el=document.getElementById(id); if (el) el.value=''; });
+  ['nc-tipo','nc-aseg'].forEach(function(id){ var el=document.getElementById(id); if (el) el.value=''; });
   document.getElementById('pdf-result').classList.remove('show');
   setStatus('', 'orange');
   document.getElementById('pdf-btn').textContent = '📂 Seleccionar PDF';
 }
 
 // ============================================================
-// GUARDAR / EDITAR / ELIMINAR CLIENTES
+// GUARDAR / EDITAR / ELIMINAR
 // ============================================================
 function guardarCliente() {
-  const nombre = document.getElementById('nc-nombre').value.trim();
-  const tel = document.getElementById('nc-tel').value.trim();
+  var nombre = document.getElementById('nc-nombre').value.trim();
+  var tel = document.getElementById('nc-tel').value.trim();
   if (!nombre) { toast('⚠️ El nombre es obligatorio'); return; }
   if (!tel) { toast('⚠️ El teléfono es obligatorio'); return; }
-  const nuevo = {
+  var nuevo = {
     id: Date.now(),
-    nombre, tel,
+    nombre: nombre, tel: tel,
     email: document.getElementById('nc-email').value.trim(),
     rfc: document.getElementById('nc-rfc').value.trim().toUpperCase(),
     nac: document.getElementById('nc-nac').value,
@@ -1274,9 +1294,9 @@ function guardarCliente() {
     notas: document.getElementById('nc-notas').value.trim(),
     polizas: []
   };
-  const tipo = document.getElementById('nc-tipo').value;
+  var tipo = document.getElementById('nc-tipo').value;
   if (tipo) nuevo.polizas.push({
-    tipo,
+    tipo: tipo,
     prima: document.getElementById('nc-prima').value,
     vigencia: document.getElementById('nc-vigencia').value,
     num: document.getElementById('nc-num').value.trim(),
@@ -1285,6 +1305,7 @@ function guardarCliente() {
   });
   clientes.push(nuevo);
   save('mc2_clientes', clientes);
+  programarNotificaciones();
   toast('✅ Cliente guardado');
   goScreen('s-clientes');
 }
@@ -1293,8 +1314,108 @@ function eliminarCliente() {
   if (confirm('¿Eliminar a '+clientes[clienteIdx].nombre+'? No se puede deshacer.')) {
     clientes.splice(clienteIdx,1);
     save('mc2_clientes',clientes);
+    programarNotificaciones();
     toast('🗑 Cliente eliminado');
     goBack();
+  }
+}
+
+function editarCliente() {
+  if (clienteIdx === null) return;
+  var c = clientes[clienteIdx];
+  document.getElementById('ec-nombre').value = c.nombre || '';
+  document.getElementById('ec-tel').value = c.tel || '';
+  document.getElementById('ec-nac').value = c.nac || '';
+  document.getElementById('ec-email').value = c.email || '';
+  document.getElementById('ec-rfc').value = c.rfc || '';
+  document.getElementById('ec-dir').value = c.dir || '';
+  document.getElementById('ec-notas').value = c.notas || '';
+  renderPolizasEditar();
+  goScreen('s-editar-cliente');
+}
+function renderPolizasEditar() {
+  var c = clientes[clienteIdx];
+  var el = document.getElementById('ec-polizas-lista');
+  if (!(c.polizas||[]).length) {
+    el.innerHTML = '<div style="text-align:center;padding:16px;color:var(--mid);font-size:13px;">Sin pólizas aún</div>';
+    return;
+  }
+  el.innerHTML = c.polizas.map(function(p, pi){
+    return '<div style="background:var(--white);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;" onclick="editarPoliza('+pi+')">' +
+      '<div>' +
+        '<div style="font-size:13px;font-weight:700;">'+iconTipo(p.tipo)+' '+(p.tipo||'Sin tipo')+'</div>' +
+        '<div style="font-size:11px;color:var(--mid);">'+(p.aseg||'')+' · '+(p.num||'')+' · Vence: '+(p.vigencia||'—')+'</div>' +
+      '</div>' +
+      '<div style="font-size:20px;color:var(--mid);">›</div>' +
+    '</div>';
+  }).join('');
+}
+function guardarEdicionCliente() {
+  var nombre = document.getElementById('ec-nombre').value.trim();
+  var tel = document.getElementById('ec-tel').value.trim();
+  if (!nombre) { toast('⚠️ El nombre es obligatorio'); return; }
+  if (!tel) { toast('⚠️ El teléfono es obligatorio'); return; }
+  Object.assign(clientes[clienteIdx], {
+    nombre: nombre, tel: tel,
+    nac: document.getElementById('ec-nac').value,
+    email: document.getElementById('ec-email').value.trim(),
+    rfc: document.getElementById('ec-rfc').value.trim().toUpperCase(),
+    dir: document.getElementById('ec-dir').value.trim(),
+    notas: document.getElementById('ec-notas').value.trim()
+  });
+  save('mc2_clientes', clientes);
+  programarNotificaciones();
+  toast('✅ Cliente actualizado');
+  verCliente(clienteIdx);
+}
+function editarPoliza(pi) {
+  polizaEditandoIdx = pi;
+  var p = clientes[clienteIdx].polizas[pi];
+  var sel = document.getElementById('ep-tipo');
+  for (var i=0; i<sel.options.length; i++) {
+    if (sel.options[i].text === p.tipo) { sel.selectedIndex=i; break; }
+  }
+  document.getElementById('ep-prima').value = p.prima || '';
+  document.getElementById('ep-vigencia').value = p.vigencia || '';
+  document.getElementById('ep-num').value = p.num || '';
+  document.getElementById('ep-coberturas').value = p.coberturas || '';
+  document.getElementById('ep-nota').value = p.nota || '';
+  var selA = document.getElementById('ep-aseg');
+  for (var j=0; j<selA.options.length; j++) {
+    if (selA.options[j].text === p.aseg) { selA.selectedIndex=j; break; }
+  }
+  goScreen('s-editar-poliza');
+}
+function guardarEdicionPoliza() {
+  if (clienteIdx===null || polizaEditandoIdx===null) return;
+  var tipo = document.getElementById('ep-tipo').value;
+  if (!tipo) { toast('⚠️ Selecciona el tipo de seguro'); return; }
+  Object.assign(clientes[clienteIdx].polizas[polizaEditandoIdx], {
+    tipo: tipo,
+    prima: parseFloat(document.getElementById('ep-prima').value)||0,
+    vigencia: document.getElementById('ep-vigencia').value,
+    num: document.getElementById('ep-num').value.trim(),
+    aseg: document.getElementById('ep-aseg').value,
+    coberturas: document.getElementById('ep-coberturas').value.trim(),
+    nota: document.getElementById('ep-nota').value.trim()
+  });
+  save('mc2_clientes', clientes);
+  programarNotificaciones();
+  toast('✅ Póliza actualizada');
+  goBack();
+  renderPolizasEditar();
+}
+function eliminarPoliza() {
+  if (clienteIdx===null || polizaEditandoIdx===null) return;
+  var tipo = clientes[clienteIdx].polizas[polizaEditandoIdx].tipo;
+  if (confirm('¿Eliminar póliza de ' + tipo + '?')) {
+    clientes[clienteIdx].polizas.splice(polizaEditandoIdx, 1);
+    save('mc2_clientes', clientes);
+    programarNotificaciones();
+    toast('🗑 Póliza eliminada');
+    polizaEditandoIdx = null;
+    goBack();
+    renderPolizasEditar();
   }
 }
 
@@ -1302,45 +1423,46 @@ function eliminarCliente() {
 // COBRANZA
 // ============================================================
 function renderCobranza() {
-  let porCobrar=0, cobrado=0, items=[];
-  const mes=hoy.getMonth(), anio=hoy.getFullYear();
-  clientes.forEach((c,idx)=>{
-    (c.polizas||[]).forEach(p=>{
-      const prima=parseFloat(p.prima)||0;
-      const clave='cobro_'+c.id+'_'+(p.num||p.tipo)+'_'+mes+'_'+anio;
-      const pagado=localStorage.getItem(clave)==='1';
+  var porCobrar=0, cobrado=0, items=[];
+  var mes=hoy.getMonth(), anio=hoy.getFullYear();
+  clientes.forEach(function(c, idx){
+    (c.polizas||[]).forEach(function(p){
+      var prima=parseFloat(p.prima)||0;
+      var clave='cobro_'+c.id+'_'+(p.num||p.tipo)+'_'+mes+'_'+anio;
+      var pagado=localStorage.getItem(clave)==='1';
       if (pagado) cobrado+=prima/12; else porCobrar+=prima/12;
-      items.push({nombre:c.nombre,tipo:p.tipo,monto:Math.round(prima/12),clave,pagado,idx});
+      items.push({nombre:c.nombre,tipo:p.tipo,monto:Math.round(prima/12),clave:clave,pagado:pagado,idx:idx});
     });
   });
-  const total=porCobrar+cobrado;
-  const pct=total>0?Math.round(cobrado/total*100):0;
-  document.getElementById('cobro-resumen').innerHTML=`
-    <div style="background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px;">
-      <div style="display:flex;justify-content:space-between;margin-bottom:10px;">
-        <div><div style="font-size:11px;color:var(--mid);">Por cobrar</div><div style="font-size:24px;font-weight:800;color:var(--orange);">$${Math.round(porCobrar).toLocaleString()}</div></div>
-        <div style="text-align:right;"><div style="font-size:11px;color:var(--mid);">Cobrado</div><div style="font-size:24px;font-weight:800;color:var(--green);">$${Math.round(cobrado).toLocaleString()}</div></div>
-      </div>
-      <div style="height:8px;background:var(--border);border-radius:4px;overflow:hidden;">
-        <div style="width:${pct}%;height:100%;background:var(--green);border-radius:4px;"></div>
-      </div>
-      <div style="font-size:11px;color:var(--mid);margin-top:5px;">${pct}% cobrado este mes</div>
-    </div>`;
-  const el=document.getElementById('lista-cobros');
-  if (!items.length){el.innerHTML='<div class="empty"><div class="ico">💰</div><p>Agrega clientes con pólizas.</p></div>';return;}
-  el.innerHTML=items.map(it=>`
-    <div class="cobro-item">
-      <div class="cobro-check ${it.pagado?'done':''}" onclick="toggleCobro('${it.clave}')">${it.pagado?'✓':''}</div>
-      <div style="flex:1;cursor:pointer;" onclick="verCliente(${it.idx})">
-        <div style="font-size:13px;font-weight:700;${it.pagado?'text-decoration:line-through;color:var(--mid);':''}">${it.nombre}</div>
-        <div style="font-size:11px;color:var(--mid);">${it.tipo}</div>
-      </div>
-      <div style="font-size:15px;font-weight:800;color:${it.pagado?'var(--green)':'var(--orange)'};">$${it.monto.toLocaleString()}</div>
-    </div>`).join('');
+  var total=porCobrar+cobrado;
+  var pct=total>0?Math.round(cobrado/total*100):0;
+  document.getElementById('cobro-resumen').innerHTML =
+    '<div style="background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px;">' +
+      '<div style="display:flex;justify-content:space-between;margin-bottom:10px;">' +
+        '<div><div style="font-size:11px;color:var(--mid);">Por cobrar</div><div style="font-size:24px;font-weight:800;color:var(--orange);">$'+Math.round(porCobrar).toLocaleString()+'</div></div>' +
+        '<div style="text-align:right;"><div style="font-size:11px;color:var(--mid);">Cobrado</div><div style="font-size:24px;font-weight:800;color:var(--green);">$'+Math.round(cobrado).toLocaleString()+'</div></div>' +
+      '</div>' +
+      '<div style="height:8px;background:var(--border);border-radius:4px;overflow:hidden;">' +
+        '<div style="width:'+pct+'%;height:100%;background:var(--green);border-radius:4px;"></div>' +
+      '</div>' +
+      '<div style="font-size:11px;color:var(--mid);margin-top:5px;">'+pct+'% cobrado este mes</div>' +
+    '</div>';
+  var el=document.getElementById('lista-cobros');
+  if (!items.length) { el.innerHTML='<div class="empty"><div class="ico">💰</div><p>Agrega clientes con pólizas.</p></div>'; return; }
+  el.innerHTML = items.map(function(it){
+    return '<div class="cobro-item">' +
+      '<div class="cobro-check '+(it.pagado?'done':'')+'" onclick="toggleCobro(\''+it.clave+'\')">'+(it.pagado?'✓':'')+'</div>' +
+      '<div style="flex:1;cursor:pointer;" onclick="verCliente('+it.idx+')">' +
+        '<div style="font-size:13px;font-weight:700;'+(it.pagado?'text-decoration:line-through;color:var(--mid);':'')+'">'+it.nombre+'</div>' +
+        '<div style="font-size:11px;color:var(--mid);">'+it.tipo+'</div>' +
+      '</div>' +
+      '<div style="font-size:15px;font-weight:800;color:'+(it.pagado?'var(--green)':'var(--orange)')+';">$'+it.monto.toLocaleString()+'</div>' +
+    '</div>';
+  }).join('');
 }
 function toggleCobro(clave){
-  localStorage.setItem(clave,localStorage.getItem(clave)==='1'?'0':'1');
-  toast(localStorage.getItem(clave)==='1'?'✅ Cobro registrado':'↩️ Marcado como pendiente');
+  localStorage.setItem(clave, localStorage.getItem(clave)==='1' ? '0' : '1');
+  toast(localStorage.getItem(clave)==='1' ? '✅ Cobro registrado' : '↩️ Marcado como pendiente');
   renderCobranza();
 }
 
@@ -1348,30 +1470,33 @@ function toggleCobro(clave){
 // PERFIL
 // ============================================================
 function cargarPerfil(){
-  perfil=load('mc2_perfil',perfil);
-  document.getElementById('p-nombre').value=perfil.nombre||'';
-  document.getElementById('p-tel').value=perfil.tel||'';
-  document.getElementById('p-email').value=perfil.email||'';
-  document.getElementById('p-meta').value=perfil.meta||'';
-  document.getElementById('p-clave').value=perfil.clave||'';
-  document.getElementById('p-nombre-display').textContent=perfil.nombre||'Agente';
-  document.getElementById('p-avatar').textContent=ini(perfil.nombre||'A');
+  perfil = load('mc2_perfil', perfil);
+  document.getElementById('p-nombre').value = perfil.nombre || '';
+  document.getElementById('p-tel').value = perfil.tel || '';
+  document.getElementById('p-email').value = perfil.email || '';
+  document.getElementById('p-meta').value = perfil.meta || '';
+  document.getElementById('p-clave').value = perfil.clave || '';
+  document.getElementById('p-nombre-display').textContent = perfil.nombre || 'Agente';
+  document.getElementById('p-avatar').textContent = ini(perfil.nombre || 'A');
 }
 function guardarPerfil(){
-  perfil={
-    nombre:document.getElementById('p-nombre').value.trim()||'Agente',
-    tel:document.getElementById('p-tel').value.trim(),
-    email:document.getElementById('p-email').value.trim(),
-    meta:parseFloat(document.getElementById('p-meta').value)||0,
-    clave:document.getElementById('p-clave').value.trim()
+  perfil = {
+    nombre: document.getElementById('p-nombre').value.trim() || 'Agente',
+    tel: document.getElementById('p-tel').value.trim(),
+    email: document.getElementById('p-email').value.trim(),
+    meta: parseFloat(document.getElementById('p-meta').value) || 0,
+    clave: document.getElementById('p-clave').value.trim()
   };
-  save('mc2_perfil',perfil);
+  save('mc2_perfil', perfil);
   toast('✅ Perfil guardado');
 }
 function borrarTodo(){
-  if(confirm('¿Segura? Se borrarán TODOS los datos.')){
-    localStorage.clear(); clientes=[]; perfil={nombre:'Agente',tel:'',email:'',meta:0,clave:''};
-    toast('🗑 Datos borrados'); goScreen('s-home');
+  if (confirm('¿Segura? Se borrarán TODOS los datos.')) {
+    localStorage.clear();
+    clientes = [];
+    perfil = {nombre:'Agente', tel:'', email:'', meta:0, clave:''};
+    toast('🗑 Datos borrados');
+    goScreen('s-home');
   }
 }
 
@@ -1379,17 +1504,17 @@ function borrarTodo(){
 // IMPORTAR CSV
 // ============================================================
 function importarCSV(input) {
-  const file = input.files[0];
+  var file = input.files[0];
   if (!file) return;
-  const reader = new FileReader();
+  var reader = new FileReader();
   reader.onload = function(e) {
     try {
-      const texto = e.target.result;
-      const lineas = texto.split(/\r?\n/).filter(l => l.trim());
+      var texto = e.target.result;
+      var lineas = texto.split(/\r?\n/).filter(function(l){return l.trim();});
       if (lineas.length < 2) { toast('⚠️ CSV vacío'); return; }
-      const sep = lineas[0].includes(';') ? ';' : ',';
-      const headers = lineas[0].split(sep).map(h => h.trim().replace(/^"|"$/g,'').toLowerCase());
-      const mapa = {
+      var sep = lineas[0].indexOf(';') >= 0 ? ';' : ',';
+      var headers = lineas[0].split(sep).map(function(h){return h.trim().replace(/^"|"$/g,'').toLowerCase();});
+      var mapa = {
         'nombre': 'nombre', 'name': 'nombre',
         'rfc': 'rfc',
         'tel': 'tel', 'telefono': 'tel', 'teléfono': 'tel', 'phone': 'tel',
@@ -1403,32 +1528,31 @@ function importarCSV(input) {
         'prima': 'prima',
         'coberturas': 'coberturas', 'notas': 'notas'
       };
-      let importados = 0, omitidos = 0;
-      for (let i = 1; i < lineas.length; i++) {
-        const vals = parsearLineaCSV(lineas[i], sep);
-        const row = {};
-        headers.forEach((h, idx) => { row[h] = (vals[idx] || '').trim().replace(/^"|"$/g, ''); });
-        const datos = {};
-        headers.forEach(h => {
-          const campo = mapa[h];
+      var importados = 0, omitidos = 0;
+      for (var i = 1; i < lineas.length; i++) {
+        var vals = parsearLineaCSV(lineas[i], sep);
+        var row = {};
+        headers.forEach(function(h, idx){ row[h] = (vals[idx] || '').trim().replace(/^"|"$/g, ''); });
+        var datos = {};
+        headers.forEach(function(h){
+          var campo = mapa[h];
           if (campo && row[h]) datos[campo] = row[h];
         });
         if (!datos.nombre) { omitidos++; continue; }
-        const existe = clientes.find(c =>
-          (datos.rfc && c.rfc === datos.rfc) ||
-          c.nombre.toLowerCase() === datos.nombre.toLowerCase()
-        );
-        const poliza = {};
+        var existe = clientes.find(function(c){
+          return (datos.rfc && c.rfc === datos.rfc) || c.nombre.toLowerCase() === datos.nombre.toLowerCase();
+        });
+        var poliza = {};
         if (datos.tipo) poliza.tipo = normTipo(datos.tipo);
         if (datos.numPoliza) poliza.num = datos.numPoliza;
         if (datos.aseg) poliza.aseg = normAseg(datos.aseg);
         if (datos.prima) poliza.prima = parseFloat(datos.prima) || 0;
         if (datos.vigencia) poliza.vigencia = normFecha(datos.vigencia) || datos.vigencia;
         if (datos.coberturas) poliza.coberturas = datos.coberturas;
-        const tienePoliza = poliza.tipo || poliza.num;
+        var tienePoliza = poliza.tipo || poliza.num;
         if (existe) {
           if (tienePoliza) {
-            const polizaExiste = existe.polizas.some(p => p.num === poliza.num);
+            var polizaExiste = existe.polizas.some(function(p){ return p.num === poliza.num; });
             if (!polizaExiste) existe.polizas.push(poliza);
           }
         } else {
@@ -1447,11 +1571,12 @@ function importarCSV(input) {
         }
       }
       save('mc2_clientes', clientes);
+      programarNotificaciones();
       renderLista(clientes);
       renderHome();
       input.value = '';
-      const msg = importados > 0 ? `✅ ${importados} cliente(s) importado(s)` : `✅ Pólizas actualizadas`;
-      toast(omitidos > 0 ? msg + ` (${omitidos} sin nombre omitidos)` : msg);
+      var msg = importados > 0 ? '✅ '+importados+' cliente(s) importado(s)' : '✅ Pólizas actualizadas';
+      toast(omitidos > 0 ? msg+' ('+omitidos+' sin nombre omitidos)' : msg);
     } catch(err) {
       console.error('CSV error:', err);
       toast('❌ Error: ' + err.message);
@@ -1460,9 +1585,9 @@ function importarCSV(input) {
   reader.readAsText(file, 'UTF-8');
 }
 function parsearLineaCSV(linea, sep) {
-  const vals = []; let actual = ''; let enComillas = false;
-  for (let i = 0; i < linea.length; i++) {
-    const ch = linea[i];
+  var vals = []; var actual = ''; var enComillas = false;
+  for (var i = 0; i < linea.length; i++) {
+    var ch = linea[i];
     if (ch === '"') enComillas = !enComillas;
     else if (ch === sep && !enComillas) { vals.push(actual); actual = ''; }
     else actual += ch;
@@ -1472,148 +1597,50 @@ function parsearLineaCSV(linea, sep) {
 }
 
 // ============================================================
-// EDITAR CLIENTE / PÓLIZA
-// ============================================================
-function editarCliente() {
-  if (clienteIdx === null) return;
-  const c = clientes[clienteIdx];
-  document.getElementById('ec-nombre').value = c.nombre || '';
-  document.getElementById('ec-tel').value = c.tel || '';
-  document.getElementById('ec-nac').value = c.nac || '';
-  document.getElementById('ec-email').value = c.email || '';
-  document.getElementById('ec-rfc').value = c.rfc || '';
-  document.getElementById('ec-dir').value = c.dir || '';
-  document.getElementById('ec-notas').value = c.notas || '';
-  renderPolizasEditar();
-  goScreen('s-editar-cliente');
-}
-function renderPolizasEditar() {
-  const c = clientes[clienteIdx];
-  const el = document.getElementById('ec-polizas-lista');
-  if (!(c.polizas||[]).length) {
-    el.innerHTML = '<div style="text-align:center;padding:16px;color:var(--mid);font-size:13px;">Sin pólizas aún</div>';
-    return;
-  }
-  el.innerHTML = c.polizas.map((p,pi) => `
-    <div style="background:var(--white);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;" onclick="editarPoliza(${pi})">
-      <div>
-        <div style="font-size:13px;font-weight:700;">${iconTipo(p.tipo)} ${p.tipo||'Sin tipo'}</div>
-        <div style="font-size:11px;color:var(--mid);">${p.aseg||''} · ${p.num||''} · Vence: ${p.vigencia||'—'}</div>
-      </div>
-      <div style="font-size:20px;color:var(--mid);">›</div>
-    </div>`).join('');
-}
-function guardarEdicionCliente() {
-  const nombre = document.getElementById('ec-nombre').value.trim();
-  const tel = document.getElementById('ec-tel').value.trim();
-  if (!nombre) { toast('⚠️ El nombre es obligatorio'); return; }
-  if (!tel) { toast('⚠️ El teléfono es obligatorio'); return; }
-  Object.assign(clientes[clienteIdx], {
-    nombre, tel,
-    nac: document.getElementById('ec-nac').value,
-    email: document.getElementById('ec-email').value.trim(),
-    rfc: document.getElementById('ec-rfc').value.trim().toUpperCase(),
-    dir: document.getElementById('ec-dir').value.trim(),
-    notas: document.getElementById('ec-notas').value.trim()
-  });
-  save('mc2_clientes', clientes);
-  toast('✅ Cliente actualizado');
-  verCliente(clienteIdx);
-}
-function editarPoliza(pi) {
-  polizaEditandoIdx = pi;
-  const p = clientes[clienteIdx].polizas[pi];
-  const sel = document.getElementById('ep-tipo');
-  for (let i=0; i<sel.options.length; i++) {
-    if (sel.options[i].text === p.tipo) { sel.selectedIndex=i; break; }
-  }
-  document.getElementById('ep-prima').value = p.prima || '';
-  document.getElementById('ep-vigencia').value = p.vigencia || '';
-  document.getElementById('ep-num').value = p.num || '';
-  document.getElementById('ep-coberturas').value = p.coberturas || '';
-  document.getElementById('ep-nota').value = p.nota || '';
-  const selA = document.getElementById('ep-aseg');
-  for (let i=0; i<selA.options.length; i++) {
-    if (selA.options[i].text === p.aseg) { selA.selectedIndex=i; break; }
-  }
-  goScreen('s-editar-poliza');
-}
-function guardarEdicionPoliza() {
-  if (clienteIdx===null || polizaEditandoIdx===null) return;
-  const tipo = document.getElementById('ep-tipo').value;
-  if (!tipo) { toast('⚠️ Selecciona el tipo de seguro'); return; }
-  Object.assign(clientes[clienteIdx].polizas[polizaEditandoIdx], {
-    tipo,
-    prima: parseFloat(document.getElementById('ep-prima').value)||0,
-    vigencia: document.getElementById('ep-vigencia').value,
-    num: document.getElementById('ep-num').value.trim(),
-    aseg: document.getElementById('ep-aseg').value,
-    coberturas: document.getElementById('ep-coberturas').value.trim(),
-    nota: document.getElementById('ep-nota').value.trim()
-  });
-  save('mc2_clientes', clientes);
-  toast('✅ Póliza actualizada');
-  goBack();
-  renderPolizasEditar();
-}
-function eliminarPoliza() {
-  if (clienteIdx===null || polizaEditandoIdx===null) return;
-  const tipo = clientes[clienteIdx].polizas[polizaEditandoIdx].tipo;
-  if (confirm('¿Eliminar póliza de ' + tipo + '?')) {
-    clientes[clienteIdx].polizas.splice(polizaEditandoIdx, 1);
-    save('mc2_clientes', clientes);
-    toast('🗑 Póliza eliminada');
-    polizaEditandoIdx = null;
-    goBack();
-    renderPolizasEditar();
-  }
-}
-
-// ============================================================
 // NUEVA PÓLIZA (insertada al final)
 // ============================================================
-const sNuevaPoliza = `
-<div class="screen" id="s-nueva-poliza">
-  <div class="back-bar">
-    <button class="back-btn" onclick="goBack()">←</button>
-    <div class="back-title">Nueva Póliza</div>
-  </div>
-  <div class="form-scroll">
-    <div class="f-group"><label class="f-label">Tipo de seguro *</label>
-      <select class="f-select" id="np-tipo">
-        <option value="">— Seleccionar —</option>
-        <option>Automóvil</option><option>Vida</option>
-        <option>Gastos Médicos Mayores</option><option>Hogar</option>
-        <option>Negocio</option><option>Accidentes Personales</option><option>Retiro / Ahorro</option>
-      </select>
-    </div>
-    <div class="f-row">
-      <div class="f-group"><label class="f-label">Prima anual ($)</label><input class="f-input" type="number" placeholder="0" id="np-prima"></div>
-      <div class="f-group"><label class="f-label">Vencimiento</label><input class="f-input" type="date" id="np-vigencia"></div>
-    </div>
-    <div class="f-row">
-      <div class="f-group"><label class="f-label">No. Póliza</label><input class="f-input" placeholder="Número" id="np-num"></div>
-      <div class="f-group"><label class="f-label">Aseguradora</label>
-        <select class="f-select" id="np-aseg">
-          <option value="">—</option>
-          <option>GNP</option><option>Qualitas</option><option>AXA</option>
-          <option>Mapfre</option><option>HDI</option><option>Metlife</option>
-          <option>Zurich</option><option>Allianz</option><option>Sura</option><option>Otra</option>
-        </select>
-      </div>
-    </div>
-    <div class="f-group"><label class="f-label">Coberturas</label><input class="f-input" id="np-coberturas" placeholder="RC | GMM | Robo total..."></div>
-    <button class="f-btn" onclick="guardarPoliza()">Guardar póliza</button>
-  </div>
-</div>`;
+var sNuevaPoliza =
+'<div class="screen" id="s-nueva-poliza">' +
+  '<div class="back-bar">' +
+    '<button class="back-btn" onclick="goBack()">←</button>' +
+    '<div class="back-title">Nueva Póliza</div>' +
+  '</div>' +
+  '<div class="form-scroll">' +
+    '<div class="f-group"><label class="f-label">Tipo de seguro *</label>' +
+      '<select class="f-select" id="np-tipo">' +
+        '<option value="">— Seleccionar —</option>' +
+        '<option>Automóvil</option><option>Vida</option>' +
+        '<option>Gastos Médicos Mayores</option><option>Hogar</option>' +
+        '<option>Negocio</option><option>Accidentes Personales</option><option>Retiro / Ahorro</option>' +
+      '</select>' +
+    '</div>' +
+    '<div class="f-row">' +
+      '<div class="f-group"><label class="f-label">Prima anual ($)</label><input class="f-input" type="number" placeholder="0" id="np-prima"></div>' +
+      '<div class="f-group"><label class="f-label">Vencimiento</label><input class="f-input" type="date" id="np-vigencia"></div>' +
+    '</div>' +
+    '<div class="f-row">' +
+      '<div class="f-group"><label class="f-label">No. Póliza</label><input class="f-input" placeholder="Número" id="np-num"></div>' +
+      '<div class="f-group"><label class="f-label">Aseguradora</label>' +
+        '<select class="f-select" id="np-aseg">' +
+          '<option value="">—</option>' +
+          '<option>GNP</option><option>Qualitas</option><option>AXA</option>' +
+          '<option>Mapfre</option><option>HDI</option><option>Metlife</option>' +
+          '<option>Zurich</option><option>Allianz</option><option>Sura</option><option>Otra</option>' +
+        '</select>' +
+      '</div>' +
+    '</div>' +
+    '<div class="f-group"><label class="f-label">Coberturas</label><input class="f-input" id="np-coberturas" placeholder="RC | GMM | Robo total..."></div>' +
+    '<button class="f-btn" onclick="guardarPoliza()">Guardar póliza</button>' +
+  '</div>' +
+'</div>';
 document.body.insertAdjacentHTML('beforeend', sNuevaPoliza);
 function guardarPoliza() {
   if (clienteIdx===null) return;
-  const tipo = document.getElementById('np-tipo').value;
+  var tipo = document.getElementById('np-tipo').value;
   if (!tipo) { toast('⚠️ Selecciona el tipo de seguro'); return; }
   if (!clientes[clienteIdx].polizas) clientes[clienteIdx].polizas = [];
   clientes[clienteIdx].polizas.push({
-    tipo,
+    tipo: tipo,
     prima: document.getElementById('np-prima').value,
     vigencia: document.getElementById('np-vigencia').value,
     num: document.getElementById('np-num').value,
@@ -1621,13 +1648,17 @@ function guardarPoliza() {
     coberturas: document.getElementById('np-coberturas').value
   });
   save('mc2_clientes', clientes);
+  programarNotificaciones();
   toast('✅ Póliza agregada');
-  ['np-tipo','np-aseg','np-prima','np-vigencia','np-num','np-coberturas'].forEach(id=>document.getElementById(id).value='');
+  ['np-tipo','np-aseg','np-prima','np-vigencia','np-num','np-coberturas'].forEach(function(id){document.getElementById(id).value='';});
   verCliente(clienteIdx);
 }
 
+// ============================================================
 // INIT
+// ============================================================
 renderHome();
+setTimeout(function(){ programarNotificaciones(); }, 1500);
 </script>
 </body>
 </html>
