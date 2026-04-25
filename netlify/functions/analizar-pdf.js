@@ -11,26 +11,22 @@ exports.handler = async function(event) {
     return { statusCode: 200, headers, body: '' };
   }
 
-  // TEST: verificar que la función corre
-  if (event.httpMethod === 'GET') {
-    return { statusCode: 200, headers, body: JSON.stringify({ status: 'funcion OK', node: process.version }) };
-  }
-
   try {
-    const body = JSON.parse(event.body || '{}');
-    const texto = body.texto || '';
-    
+    const { texto } = JSON.parse(event.body || '{}');
     if (!texto) {
-      return { statusCode: 400, headers, body: JSON.stringify({ error: 'sin texto recibido', bodyRecibido: event.body ? event.body.substring(0,100) : 'vacio' }) };
+      return { statusCode: 400, headers, body: JSON.stringify({ error: 'sin texto' }) };
     }
 
-    const APIKEY = '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';
+    const APIKEY = process.env.ANTHROPIC_API_KEY;
+    if (!APIKEY) {
+      return { statusCode: 500, headers, body: JSON.stringify({ error: 'API key no configurada' }) };
+    }
 
     const respuesta = await new Promise((resolve, reject) => {
       const payload = JSON.stringify({
         model: 'claude-opus-4-6',
         max_tokens: 800,
-        system: 'Eres experto en polizas de seguros mexicanas. Extrae datos del ASEGURADO unicamente. Devuelve SOLO JSON sin markdown:\n{"nombre":"","rfc":"","tel":"","email":"","direccion":"","nacimiento":"","numPoliza":"","tipo":"","aseg":"","vigencia":"","prima":"","coberturas":""}',
+        system: 'Eres experto en polizas de seguros mexicanas. Extrae datos del ASEGURADO unicamente, nunca de la aseguradora ni del agente. Devuelve SOLO JSON sin markdown:\n{"nombre":"","rfc":"","tel":"","email":"","direccion":"","nacimiento":"","numPoliza":"","tipo":"","aseg":"","vigencia":"","prima":"","coberturas":""}',
         messages: [{ role: 'user', content: texto.substring(0, 5000) }]
       });
 
@@ -54,17 +50,17 @@ exports.handler = async function(event) {
           }
           try {
             const json = JSON.parse(data);
-            const txt = json.content[0].text.replace(/```json|```/g,'').trim();
+            const txt = json.content[0].text.replace(/```json|```/g, '').trim();
             const match = txt.match(/\{[\s\S]*\}/);
-            resolve(match ? JSON.parse(match[0]) : { error: 'no JSON en respuesta', raw: txt.substring(0,100) });
+            resolve(match ? JSON.parse(match[0]) : { error: 'sin JSON', raw: txt.substring(0, 100) });
           } catch(e) {
-            reject(new Error('parse: ' + e.message + ' data: ' + data.substring(0,100)));
+            reject(new Error('parse error: ' + e.message));
           }
         });
       });
 
-      req.on('error', e => reject(new Error('https error: ' + e.message)));
-      req.setTimeout(25000, () => reject(new Error('timeout 25s')));
+      req.on('error', e => reject(new Error('https: ' + e.message)));
+      req.setTimeout(25000, () => reject(new Error('timeout')));
       req.write(payload);
       req.end();
     });
@@ -75,4 +71,3 @@ exports.handler = async function(event) {
     return { statusCode: 500, headers, body: JSON.stringify({ error: err.message }) };
   }
 };
-      
