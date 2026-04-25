@@ -1191,14 +1191,12 @@ async function extraerTextoPDF(data) {
 
     status.textContent = 'Analizando con Opus...';
 
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': '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',
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
+    const resp = await fetch('https://micartera-proxy.navarro-andres-c1f.workers.dev', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'anthropic-version': '2023-06-01'
+          },
       body: JSON.stringify({
         model: 'claude-opus-4-6',
         max_tokens: 800,
