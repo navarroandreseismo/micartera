@@ -19,6 +19,19 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .screen{display:none;min-height:100vh;padding-bottom:90px}
 .screen.active{display:block;animation:fadeUp .2s ease}
 @keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.splash{position:fixed;inset:0;background:linear-gradient(135deg,#1a1208 0%,#2d1f10 100%);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:99999;transition:opacity .7s ease;padding:20px;text-align:center}
+.splash.gone{opacity:0;pointer-events:none}
+.splash-logo{font-size:60px;margin-bottom:18px;animation:logoPop .8s ease}
+.splash-tagline{font-size:11px;color:#bfa477;letter-spacing:3px;text-transform:uppercase;margin-bottom:8px;animation:fadeIn .8s .2s both}
+.splash-brand{font-size:38px;font-weight:800;letter-spacing:2px;color:#d4a456;animation:fadeIn .8s .4s both}
+.splash-sub{font-size:12px;color:#bfa477;margin-top:8px;animation:fadeIn .8s .6s both}
+.splash-dots{display:flex;gap:8px;margin-top:30px;animation:fadeIn .8s .8s both}
+.splash-dots span{width:8px;height:8px;border-radius:50%;background:#c8622a;opacity:.5;animation:dotBounce 1.4s infinite ease-in-out both}
+.splash-dots span:nth-child(1){animation-delay:-0.32s}
+.splash-dots span:nth-child(2){animation-delay:-0.16s}
+@keyframes logoPop{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes dotBounce{0%,80%,100%{transform:scale(0.5);opacity:.5}40%{transform:scale(1);opacity:1}}
 
 .header{background:var(--dark);color:#fff;padding:18px 18px 14px;position:sticky;top:0;z-index:50}
 .header-top{display:flex;justify-content:space-between;align-items:center}
@@ -164,6 +177,15 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 </style>
 </head>
 <body>
+
+<!-- SPLASH -->
+<div class="splash" id="splash">
+ <div class="splash-logo">📋</div>
+ <div class="splash-tagline">Seguros</div>
+ <div class="splash-brand">LOMAOS</div>
+ <div class="splash-sub">Tu cartera digital</div>
+ <div class="splash-dots"><span></span><span></span><span></span></div>
+</div>
 
 <!-- HOME -->
 <div class="screen active" id="s-home">
@@ -313,6 +335,13 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
  <div class="bbar"><button class="bbtn" onclick="goBack()">←</button><div class="btitle" id="np-titulo">Nueva Póliza</div></div>
  <div class="fs">
   <div id="np-renov-banner" style="display:none;background:#dde8ff;color:#1a3f8a;padding:11px 14px;border-radius:10px;margin-bottom:14px;font-size:12px;font-weight:600">🔄 Estás <b>renovando</b> una póliza. Al guardar, la anterior queda en historial.</div>
+  <div style="background:#fff8f0;border:2px dashed #c8622a;border-radius:10px;padding:14px;margin-bottom:14px;text-align:center">
+   <div style="font-size:13px;font-weight:700;color:#c8622a;margin-bottom:4px">📄 Cargar PDF de la nueva póliza (opcional)</div>
+   <div style="font-size:11px;color:#888;margin-bottom:10px">Claude lee el PDF y rellena los campos</div>
+   <input type="file" id="np-pdf-input" accept=".pdf" style="display:none" onchange="leerPDFPoliza(this)">
+   <button id="np-pdf-btn" onclick="document.getElementById('np-pdf-input').click()" style="background:#c8622a;color:#fff;border:none;border-radius:8px;padding:10px 20px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer">📂 Seleccionar PDF</button>
+   <div id="np-pdf-status" style="font-size:11px;margin-top:8px;color:#888"></div>
+  </div>
   <div class="fg"><label class="fl">Tipo *</label><select class="fs2" id="np-tipo" onchange="toggleVehiculo('np')"><option value="">— Seleccionar —</option><option>Automóvil</option><option>Vida</option><option>Gastos Médicos Mayores</option><option>Hogar</option><option>Negocio</option><option>Accidentes Personales</option><option>Retiro / Ahorro</option></select></div>
   <div class="fr">
    <div class="fg"><label class="fl">Prima ($)</label><input class="fi" type="number" id="np-prima"></div>
@@ -990,6 +1019,8 @@ function nuevaPolizaPara(idx){
 function limpiarNuevaPol(){
  var ids=['np-prima','np-vigencia','np-num','np-coberturas','np-nota','np-veh-marca','np-veh-modelo','np-veh-anio','np-veh-color','np-veh-placas','np-veh-serie','np-veh-motor'];
  ids.forEach(function(id){var el=document.getElementById(id);if(el)el.value=''});
+ var nps=document.getElementById('np-pdf-status');if(nps){nps.textContent='';nps.style.color='#888'}
+ var npb=document.getElementById('np-pdf-btn');if(npb)npb.textContent='📂 Seleccionar PDF';
  ['np-tipo','np-aseg','np-pago'].forEach(function(id){var el=document.getElementById(id);if(el)el.value=''});
  var t=document.getElementById('np-titulo');
  var d=document.getElementById('np-del-btn');
@@ -1430,6 +1461,47 @@ function llenarFormulario(d){
  toggleVehiculo('nc');
  return n;
 }
+// Versión para pantalla de NUEVA/RENOVAR póliza
+function leerPDFPoliza(input){
+ var file=input.files[0];if(!file)return;
+ if(file.size>30*1024*1024){npStatus('❌ PDF muy grande','red');return}
+ var btn=document.getElementById('np-pdf-btn');
+ btn.disabled=true;btn.style.opacity=0.5;btn.textContent='⏳ Procesando...';
+ npStatus('Leyendo PDF...','orange');
+ fileToBase64(file).then(function(b64){npStatus('Analizando con Claude... (10-30s)','orange');return extraerConClaude(b64)})
+  .then(function(d){
+   var n=llenarFormularioPoliza(d);
+   if(n>0){npStatus('✅ '+n+' campo'+(n!==1?'s':'')+' rellenado'+(n!==1?'s':''),'green');toast('✅ Datos del PDF cargados, revisa antes de guardar')}
+   else npStatus('⚠️ No se encontraron datos','red');
+  })
+  .catch(function(err){console.error(err);npStatus('❌ '+(err.message||err),'red');toast('Error al procesar PDF')})
+  .then(function(){btn.disabled=false;btn.style.opacity=1;btn.textContent='📂 Seleccionar otro PDF';input.value=''});
+}
+function npStatus(m,c){var el=document.getElementById('np-pdf-status');if(!el)return;el.textContent=m;el.style.color=c==='green'?'#2d6a4f':c==='red'?'#b5192a':'#c8622a'}
+function llenarFormularioPoliza(d){
+ var n=0;
+ function set(id,v){if(v==null||v==='')return;var el=document.getElementById(id);if(!el)return;el.value=v;el.classList.add('flash');setTimeout(function(){el.classList.remove('flash')},1500);n++}
+ function setSel(id,v){if(!v)return;var s=document.getElementById(id);if(!s)return;for(var i=0;i<s.options.length;i++){if(s.options[i].text===v||s.options[i].value===v){s.selectedIndex=i;s.classList.add('flash');setTimeout(function(){s.classList.remove('flash')},1500);n++;return}}}
+ setSel('np-tipo',d.tipo);
+ set('np-num',d.numPoliza);
+ setSel('np-aseg',d.aseg);
+ setSel('np-pago',d.pago);
+ set('np-vigencia',d.vigencia);
+ set('np-prima',d.prima);
+ set('np-coberturas',d.coberturas);
+ if(d.vehiculo){
+  set('np-veh-marca',d.vehiculo.marca);
+  set('np-veh-modelo',d.vehiculo.modelo);
+  set('np-veh-anio',d.vehiculo.anio);
+  set('np-veh-color',d.vehiculo.color);
+  set('np-veh-placas',d.vehiculo.placas);
+  set('np-veh-serie',d.vehiculo.serie);
+  set('np-veh-motor',d.vehiculo.motor);
+ }
+ toggleVehiculo('np');
+ return n;
+}
+
 function mostrarResultado(d){
  var el=document.getElementById('pdf-result');
  var labels={nombre:'Nombre',rfc:'RFC',tel:'Teléfono',email:'Correo',direccion:'Dirección',nacimiento:'Nacimiento',numPoliza:'Póliza',tipo:'Tipo',aseg:'Aseguradora',vigencia:'Vencimiento',prima:'Prima',pago:'Forma pago',coberturas:'Coberturas'};
@@ -1524,11 +1596,19 @@ function migrarPolizas(){
  });
  if(cambios)save('mc2_clientes',clientes);
 }
+function dismissSplash(){
+ var s=document.getElementById('splash');
+ if(!s)return;
+ s.classList.add('gone');
+ setTimeout(function(){if(s.parentNode)s.parentNode.removeChild(s)},800);
+}
 function init(){
  migrarPolizas();
  document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)modalCerrar()});
  renderHome();
  setTimeout(function(){programarNotificaciones()},1500);
+ // Splash desvanece después de 1.8s
+ setTimeout(dismissSplash,1800);
 }
 init();
 </script>
