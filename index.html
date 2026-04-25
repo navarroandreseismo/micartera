@@ -1,0 +1,1525 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>MiCartera</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+:root {
+  --bg: #f5f0eb;
+  --white: #ffffff;
+  --dark: #1a1208;
+  --mid: #6b5e4e;
+  --light: #c9beb2;
+  --border: #e2d9d0;
+  --green: #2d6a4f;
+  --green-bg: #d8f3dc;
+  --red: #b5192a;
+  --red-bg: #fde8ea;
+  --orange: #c45e00;
+  --orange-bg: #fef0e0;
+  --blue: #1a4f8a;
+  --blue-bg: #ddeeff;
+  --accent: #c8622a;
+}
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: var(--bg);
+  color: var(--dark);
+  min-height: 100vh;
+  max-width: 430px;
+  margin: 0 auto;
+}
+
+/* PANTALLAS */
+.screen { display:none; min-height:100vh; padding-bottom:80px; }
+.screen.active { display:block; }
+
+/* HEADER */
+.header {
+  background: var(--dark);
+  color: #fff;
+  padding: 20px 20px 16px;
+  position: sticky; top:0; z-index:50;
+}
+.header-top { display:flex; justify-content:space-between; align-items:center; }
+.header-title { font-size:20px; font-weight:800; letter-spacing:-0.5px; }
+.header-sub { font-size:12px; color: var(--light); margin-top:2px; }
+.add-btn {
+  width:36px; height:36px; border-radius:50%;
+  background: var(--accent); border:none;
+  color:#fff; font-size:22px; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  font-weight:300; line-height:1;
+}
+
+/* STATS BAR */
+.stats-bar {
+  display:flex; gap:1px; background:var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.stat-box {
+  flex:1; background:var(--white);
+  padding:12px 10px; text-align:center;
+}
+.stat-box .num { font-size:22px; font-weight:800; }
+.stat-box .lbl { font-size:10px; color:var(--mid); margin-top:2px; }
+.stat-box.red .num { color:var(--red); }
+.stat-box.orange .num { color:var(--orange); }
+.stat-box.green .num { color:var(--green); }
+
+/* SEARCH */
+.search-wrap { padding:12px 16px; background:var(--white); border-bottom:1px solid var(--border); }
+.search-input {
+  width:100%; background:var(--bg);
+  border:1px solid var(--border); border-radius:8px;
+  padding:9px 14px 9px 36px;
+  font-family:'Plus Jakarta Sans',sans-serif;
+  font-size:14px; color:var(--dark); outline:none;
+}
+.search-wrap { position:relative; }
+.search-ico { position:absolute; left:28px; top:50%; transform:translateY(-50%); font-size:14px; }
+
+/* TABS */
+.tabs { display:flex; background:var(--white); border-bottom:2px solid var(--border); overflow-x:auto; scrollbar-width:none; }
+.tabs::-webkit-scrollbar { display:none; }
+.tab {
+  flex-shrink:0; padding:10px 16px;
+  font-size:12px; font-weight:600; color:var(--mid);
+  border:none; background:none; cursor:pointer;
+  font-family:'Plus Jakarta Sans',sans-serif;
+  border-bottom:2px solid transparent; margin-bottom:-2px;
+}
+.tab.active { color:var(--accent); border-bottom-color:var(--accent); }
+
+/* LISTA */
+.lista { padding:0; }
+.cliente-card {
+  background:var(--white);
+  border-bottom:1px solid var(--border);
+  padding:14px 16px;
+  display:flex; align-items:center; gap:12px;
+  cursor:pointer; transition:.1s;
+}
+.cliente-card:active { background:#f8f4f0; }
+.av {
+  width:44px; height:44px; border-radius:12px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:16px; font-weight:800; flex-shrink:0;
+}
+.info { flex:1; min-width:0; }
+.c-nombre { font-size:14px; font-weight:700; }
+.c-det { font-size:11px; color:var(--mid); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.badge {
+  padding:3px 9px; border-radius:20px;
+  font-size:10px; font-weight:700; flex-shrink:0;
+}
+.badge.ok { background:var(--green-bg); color:var(--green); }
+.badge.venc { background:var(--red-bg); color:var(--red); }
+.badge.prox { background:var(--orange-bg); color:var(--orange); }
+
+/* DETALLE */
+.back-bar {
+  background:var(--white); border-bottom:1px solid var(--border);
+  padding:14px 16px; display:flex; align-items:center; gap:12px;
+  position:sticky; top:0; z-index:40;
+}
+.back-btn {
+  background:none; border:none; font-size:20px; cursor:pointer; padding:0;
+  color:var(--dark); line-height:1;
+}
+.back-title { font-size:15px; font-weight:700; }
+
+.det-hero {
+  background:var(--dark); color:#fff;
+  padding:20px 16px 16px;
+  display:flex; align-items:center; gap:14px;
+}
+.det-av {
+  width:56px; height:56px; border-radius:14px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:20px; font-weight:800; flex-shrink:0;
+}
+.det-nombre { font-size:18px; font-weight:800; }
+.det-sub { font-size:12px; color:var(--light); margin-top:3px; }
+
+/* BOTONES DE ACCIÓN */
+.acciones {
+  display:flex; gap:10px; padding:14px 16px;
+  background:var(--white); border-bottom:1px solid var(--border);
+}
+.ac-btn {
+  flex:1; padding:11px 8px;
+  border-radius:10px; border:none; cursor:pointer;
+  font-family:'Plus Jakarta Sans',sans-serif;
+  font-size:13px; font-weight:700;
+  display:flex; flex-direction:column; align-items:center; gap:4px;
+}
+.ac-btn .ico { font-size:20px; }
+.ac-btn.whats { background:#d4edda; color:#1a6b35; }
+.ac-btn.mail  { background:#dde8ff; color:#1a3f8a; }
+.ac-btn.call  { background:#f5f0eb; color:var(--dark); border:1px solid var(--border); }
+
+/* SECCIÓN INFO */
+.seccion { padding:14px 16px 6px; font-size:11px; font-weight:700; color:var(--mid); text-transform:uppercase; letter-spacing:.5px; }
+.info-card { background:var(--white); margin:0; border-top:1px solid var(--border); border-bottom:1px solid var(--border); }
+.info-row {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:11px 16px; border-bottom:1px solid var(--border);
+}
+.info-row:last-child { border-bottom:none; }
+.info-k { font-size:12px; color:var(--mid); }
+.info-v { font-size:13px; font-weight:600; text-align:right; max-width:60%; }
+
+/* PÓLIZA CARD */
+.poliza-card {
+  background:var(--white); margin:0 16px 10px;
+  border:1px solid var(--border); border-radius:12px;
+  overflow:hidden;
+}
+.poliza-head {
+  padding:12px 14px; display:flex; justify-content:space-between; align-items:center;
+  border-bottom:1px solid var(--border);
+}
+.poliza-tipo { font-size:15px; font-weight:700; }
+.poliza-body { padding:4px 0; }
+.poliza-aviso {
+  margin:10px 14px 14px;
+  background:var(--dark); color:#fff;
+  border:none; border-radius:10px;
+  width:calc(100% - 28px);
+  padding:13px; font-size:14px; font-weight:700;
+  font-family:'Plus Jakarta Sans',sans-serif;
+  cursor:pointer; display:flex; align-items:center;
+  justify-content:center; gap:8px;
+}
+.poliza-aviso:active { opacity:.85; }
+
+/* FORMULARIO */
+.form-scroll { padding:16px; }
+.f-group { margin-bottom:14px; }
+.f-label { font-size:12px; font-weight:600; color:var(--mid); margin-bottom:5px; display:block; }
+.f-input, .f-select {
+  width:100%; background:var(--white);
+  border:1px solid var(--border); border-radius:8px;
+  padding:11px 13px; font-family:'Plus Jakarta Sans',sans-serif;
+  font-size:14px; color:var(--dark); outline:none; -webkit-appearance:none;
+}
+.f-input:focus, .f-select:focus { border-color:var(--accent); }
+.f-row { display:flex; gap:10px; }
+.f-row .f-group { flex:1; }
+.f-section { font-size:13px; font-weight:700; color:var(--dark); margin:18px 0 10px; padding-bottom:6px; border-bottom:2px solid var(--border); }
+.f-btn {
+  width:100%; padding:14px; background:var(--dark);
+  color:#fff; border:none; border-radius:10px;
+  font-family:'Plus Jakarta Sans',sans-serif;
+  font-size:15px; font-weight:700; cursor:pointer; margin-top:8px;
+}
+.f-btn:active { background:#333; }
+
+/* EMPTY */
+.empty { text-align:center; padding:50px 20px; color:var(--mid); }
+.empty .ico { font-size:50px; margin-bottom:12px; }
+.empty p { font-size:13px; line-height:1.6; }
+
+/* ALERTAS SCREEN */
+.alerta-item {
+  background:var(--white); border-bottom:1px solid var(--border);
+  padding:13px 16px; display:flex; align-items:flex-start; gap:10px;
+  cursor:pointer;
+}
+.alerta-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; margin-top:4px; }
+.alerta-txt { font-size:13px; line-height:1.4; flex:1; }
+.alerta-sub { font-size:11px; color:var(--mid); margin-top:3px; }
+.av-btn {
+  padding:5px 10px; border-radius:6px; border:none;
+  font-family:'Plus Jakarta Sans',sans-serif;
+  font-size:11px; font-weight:700; cursor:pointer; flex-shrink:0;
+}
+
+/* COBRANZA */
+.cobro-item {
+  background:var(--white); border-bottom:1px solid var(--border);
+  padding:13px 16px; display:flex; align-items:center; gap:12px;
+}
+.cobro-check {
+  width:24px; height:24px; border-radius:50%;
+  border:2px solid var(--border); flex-shrink:0;
+  cursor:pointer; display:flex; align-items:center;
+  justify-content:center; font-size:12px; transition:.2s;
+}
+.cobro-check.done { background:var(--green); border-color:var(--green); color:#fff; }
+
+/* NAV */
+.bottomnav {
+  position:fixed; bottom:0; left:50%; transform:translateX(-50%);
+  width:100%; max-width:430px;
+  background:var(--white); border-top:1px solid var(--border);
+  display:flex; z-index:100;
+}
+.nav-btn {
+  flex:1; display:flex; flex-direction:column; align-items:center;
+  padding:9px 0 12px; gap:3px; border:none; background:none;
+  color:var(--mid); font-family:'Plus Jakarta Sans',sans-serif;
+  font-size:10px; font-weight:600; cursor:pointer;
+}
+.nav-btn svg { width:22px; height:22px; }
+.nav-btn.active { color:var(--accent); }
+.nav-dot { position:absolute; top:-1px; right:-1px; width:7px; height:7px; background:var(--red); border-radius:50%; }
+.nav-ico-wrap { position:relative; }
+
+/* PERFIL */
+.perfil-input {
+  background:none; border:none; font-family:'Plus Jakarta Sans',sans-serif;
+  font-size:13px; font-weight:600; text-align:right;
+  outline:none; color:var(--dark); width:60%;
+}
+
+/* TOAST */
+.toast {
+  position:fixed; bottom:90px; left:50%; transform:translateX(-50%);
+  background:var(--dark); color:#fff; border-radius:8px;
+  padding:9px 18px; font-size:13px; font-weight:600;
+  z-index:999; opacity:0; transition:.3s; white-space:nowrap; pointer-events:none;
+}
+.toast.show { opacity:1; }
+
+@keyframes fadeUp { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none} }
+.screen.active { animation:fadeUp .2s ease; }
+</style>
+</head>
+<body>
+
+<!-- ===== HOME ===== -->
+<div class="screen active" id="s-home">
+  <div class="header">
+    <div class="header-top">
+      <div>
+        <div class="header-title">MiCartera 📋</div>
+        <div class="header-sub" id="h-fecha"></div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <div onclick="goScreen('s-perfil')" style="cursor:pointer;font-size:22px;">👤</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stats-bar">
+    <div class="stat-box">
+      <div class="num" id="h-nc">0</div>
+      <div class="lbl">Clientes</div>
+    </div>
+    <div class="stat-box">
+      <div class="num" id="h-np">0</div>
+      <div class="lbl">Pólizas</div>
+    </div>
+    <div class="stat-box red">
+      <div class="num" id="h-nv">0</div>
+      <div class="lbl">Vencidas</div>
+    </div>
+    <div class="stat-box orange">
+      <div class="num" id="h-nr">0</div>
+      <div class="lbl">Por renovar</div>
+    </div>
+  </div>
+
+  <div style="padding:14px 16px 6px;font-size:13px;font-weight:700;">⚠️ Pendientes urgentes</div>
+  <div id="home-alertas"></div>
+
+  <div style="padding:14px 16px 6px;font-size:13px;font-weight:700;margin-top:6px;">👥 Clientes recientes</div>
+  <div id="home-clientes"></div>
+  <div style="height:10px;"></div>
+</div>
+
+<!-- ===== CLIENTES ===== -->
+<div class="screen" id="s-clientes">
+  <div class="header">
+    <div class="header-top">
+      <div>
+        <div class="header-title">Clientes</div>
+        <div class="header-sub" id="sub-clientes">0 clientes</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button onclick="document.getElementById('csv-input').click()" style="background:#10b981;border:none;border-radius:8px;padding:7px 12px;color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer;">📂 CSV</button>
+        <input type="file" id="csv-input" accept=".csv" style="display:none;" onchange="importarCSV(this)">
+        <button class="add-btn" onclick="goScreen('s-nuevo-cliente')">+</button>
+      </div>
+    </div>
+  </div>
+  <div class="search-wrap">
+    <span class="search-ico">🔍</span>
+    <input class="search-input" placeholder="Buscar cliente..." oninput="filtrar(this.value)" id="buscador">
+  </div>
+  <div class="tabs">
+    <button class="tab active" onclick="setTab(this,'todos')">Todos</button>
+    <button class="tab" onclick="setTab(this,'ok')">Al día</button>
+    <button class="tab" onclick="setTab(this,'venc')">Vencidos</button>
+    <button class="tab" onclick="setTab(this,'prox')">Por renovar</button>
+  </div>
+  <div class="lista" id="lista-clientes"></div>
+  <button class="add-btn" onclick="goScreen('s-nuevo-cliente')" style="position:fixed;bottom:90px;right:20px;width:52px;height:52px;font-size:28px;box-shadow:0 4px 16px #0003;">+</button>
+</div>
+
+<!-- ===== DETALLE CLIENTE ===== -->
+<div class="screen" id="s-detalle">
+  <div class="back-bar">
+    <button class="back-btn" onclick="goBack()">←</button>
+    <div class="back-title" id="det-titulo">Cliente</div>
+    <div style="flex:1;"></div>
+    <button onclick="editarCliente()" style="background:none;border:none;font-size:18px;cursor:pointer;margin-right:4px;">✏️</button>
+    <button onclick="eliminarCliente()" style="background:none;border:none;font-size:18px;cursor:pointer;">🗑</button>
+  </div>
+  <div id="det-content"></div>
+</div>
+
+<!-- ===== NUEVO CLIENTE ===== -->
+<div class="screen" id="s-nuevo-cliente">
+  <div class="back-bar">
+    <button class="back-btn" onclick="goBack()">←</button>
+    <div class="back-title" id="form-titulo">Nuevo Cliente</div>
+  </div>
+  <div class="form-scroll">
+    <div class="f-section">👤 Datos del cliente</div>
+
+    <!-- LECTOR PDF AXA -->
+    <div style="background:#fff8f0;border:2px dashed #c8622a;border-radius:10px;padding:14px;margin-bottom:16px;text-align:center;">
+      <div style="font-size:13px;font-weight:700;color:#c8622a;margin-bottom:8px;">📄 Cargar póliza AXA PDF</div>
+      <div style="font-size:11px;color:#888;margin-bottom:10px;">Se llenan los datos automáticamente</div>
+      <input type="file" id="pdf-input" accept=".pdf" style="display:none;" onchange="leerPDF(this)">
+      <button onclick="document.getElementById('pdf-input').click()" style="background:#c8622a;color:#fff;border:none;border-radius:8px;padding:10px 20px;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">📂 Seleccionar PDF</button>
+      <div id="pdf-status" style="font-size:11px;color:#888;margin-top:8px;"></div>
+    </div>
+
+    <div class="f-group">
+      <label class="f-label">Nombre completo *</label>
+      <input class="f-input" placeholder="Nombre completo" id="nc-nombre">
+    </div>
+    <div class="f-row">
+      <div class="f-group">
+        <label class="f-label">Teléfono *</label>
+        <input class="f-input" placeholder="10 dígitos" type="tel" id="nc-tel">
+      </div>
+      <div class="f-group">
+        <label class="f-label">Nacimiento</label>
+        <input class="f-input" type="date" id="nc-nac">
+      </div>
+    </div>
+    <div class="f-group">
+      <label class="f-label">Correo electrónico</label>
+      <input class="f-input" placeholder="correo@ejemplo.com" type="email" id="nc-email">
+    </div>
+    <div class="f-group">
+      <label class="f-label">RFC</label>
+      <input class="f-input" placeholder="RFC" id="nc-rfc">
+    </div>
+    <div class="f-group">
+      <label class="f-label">Dirección</label>
+      <input class="f-input" placeholder="Calle, Colonia, Ciudad" id="nc-dir">
+    </div>
+    <div class="f-group">
+      <label class="f-label">Notas</label>
+      <input class="f-input" placeholder="Referido por, intereses..." id="nc-notas">
+    </div>
+
+    <div class="f-section">📋 Primera póliza (opcional)</div>
+    <div class="f-group">
+      <label class="f-label">Tipo de seguro</label>
+      <select class="f-select" id="nc-tipo">
+        <option value="">— Seleccionar —</option>
+        <option>Automóvil</option><option>Vida</option>
+        <option>Gastos Médicos Mayores</option><option>Hogar</option>
+        <option>Negocio</option><option>Accidentes Personales</option>
+        <option>Retiro / Ahorro</option>
+      </select>
+    </div>
+    <div class="f-row">
+      <div class="f-group">
+        <label class="f-label">Prima anual ($)</label>
+        <input class="f-input" placeholder="0" type="number" id="nc-prima">
+      </div>
+      <div class="f-group">
+        <label class="f-label">Vencimiento</label>
+        <input class="f-input" type="date" id="nc-vigencia">
+      </div>
+    </div>
+    <div class="f-row">
+      <div class="f-group">
+        <label class="f-label">No. de Póliza</label>
+        <input class="f-input" placeholder="Número" id="nc-num">
+      </div>
+      <div class="f-group">
+        <label class="f-label">Aseguradora</label>
+        <select class="f-select" id="nc-aseg">
+          <option value="">—</option>
+          <option>GNP</option><option>Qualitas</option><option>AXA</option>
+          <option>Mapfre</option><option>HDI</option><option>Metlife</option>
+          <option>Zurich</option><option>Allianz</option><option>Sura</option><option>Otra</option>
+        </select>
+      </div>
+    </div>
+    <button class="f-btn" onclick="guardarCliente()">Guardar cliente</button>
+    <div style="height:10px;"></div>
+  </div>
+</div>
+
+<!-- ===== ALERTAS ===== -->
+<div class="screen" id="s-alertas">
+  <div class="header">
+    <div class="header-top">
+      <div>
+        <div class="header-title">Alertas 🔔</div>
+        <div class="header-sub">Acciones pendientes</div>
+      </div>
+    </div>
+  </div>
+  <div id="alertas-content"></div>
+</div>
+
+<!-- ===== COBRANZA ===== -->
+<div class="screen" id="s-cobranza">
+  <div class="header">
+    <div class="header-top">
+      <div>
+        <div class="header-title">Cobranza 💰</div>
+        <div class="header-sub" id="cobro-mes"></div>
+      </div>
+    </div>
+  </div>
+  <div id="cobro-resumen" style="padding:14px 16px 0;"></div>
+  <div style="padding:10px 16px 6px;font-size:13px;font-weight:700;">Lista de cobros</div>
+  <div id="lista-cobros"></div>
+</div>
+
+<!-- ===== PERFIL ===== -->
+<div class="screen" id="s-perfil">
+  <div class="back-bar">
+    <button class="back-btn" onclick="goBack()">←</button>
+    <div class="back-title">Mi perfil</div>
+  </div>
+  <div style="text-align:center;padding:28px 16px 20px;background:var(--white);border-bottom:1px solid var(--border);">
+    <div style="width:72px;height:72px;border-radius:18px;background:var(--dark);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;color:#fff;margin:0 auto 10px;" id="p-avatar">?</div>
+    <div style="font-size:18px;font-weight:800;" id="p-nombre-display">Agente</div>
+  </div>
+  <div class="info-card" style="margin-top:14px;">
+    <div class="info-row"><span class="info-k">Nombre</span><input class="perfil-input" id="p-nombre" placeholder="Tu nombre"></div>
+    <div class="info-row"><span class="info-k">Teléfono</span><input class="perfil-input" id="p-tel" placeholder="Tu teléfono" type="tel"></div>
+    <div class="info-row"><span class="info-k">Correo</span><input class="perfil-input" id="p-email" placeholder="Tu correo" type="email"></div>
+    <div class="info-row"><span class="info-k">Meta anual ($)</span><input class="perfil-input" id="p-meta" placeholder="0" type="number" style="color:var(--orange);"></div>
+    <div class="info-row"><span class="info-k">Clave de agente</span><input class="perfil-input" id="p-clave" placeholder="Clave"></div>
+  </div>
+  <div style="padding:16px;">
+    <button class="f-btn" onclick="guardarPerfil()">Guardar perfil</button>
+    <div style="height:10px;"></div>
+    <button onclick="borrarTodo()" style="width:100%;padding:13px;background:var(--red-bg);color:var(--red);border:1px solid #f5c2c7;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Borrar todos los datos</button>
+  </div>
+</div>
+
+
+<!-- ===== EDITAR CLIENTE ===== -->
+<div class="screen" id="s-editar-cliente">
+  <div class="back-bar">
+    <button class="back-btn" onclick="goBack()">←</button>
+    <div class="back-title">Editar Cliente</div>
+  </div>
+  <div class="form-scroll">
+    <div class="f-section">👤 Datos del cliente</div>
+    <div class="f-group"><label class="f-label">Nombre completo *</label><input class="f-input" id="ec-nombre"></div>
+    <div class="f-row">
+      <div class="f-group"><label class="f-label">Teléfono *</label><input class="f-input" type="tel" id="ec-tel"></div>
+      <div class="f-group"><label class="f-label">Nacimiento</label><input class="f-input" type="date" id="ec-nac"></div>
+    </div>
+    <div class="f-group"><label class="f-label">Correo electrónico</label><input class="f-input" type="email" id="ec-email"></div>
+    <div class="f-group"><label class="f-label">RFC</label><input class="f-input" id="ec-rfc"></div>
+    <div class="f-group"><label class="f-label">Dirección</label><input class="f-input" id="ec-dir"></div>
+    <div class="f-group"><label class="f-label">Notas</label><input class="f-input" id="ec-notas"></div>
+    <button class="f-btn" onclick="guardarEdicionCliente()">💾 Guardar cambios</button>
+    <div style="height:10px;"></div>
+    <div class="f-section" id="ec-polizas-title">📋 Pólizas</div>
+    <div id="ec-polizas-lista"></div>
+    <button onclick="goScreen('s-nueva-poliza')" style="width:100%;padding:12px;background:var(--surface);border:2px dashed var(--border);border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:600;color:var(--mid);cursor:pointer;margin-top:8px;">+ Agregar póliza</button>
+    <div style="height:20px;"></div>
+  </div>
+</div>
+
+<!-- ===== EDITAR PÓLIZA ===== -->
+<div class="screen" id="s-editar-poliza">
+  <div class="back-bar">
+    <button class="back-btn" onclick="goBack()">←</button>
+    <div class="back-title">Editar Póliza</div>
+  </div>
+  <div class="form-scroll">
+    <div class="f-group"><label class="f-label">Tipo de seguro *</label>
+      <select class="f-select" id="ep-tipo">
+        <option value="">— Seleccionar —</option>
+        <option>Automóvil</option><option>Vida</option><option>Gastos Médicos Mayores</option>
+        <option>Hogar</option><option>Negocio</option><option>Accidentes Personales</option><option>Retiro / Ahorro</option>
+      </select>
+    </div>
+    <div class="f-row">
+      <div class="f-group"><label class="f-label">Prima anual ($)</label><input class="f-input" type="number" id="ep-prima"></div>
+      <div class="f-group"><label class="f-label">Vencimiento</label><input class="f-input" type="date" id="ep-vigencia"></div>
+    </div>
+    <div class="f-row">
+      <div class="f-group"><label class="f-label">No. Póliza</label><input class="f-input" id="ep-num"></div>
+      <div class="f-group"><label class="f-label">Aseguradora</label>
+        <select class="f-select" id="ep-aseg">
+          <option value="">—</option>
+          <option>GNP</option><option>Qualitas</option><option>AXA</option><option>Mapfre</option>
+          <option>HDI</option><option>Metlife</option><option>Zurich</option><option>Allianz</option><option>Sura</option><option>Otra</option>
+        </select>
+      </div>
+    </div>
+    <div class="f-group"><label class="f-label">Coberturas</label><input class="f-input" id="ep-coberturas" placeholder="RC Bienes | Gastos Médicos | ..."></div>
+    <div class="f-group"><label class="f-label">Notas</label><input class="f-input" id="ep-nota"></div>
+    <button class="f-btn" onclick="guardarEdicionPoliza()">💾 Guardar póliza</button>
+    <div style="height:10px;"></div>
+    <button onclick="eliminarPoliza()" style="width:100%;padding:13px;background:#fde8ea;color:#b5192a;border:1px solid #f5c2c7;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;">🗑 Eliminar póliza</button>
+    <div style="height:20px;"></div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="bottomnav">
+  <button class="nav-btn active" onclick="goScreen('s-home')">
+    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    Inicio
+  </button>
+  <button class="nav-btn" onclick="goScreen('s-clientes')">
+    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+    Clientes
+  </button>
+  <button class="nav-btn" onclick="goScreen('s-alertas')">
+    <div class="nav-ico-wrap">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+      <div class="nav-dot" id="nav-dot" style="display:none;"></div>
+    </div>
+    Alertas
+  </button>
+  <button class="nav-btn" onclick="goScreen('s-cobranza')">
+    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+    Cobranza
+  </button>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// DATOS Y STORAGE
+// ============================================================
+const COLORES = ['#f0e6d3','#d3e8f0','#d3f0e0','#f0d3d3','#e8d3f0','#f0f0d3'];
+const COLORES_TEXT = ['#7a5c2e','#1a5f7a','#1a6b35','#7a1a1a','#5c1a7a','#5c5c1a'];
+
+function load(k, def) { try { return JSON.parse(localStorage.getItem(k)) || def; } catch { return def; } }
+function save(k, v) { localStorage.setItem(k, JSON.stringify(v)); }
+
+let clientes = load('mc2_clientes', []);
+
+let perfil = load('mc2_perfil', { nombre:'Laura Castillo', tel:'', email:'', meta:0, clave:'' });
+let tabActual = 'todos';
+let history = ['s-home'];
+let clienteIdx = null;
+
+// ============================================================
+// NAVEGACIÓN
+// ============================================================
+const navMap = { 's-home':0, 's-clientes':1, 's-alertas':2, 's-cobranza':3 };
+function goScreen(id) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if (history[history.length-1] !== id) history.push(id);
+  document.querySelectorAll('.nav-btn').forEach((b,i)=>b.classList.toggle('active', navMap[id]===i));
+  document.getElementById(id).scrollTop = 0;
+  if (id==='s-home') renderHome();
+  if (id==='s-clientes') { renderLista(clientes); document.getElementById('buscador').value=''; }
+  if (id==='s-alertas') renderAlertas();
+  if (id==='s-cobranza') renderCobranza();
+  if (id==='s-perfil') cargarPerfil();
+}
+function goBack() {
+  history.pop();
+  const prev = history[history.length-1] || 's-home';
+  history.pop();
+  goScreen(prev);
+}
+
+// ============================================================
+// UTILS
+// ============================================================
+function ini(n) { return (n||'?').split(' ').slice(0,2).map(p=>p[0]||'').join('').toUpperCase()||'?'; }
+function col(i) { return COLORES[Math.abs(i||0) % COLORES.length]; }
+function colT(i) { return COLORES_TEXT[Math.abs(i||0) % COLORES_TEXT.length]; }
+function diasHasta(fecha) { return Math.round((new Date(fecha) - new Date().setHours(0,0,0,0)) / 86400000); }
+function estadoPoliza(p) {
+  if (!p.vigencia) return 'ok';
+  const d = diasHasta(p.vigencia);
+  if (d < 0) return 'venc';
+  if (d <= 30) return 'prox';
+  return 'ok';
+}
+function estadoCliente(c) {
+  if (!(c.polizas||[]).length) return 'ok';
+  if (c.polizas.some(p=>estadoPoliza(p)==='venc')) return 'venc';
+  if (c.polizas.some(p=>estadoPoliza(p)==='prox')) return 'prox';
+  return 'ok';
+}
+function badgeHTML(e) {
+  const m = { ok:'<span class="badge ok">Al día</span>', venc:'<span class="badge venc">Vencido</span>', prox:'<span class="badge prox">Por renovar</span>' };
+  return m[e] || '';
+}
+function polizaBadge(e) {
+  const m = { ok:'<span class="badge ok">Vigente</span>', venc:'<span class="badge venc">Vencida</span>', prox:'<span class="badge prox">Por renovar</span>' };
+  return m[e] || '';
+}
+function iconTipo(t) {
+  const m = {'Automóvil':'🚗','Vida':'❤️','Gastos Médicos Mayores':'🏥','Hogar':'🏠','Negocio':'🏢','Accidentes Personales':'🛡️','Retiro / Ahorro':'💰'};
+  return m[t]||'📋';
+}
+const meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+const hoy = new Date();
+document.getElementById('h-fecha').textContent = hoy.getDate()+' de '+meses[hoy.getMonth()]+' '+hoy.getFullYear();
+document.getElementById('cobro-mes').textContent = meses[hoy.getMonth()]+' '+hoy.getFullYear();
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2500);
+}
+
+// ============================================================
+// HOME
+// ============================================================
+function renderHome() {
+  perfil = load('mc2_perfil', perfil);
+  const totalP = clientes.reduce((a,c)=>a+(c.polizas||[]).length, 0);
+  const vencidas = clientes.reduce((a,c)=>a+(c.polizas||[]).filter(p=>estadoPoliza(p)==='venc').length, 0);
+  const prox = clientes.reduce((a,c)=>a+(c.polizas||[]).filter(p=>estadoPoliza(p)==='prox').length, 0);
+  document.getElementById('h-nc').textContent = clientes.length;
+  document.getElementById('h-np').textContent = totalP;
+  document.getElementById('h-nv').textContent = vencidas;
+  document.getElementById('h-nr').textContent = prox;
+
+  // Alertas urgentes
+  const alertas = getAlertas().filter(a=>a.tipo==='rojo');
+  const el = document.getElementById('home-alertas');
+  if (!alertas.length) {
+    el.innerHTML = '<div style="padding:16px;background:#fff;border-top:1px solid var(--border);border-bottom:1px solid var(--border);text-align:center;color:var(--mid);font-size:13px;">✅ Sin pendientes urgentes</div>';
+  } else {
+    el.innerHTML = alertas.slice(0,3).map(a=>`
+      <div class="alerta-item" onclick="verCliente(${a.idx})">
+        <div class="alerta-dot" style="background:var(--red);"></div>
+        <div><div class="alerta-txt">${a.txt}</div><div class="alerta-sub">${a.sub}</div></div>
+      </div>`).join('');
+  }
+
+  // Recientes
+  const el2 = document.getElementById('home-clientes');
+  const rec = [...clientes].reverse().slice(0,3);
+  if (!rec.length) {
+    el2.innerHTML = '<div style="padding:16px;text-align:center;color:var(--mid);font-size:13px;">Sin clientes aún</div>';
+  } else {
+    el2.innerHTML = rec.map(c=>{
+      const idx = clientes.indexOf(c);
+      const e = estadoCliente(c);
+      return `<div class="cliente-card" onclick="verCliente(${idx})">
+        <div class="av" style="background:${col(idx)};color:${colT(idx)}">${ini(c.nombre)}</div>
+        <div class="info"><div class="c-nombre">${c.nombre}</div><div class="c-det">${(c.polizas||[]).map(p=>p.tipo).join(' · ')||'Sin pólizas'}</div></div>
+        ${badgeHTML(e)}
+      </div>`;
+    }).join('');
+  }
+  document.getElementById('nav-dot').style.display = getAlertas().filter(a=>a.tipo==='rojo').length ? 'block':'none';
+}
+
+// ============================================================
+// ALERTAS
+// ============================================================
+function getAlertas() {
+  const alertas = [];
+  clientes.forEach((c,idx)=>{
+    if (c.nac) {
+      const n = new Date(c.nac);
+      const cumple = new Date(hoy.getFullYear(), n.getMonth(), n.getDate());
+      if (cumple < hoy) cumple.setFullYear(hoy.getFullYear()+1);
+      const d = Math.round((cumple-hoy)/86400000);
+      if (d<=7) alertas.push({ txt:`🎂 Cumpleaños de <b>${c.nombre}</b> en ${d===0?'HOY':d+' días'}`, sub:'Envía un mensaje de felicitación', tipo:d<=2?'rojo':'naranja', idx });
+    }
+    (c.polizas||[]).forEach(p=>{
+      if (!p.vigencia) return;
+      const d = diasHasta(p.vigencia);
+      if (d<0) alertas.push({ txt:`<b>${c.nombre}</b> — Póliza ${p.tipo} venció hace ${Math.abs(d)} días`, sub:`${p.num||''} · ${p.aseg||''} · Renovar urgente`, tipo:'rojo', idx });
+      else if (d<=30) alertas.push({ txt:`<b>${c.nombre}</b> — Póliza ${p.tipo} vence en ${d} días`, sub:`${p.num||''} · ${p.aseg||''}`, tipo:d<=7?'rojo':'naranja', idx });
+    });
+  });
+  return alertas;
+}
+
+function renderAlertas() {
+  const alertas = getAlertas();
+  const el = document.getElementById('alertas-content');
+  if (!alertas.length) {
+    el.innerHTML = '<div class="empty"><div class="ico">🎉</div><p>¡Sin alertas!<br>Todos tus clientes están al día.</p></div>';
+    return;
+  }
+  const rojas = alertas.filter(a=>a.tipo==='rojo');
+  const naranjas = alertas.filter(a=>a.tipo==='naranja');
+  let html = '';
+  if (rojas.length) {
+    html += `<div style="padding:12px 16px 6px;font-size:11px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:.5px;">🔴 Urgente</div>`;
+    html += rojas.map(a=>`<div class="alerta-item" onclick="verCliente(${a.idx})">
+      <div class="alerta-dot" style="background:var(--red);"></div>
+      <div class="alerta-txt" style="flex:1;">${a.txt}<div class="alerta-sub">${a.sub}</div></div>
+      <button class="av-btn" style="background:var(--red-bg);color:var(--red);" onclick="event.stopPropagation();verCliente(${a.idx})">Ver</button>
+    </div>`).join('');
+  }
+  if (naranjas.length) {
+    html += `<div style="padding:12px 16px 6px;font-size:11px;font-weight:700;color:var(--orange);text-transform:uppercase;letter-spacing:.5px;margin-top:8px;">🟠 Próximo</div>`;
+    html += naranjas.map(a=>`<div class="alerta-item" onclick="verCliente(${a.idx})">
+      <div class="alerta-dot" style="background:var(--orange);"></div>
+      <div class="alerta-txt" style="flex:1;">${a.txt}<div class="alerta-sub">${a.sub}</div></div>
+      <button class="av-btn" style="background:var(--orange-bg);color:var(--orange);" onclick="event.stopPropagation();verCliente(${a.idx})">Ver</button>
+    </div>`).join('');
+  }
+  el.innerHTML = html;
+  document.getElementById('nav-dot').style.display = rojas.length?'block':'none';
+}
+
+// ============================================================
+// LISTA CLIENTES
+// ============================================================
+function renderLista(lista) {
+  document.getElementById('sub-clientes').textContent = clientes.length+' cliente'+(clientes.length!==1?'s':'');
+  const el = document.getElementById('lista-clientes');
+  if (!lista.length) {
+    el.innerHTML = '<div class="empty"><div class="ico">📂</div><p>Sin clientes aún.<br>Toca <b>CSV</b> para importar tu cartera<br>o <b>+</b> para agregar manualmente.</p></div>';
+    return;
+  }
+  el.innerHTML = lista.map(c=>{
+    const idx = clientes.indexOf(c);
+    const e = estadoCliente(c);
+    const prima = (c.polizas||[]).reduce((a,p)=>a+(parseFloat(p.prima)||0),0);
+    return `<div class="cliente-card" onclick="verCliente(${idx})">
+      <div class="av" style="background:${col(idx)};color:${colT(idx)}">${ini(c.nombre)}</div>
+      <div class="info">
+        <div class="c-nombre">${c.nombre}</div>
+        <div class="c-det">${(c.polizas||[]).map(p=>p.tipo).join(' · ')||'Sin pólizas'} · $${prima.toLocaleString()}/año</div>
+      </div>
+      ${badgeHTML(e)}
+    </div>`;
+  }).join('');
+}
+
+function filtrar(q) {
+  let lista = q ? clientes.filter(c=>(c.nombre||'').toLowerCase().includes(q.toLowerCase())) : clientes;
+  if (tabActual!=='todos') lista = lista.filter(c=>estadoCliente(c)===tabActual);
+  renderLista(lista);
+}
+
+function setTab(btn, tab) {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  tabActual = tab;
+  filtrar(document.getElementById('buscador').value);
+}
+
+// ============================================================
+// DETALLE CLIENTE
+// ============================================================
+function verCliente(idx) {
+  clienteIdx = idx;
+  const c = clientes[idx];
+  if (!c) return;
+  document.getElementById('det-titulo').textContent = c.nombre;
+  const prima = (c.polizas||[]).reduce((a,p)=>a+(parseFloat(p.prima)||0),0);
+  const e = estadoCliente(c);
+
+  let html = `
+    <div class="det-hero">
+      <div class="det-av" style="background:${col(idx)};color:${colT(idx)}">${ini(c.nombre)}</div>
+      <div>
+        <div class="det-nombre">${c.nombre}</div>
+        <div class="det-sub">${c.tel||'Sin teléfono'} · ${c.email||'Sin correo'}</div>
+        <div style="margin-top:6px;">${badgeHTML(e)}</div>
+      </div>
+    </div>
+
+    <div class="acciones">
+      ${c.tel ? `<button class="ac-btn call" onclick="window.location='tel:${c.tel}'"><span class="ico">📞</span>Llamar</button>` : ''}
+      ${c.tel ? `<button class="ac-btn whats" onclick="abrirWhatsApp(${idx})"><span class="ico">💬</span>WhatsApp</button>` : ''}
+      ${c.email ? `<button class="ac-btn mail" onclick="abrirEmail(${idx})"><span class="ico">✉️</span>Correo</button>` : ''}
+    </div>
+
+    <div class="seccion">Datos del cliente</div>
+    <div class="info-card">
+      ${c.rfc?`<div class="info-row"><span class="info-k">RFC</span><span class="info-v">${c.rfc}</span></div>`:''}
+      ${c.nac?`<div class="info-row"><span class="info-k">Nacimiento</span><span class="info-v">${c.nac}</span></div>`:''}
+      <div class="info-row"><span class="info-k">Prima total</span><span class="info-v" style="color:var(--green);font-weight:800;">$${prima.toLocaleString()}/año</span></div>
+      ${c.notas?`<div class="info-row"><span class="info-k">Notas</span><span class="info-v" style="font-size:12px;">${c.notas}</span></div>`:''}
+    </div>
+
+    <div class="seccion" style="display:flex;justify-content:space-between;align-items:center;">
+      <span>Pólizas (${(c.polizas||[]).length})</span>
+      <button onclick="goScreen('s-nueva-poliza')" style="background:var(--dark);color:#fff;border:none;border-radius:6px;padding:4px 10px;font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:700;cursor:pointer;">+ Agregar</button>
+    </div>
+    <div style="height:6px;"></div>`;
+
+  if (!(c.polizas||[]).length) {
+    html += '<div style="text-align:center;padding:20px;color:var(--mid);font-size:13px;">Sin pólizas. Toca + Agregar.</div>';
+  } else {
+    html += (c.polizas||[]).map((p,pi)=>{
+      const ep = estadoPoliza(p);
+      const dias = p.vigencia ? diasHasta(p.vigencia) : null;
+      const diasTxt = dias===null ? '' : dias<0 ? `Venció hace ${Math.abs(dias)} días` : dias===0 ? 'Vence HOY' : `Vence en ${dias} días`;
+      return `<div class="poliza-card">
+        <div class="poliza-head">
+          <div class="poliza-tipo">${iconTipo(p.tipo)} ${p.tipo}</div>
+          ${polizaBadge(ep)}
+        </div>
+        <div class="poliza-body">
+          <div class="info-row"><span class="info-k">No. Póliza</span><span class="info-v" style="font-family:monospace;font-size:12px;">${p.num||'—'}</span></div>
+          <div class="info-row"><span class="info-k">Aseguradora</span><span class="info-v">${p.aseg||'—'}</span></div>
+          <div class="info-row"><span class="info-k">Prima anual</span><span class="info-v" style="color:var(--orange);font-weight:800;">$${(parseFloat(p.prima)||0).toLocaleString()}</span></div>
+          <div class="info-row"><span class="info-k">Vencimiento</span><span class="info-v" style="color:${ep==='venc'?'var(--red)':ep==='prox'?'var(--orange)':'var(--green)'};">${p.vigencia||'—'}<br><span style="font-size:10px;font-weight:400;">${diasTxt}</span></span></div>
+        </div>
+        <div style="display:flex;gap:8px;margin:10px 14px 14px;">
+          <button onclick="enviarAvisoWA(${idx},${pi})" style="flex:1;padding:12px 6px;background:#25D366;color:#fff;border:none;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">💬 WhatsApp</button>
+          <button onclick="enviarAvisoEmail(${idx},${pi})" style="flex:1;padding:12px 6px;background:#1a73e8;color:#fff;border:none;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">✉️ Gmail</button>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  html += '<div style="height:10px;"></div>';
+  document.getElementById('det-content').innerHTML = html;
+  goScreen('s-detalle');
+}
+
+// ============================================================
+// ENVIAR AVISO — WhatsApp + Correo juntos
+// ============================================================
+function enviarAvisoWA(idx, pi) {
+  const c = clientes[idx];
+  const p = c.polizas[pi];
+  if (!c.tel) { toast('Sin telefono registrado'); return; }
+  const msj = buildMsj(c, p);
+  const tel = c.tel.replace(/\D/g,'');
+  window.open('https://wa.me/52' + tel + '?text=' + encodeURIComponent(msj), '_blank');
+  toast('Abriendo WhatsApp...');
+}
+
+function enviarAvisoEmail(idx, pi) {
+  const c = clientes[idx];
+  const p = c.polizas[pi];
+  if (!c.email) { toast('Sin correo registrado'); return; }
+  const msj = buildMsj(c, p);
+  const dias = p.vigencia ? diasHasta(p.vigencia) : null;
+  const estadoTxt = dias===null ? 'proxima a vencer'
+    : dias < 0 ? 'vencio hace ' + Math.abs(dias) + ' dias'
+    : dias === 0 ? 'vence HOY'
+    : 'vence en ' + dias + ' dias';
+  const asunto = 'Aviso poliza ' + p.tipo + ' - ' + estadoTxt;
+  const url = 'mailto:' + c.email
+    + '?subject=' + encodeURIComponent(asunto)
+    + '&body=' + encodeURIComponent(msj);
+  const a = document.createElement('a');
+  a.href = url;
+  a.target = '_blank';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  toast('Abriendo Gmail...');
+}
+
+function buildMsj(c, p) {
+  const dias = p.vigencia ? diasHasta(p.vigencia) : null;
+  const estadoTxt = dias===null ? 'proxima a vencer'
+    : dias < 0 ? 'vencio hace ' + Math.abs(dias) + ' dias'
+    : dias === 0 ? 'vence HOY'
+    : 'vence en ' + dias + ' dias (' + p.vigencia + ')';
+  return 'Hola ' + c.nombre.split(' ')[0] + ', tu poliza de ' + p.tipo
+    + ' ' + estadoTxt + '.\nPoliza: ' + (p.num||'N/A')
+    + '\nAseguradora: ' + (p.aseg||'N/A')
+    + '\nPrima: $' + (parseFloat(p.prima)||0).toLocaleString() + ' MXN'
+    + '\nContactame para renovarla. Saludos, tu agente de seguros.';
+}
+
+
+// ============================================================
+// ABRIR WHATSAPP / CORREO INDIVIDUAL (botones del header)
+// ============================================================
+function abrirWhatsApp(idx) {
+  const c = clientes[idx];
+  const msj = 'Hola ' + c.nombre.split(' ')[0] + ', soy tu agente de seguros. ¿En qué te puedo ayudar?';
+  const tel = c.tel.replace(/\D/g,'');
+  window.open('https://wa.me/52' + tel + '?text=' + encodeURIComponent(msj), '_blank');
+}
+
+function abrirEmail(idx) {
+  const c = clientes[idx];
+  const a = document.createElement('a');
+  a.href = 'googlegmail://co?to=' + encodeURIComponent(c.email);
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+// ============================================================
+// NUEVA PÓLIZA
+// ============================================================
+// Reutilizamos la pantalla de nuevo cliente para agregar póliza
+const sNuevaPoliza = `
+<div class="screen" id="s-nueva-poliza">
+  <div class="back-bar">
+    <button class="back-btn" onclick="goBack()">←</button>
+    <div class="back-title">Nueva Póliza</div>
+  </div>
+  <div class="form-scroll">
+    <div class="f-group"><label class="f-label">Tipo de seguro *</label>
+      <select class="f-select" id="np-tipo">
+        <option value="">— Seleccionar —</option>
+        <option>Automóvil</option><option>Vida</option>
+        <option>Gastos Médicos Mayores</option><option>Hogar</option>
+        <option>Negocio</option><option>Accidentes Personales</option><option>Retiro / Ahorro</option>
+      </select>
+    </div>
+    <div class="f-row">
+      <div class="f-group"><label class="f-label">Prima anual ($)</label><input class="f-input" type="number" placeholder="0" id="np-prima"></div>
+      <div class="f-group"><label class="f-label">Vencimiento</label><input class="f-input" type="date" id="np-vigencia"></div>
+    </div>
+    <div class="f-row">
+      <div class="f-group"><label class="f-label">No. Póliza</label><input class="f-input" placeholder="Número" id="np-num"></div>
+      <div class="f-group"><label class="f-label">Aseguradora</label>
+        <select class="f-select" id="np-aseg">
+          <option value="">—</option>
+          <option>GNP</option><option>Qualitas</option><option>AXA</option>
+          <option>Mapfre</option><option>HDI</option><option>Metlife</option>
+          <option>Zurich</option><option>Allianz</option><option>Sura</option><option>Otra</option>
+        </select>
+      </div>
+    </div>
+    <button class="f-btn" onclick="guardarPoliza()">Guardar póliza</button>
+  </div>
+</div>`;
+document.body.insertAdjacentHTML('beforeend', sNuevaPoliza);
+
+function guardarPoliza() {
+  if (clienteIdx===null) return;
+  const tipo = document.getElementById('np-tipo').value;
+  if (!tipo) { toast('⚠️ Selecciona el tipo de seguro'); return; }
+  if (!clientes[clienteIdx].polizas) clientes[clienteIdx].polizas = [];
+  clientes[clienteIdx].polizas.push({
+    tipo, prima: document.getElementById('np-prima').value,
+    vigencia: document.getElementById('np-vigencia').value,
+    num: document.getElementById('np-num').value,
+    aseg: document.getElementById('np-aseg').value
+  });
+  save('mc2_clientes', clientes);
+  toast('✅ Póliza agregada');
+  ['np-tipo','np-aseg'].forEach(id=>document.getElementById(id).value='');
+  ['np-prima','np-vigencia','np-num'].forEach(id=>document.getElementById(id).value='');
+  verCliente(clienteIdx);
+}
+
+// ============================================================
+// GUARDAR CLIENTE
+// ============================================================
+function guardarCliente() {
+  const nombre = document.getElementById('nc-nombre').value.trim();
+  const tel = document.getElementById('nc-tel').value.trim();
+  if (!nombre) { toast('⚠️ El nombre es obligatorio'); return; }
+  if (!tel) { toast('⚠️ El teléfono es obligatorio'); return; }
+
+  const nuevo = {
+    id: Date.now(),
+    nombre, tel,
+    email: document.getElementById('nc-email').value.trim(),
+    rfc: document.getElementById('nc-rfc').value.trim(),
+    nac: document.getElementById('nc-nac').value,
+    notas: document.getElementById('nc-notas').value.trim(),
+    polizas: []
+  };
+  const tipo = document.getElementById('nc-tipo').value;
+  if (tipo) nuevo.polizas.push({
+    tipo, prima: document.getElementById('nc-prima').value,
+    vigencia: document.getElementById('nc-vigencia').value,
+    num: document.getElementById('nc-num').value.trim(),
+    aseg: document.getElementById('nc-aseg').value
+  });
+
+  clientes.push(nuevo);
+  save('mc2_clientes', clientes);
+  toast('✅ Cliente guardado');
+  ['nc-nombre','nc-tel','nc-email','nc-rfc','nc-nac','nc-notas','nc-prima','nc-vigencia','nc-num'].forEach(id=>document.getElementById(id).value='');
+  ['nc-tipo','nc-aseg'].forEach(id=>document.getElementById(id).value='');
+  goScreen('s-clientes');
+}
+
+function eliminarCliente() {
+  if (clienteIdx===null) return;
+  if (confirm('¿Eliminar a '+clientes[clienteIdx].nombre+'? No se puede deshacer.')) {
+    clientes.splice(clienteIdx,1);
+    save('mc2_clientes',clientes);
+    toast('🗑 Cliente eliminado');
+    goBack();
+  }
+}
+
+// ============================================================
+// COBRANZA
+// ============================================================
+function renderCobranza() {
+  let porCobrar=0, cobrado=0, items=[];
+  const mes=hoy.getMonth(), anio=hoy.getFullYear();
+  clientes.forEach((c,idx)=>{
+    (c.polizas||[]).forEach(p=>{
+      const prima=parseFloat(p.prima)||0;
+      const clave='cobro_'+c.id+'_'+(p.num||p.tipo)+'_'+mes+'_'+anio;
+      const pagado=localStorage.getItem(clave)==='1';
+      if (pagado) cobrado+=prima/12; else porCobrar+=prima/12;
+      items.push({nombre:c.nombre,tipo:p.tipo,monto:Math.round(prima/12),clave,pagado,idx});
+    });
+  });
+  const total=porCobrar+cobrado;
+  const pct=total>0?Math.round(cobrado/total*100):0;
+
+  document.getElementById('cobro-resumen').innerHTML=`
+    <div style="background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:10px;">
+        <div><div style="font-size:11px;color:var(--mid);">Por cobrar</div><div style="font-size:24px;font-weight:800;color:var(--orange);">$${Math.round(porCobrar).toLocaleString()}</div></div>
+        <div style="text-align:right;"><div style="font-size:11px;color:var(--mid);">Cobrado</div><div style="font-size:24px;font-weight:800;color:var(--green);">$${Math.round(cobrado).toLocaleString()}</div></div>
+      </div>
+      <div style="height:8px;background:var(--border);border-radius:4px;overflow:hidden;">
+        <div style="width:${pct}%;height:100%;background:var(--green);border-radius:4px;"></div>
+      </div>
+      <div style="font-size:11px;color:var(--mid);margin-top:5px;">${pct}% cobrado este mes</div>
+    </div>`;
+
+  const el=document.getElementById('lista-cobros');
+  if (!items.length){el.innerHTML='<div class="empty"><div class="ico">💰</div><p>Agrega clientes con pólizas.</p></div>';return;}
+  el.innerHTML=items.map(it=>`
+    <div class="cobro-item">
+      <div class="cobro-check ${it.pagado?'done':''}" onclick="toggleCobro('${it.clave}')">
+        ${it.pagado?'✓':''}
+      </div>
+      <div style="flex:1;cursor:pointer;" onclick="verCliente(${it.idx})">
+        <div style="font-size:13px;font-weight:700;${it.pagado?'text-decoration:line-through;color:var(--mid);':''}">${it.nombre}</div>
+        <div style="font-size:11px;color:var(--mid);">${it.tipo}</div>
+      </div>
+      <div style="font-size:15px;font-weight:800;color:${it.pagado?'var(--green)':'var(--orange)'};">$${it.monto.toLocaleString()}</div>
+    </div>`).join('');
+}
+function toggleCobro(clave){
+  localStorage.setItem(clave,localStorage.getItem(clave)==='1'?'0':'1');
+  toast(localStorage.getItem(clave)==='1'?'✅ Cobro registrado':'↩️ Marcado como pendiente');
+  renderCobranza();
+}
+
+// ============================================================
+// PERFIL
+// ============================================================
+function cargarPerfil(){
+  perfil=load('mc2_perfil',perfil);
+  document.getElementById('p-nombre').value=perfil.nombre||'';
+  document.getElementById('p-tel').value=perfil.tel||'';
+  document.getElementById('p-email').value=perfil.email||'';
+  document.getElementById('p-meta').value=perfil.meta||'';
+  document.getElementById('p-clave').value=perfil.clave||'';
+  document.getElementById('p-nombre-display').textContent=perfil.nombre||'Agente';
+  document.getElementById('p-avatar').textContent=ini(perfil.nombre||'A');
+}
+function guardarPerfil(){
+  perfil={
+    nombre:document.getElementById('p-nombre').value.trim()||'Agente',
+    tel:document.getElementById('p-tel').value.trim(),
+    email:document.getElementById('p-email').value.trim(),
+    meta:parseFloat(document.getElementById('p-meta').value)||0,
+    clave:document.getElementById('p-clave').value.trim()
+  };
+  save('mc2_perfil',perfil);
+  toast('✅ Perfil guardado');
+}
+function borrarTodo(){
+  if(confirm('¿Segura? Se borrarán TODOS los datos.')){
+    localStorage.clear(); clientes=[]; perfil={nombre:'Agente',tel:'',email:'',meta:0,clave:''};
+    toast('🗑 Datos borrados'); goScreen('s-home');
+  }
+}
+
+// ============================================================
+// LECTOR PDF AXA
+// ============================================================
+function leerPDF(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const status = document.getElementById('pdf-status');
+  status.textContent = 'Leyendo PDF...';
+  status.style.color = '#c8622a';
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const data = new Uint8Array(e.target.result);
+    // Extraer texto del PDF manualmente (sin librerías)
+    extraerTextoPDF(data);
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+async function extraerTextoPDF(data) {
+  const status = document.getElementById('pdf-status');
+  try {
+    status.textContent = 'Leyendo PDF...';
+    if (!window.pdfjsLib) {
+      await new Promise((res, rej) => {
+        const s = document.createElement('script');
+        s.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+        s.onload = res; s.onerror = () => rej(new Error('No se pudo cargar PDF.js'));
+        document.head.appendChild(s);
+      });
+      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    }
+    const pdf = await pdfjsLib.getDocument({ data }).promise;
+    let txt = '';
+    for (let i = 1; i <= Math.min(pdf.numPages, 3); i++) {
+      const page = await pdf.getPage(i);
+      const content = await page.getTextContent();
+      txt += content.items.map(item => item.str).join(' ') + ' ';
+    }
+    txt = txt.replace(/\s+/g, ' ').trim();
+    if (!txt || txt.length < 30) throw new Error('PDF sin texto legible');
+
+    status.textContent = 'Analizando con Opus...';
+
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': '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',
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-opus-4-6',
+        max_tokens: 800,
+        system: 'Eres experto en polizas de seguros mexicanas. Extrae datos del ASEGURADO unicamente, nunca de la aseguradora ni del agente. Devuelve SOLO JSON sin markdown: {"nombre":"","rfc":"","tel":"","email":"","direccion":"","nacimiento":"","numPoliza":"","tipo":"","aseg":"","vigencia":"","prima":"","coberturas":""}. Reglas: rfc del asegurado ignora MTE440316E54 GNP9211244P0 ASE931116231. tel 10 digitos del asegurado ignora 800 01800 aseguradoras agentes. tipo exactamente uno de: Automovil Vida Gastos Medicos Mayores Hogar Accidentes Personales. vigencia YYYY-MM-DD ene=01 feb=02 mar=03 abr=04 may=05 jun=06 jul=07 ago=08 sep=09 oct=10 nov=11 dic=12. prima entero sin comas.',
+        messages: [{ role: 'user', content: txt.substring(0, 5000) }]
+      })
+    });
+
+    if (!resp.ok) {
+      const e = await resp.text();
+      throw new Error('API ' + resp.status + ': ' + e.substring(0, 150));
+    }
+
+    const resultado = await resp.json();
+    const textoIA = resultado.content?.[0]?.text || '';
+    const limpio = textoIA.replace(/```json|```/g, '').trim();
+    const match = limpio.match(/\{[\s\S]*\}/);
+    if (!match) throw new Error('Respuesta invalida de IA');
+    const datos = JSON.parse(match[0]);
+
+    const llenos = Object.values(datos).filter(v => v && String(v).trim()).length;
+    if (llenos > 0) {
+      llenarFormulario(datos);
+      status.textContent = '\u2705 ' + llenos + ' campos extraidos';
+      status.style.color = '#2d6a4f';
+    } else {
+      status.textContent = '\u26a0\ufe0f No se encontraron datos';
+      status.style.color = '#b5192a';
+    }
+  } catch(err) {
+    console.error(err);
+    status.textContent = '\u274c ' + err.message;
+    status.style.color = '#b5192a';
+  }
+}
+
+
+function llenarFormulario(d) {
+  if (d.nombre) document.getElementById('nc-nombre').value = d.nombre;
+  if (d.tel)    document.getElementById('nc-tel').value    = d.tel;
+  if (d.rfc)    document.getElementById('nc-rfc').value    = d.rfc;
+  if (d.dir)    { const el = document.getElementById('nc-dir'); if(el) el.value = d.dir; }
+  if (d.numPoliza) document.getElementById('nc-num').value = d.numPoliza;
+  if (d.vigencia)  document.getElementById('nc-vigencia').value = d.vigencia;
+  if (d.prima)     document.getElementById('nc-prima').value = d.prima;
+  if (d.tipo) {
+    const sel = document.getElementById('nc-tipo');
+    for (let i=0; i<sel.options.length; i++) {
+      if (sel.options[i].text === d.tipo) { sel.selectedIndex = i; break; }
+    }
+  }
+  if (d.aseg) {
+    const sel = document.getElementById('nc-aseg');
+    for (let i=0; i<sel.options.length; i++) {
+      if (sel.options[i].text === d.aseg) { sel.selectedIndex = i; break; }
+    }
+  }
+  // Nacimiento: del PDF o inferido del RFC
+  const nacPDF = d.nacimiento || '';
+  const nacRFC = d.rfc ? nacimientoDesdeRFC(d.rfc) : '';
+  const nacFinal = nacPDF || nacRFC;
+  const elNac = document.getElementById('nc-nac');
+  if (elNac && nacFinal) elNac.value = nacFinal;
+  toast('✅ Datos cargados. Revisa y completa lo que falte.');
+}
+
+// ============================================================
+// IMPORTAR CSV
+// ============================================================
+function importarCSV(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const texto = e.target.result;
+      const lineas = texto.split('\n').filter(l => l.trim());
+      if (lineas.length < 2) { toast('⚠️ CSV vacío'); return; }
+
+      // Detectar separador
+      const sep = lineas[0].includes(';') ? ';' : ',';
+      
+      // Headers
+      const headers = lineas[0].split(sep).map(h => h.trim().replace(/^"|"$/g,'').toLowerCase());
+      console.log('[CSV] Headers:', headers);
+
+      // Mapeo de columnas del CSV a campos de la app
+      const mapa = {
+        'nombre': 'nombre', 'name': 'nombre',
+        'rfc': 'rfc',
+        'tel': 'tel', 'telefono': 'tel', 'teléfono': 'tel', 'phone': 'tel',
+        'correo': 'email', 'email': 'email', 'mail': 'email',
+        'direccion': 'dir', 'dirección': 'dir', 'address': 'dir',
+        'nacimiento': 'nac', 'fecha_nacimiento': 'nac', 'dob': 'nac',
+        'poliza': 'numPoliza', 'póliza': 'numPoliza', 'num_poliza': 'numPoliza',
+        'tipo': 'tipo',
+        'aseguradora': 'aseg',
+        'vigencia_hasta': 'vigencia', 'vigencia': 'vigencia', 'vencimiento': 'vigencia',
+        'prima': 'prima',
+        'coberturas': 'coberturas', 'notas': 'notas'
+      };
+
+      let importados = 0;
+      let omitidos = 0;
+
+      for (let i = 1; i < lineas.length; i++) {
+        const linea = lineas[i].trim();
+        if (!linea) continue;
+
+        // Parsear CSV respetando comillas
+        const vals = parsearLineaCSV(linea, sep);
+        const row = {};
+        headers.forEach((h, idx) => { row[h] = (vals[idx] || '').trim().replace(/^"|"$/g, ''); });
+
+        // Mapear campos
+        const datos = {};
+        headers.forEach(h => {
+          const campo = mapa[h];
+          if (campo && row[h]) datos[campo] = row[h];
+        });
+
+        if (!datos.nombre) { omitidos++; continue; }
+
+        // Buscar si ya existe este cliente (por RFC o nombre)
+        const existe = clientes.find(c =>
+          (datos.rfc && c.rfc === datos.rfc) ||
+          c.nombre.toLowerCase() === datos.nombre.toLowerCase()
+        );
+
+        // Construir póliza si tiene datos
+        const poliza = {};
+        if (datos.tipo) poliza.tipo = datos.tipo;
+        if (datos.numPoliza) poliza.num = datos.numPoliza;
+        if (datos.aseg) poliza.aseg = datos.aseg;
+        if (datos.prima) poliza.prima = parseFloat(datos.prima) || 0;
+        if (datos.vigencia) poliza.vigencia = datos.vigencia;
+        if (datos.coberturas) poliza.coberturas = datos.coberturas;
+        const tienePoliza = poliza.tipo || poliza.num;
+
+        if (existe) {
+          // Cliente existe → solo agregar póliza si es nueva
+          if (tienePoliza) {
+            const polizaExiste = existe.polizas.some(p => p.num === poliza.num);
+            if (!polizaExiste) existe.polizas.push(poliza);
+          }
+        } else {
+          // Cliente nuevo
+          const nuevo = {
+            id: Date.now() + i,
+            nombre: datos.nombre,
+            tel: datos.tel || '',
+            email: datos.email || '',
+            rfc: datos.rfc || '',
+            dir: datos.dir || '',
+            nac: datos.nac || '',
+            notas: datos.notas || '',
+            polizas: tienePoliza ? [poliza] : []
+          };
+          clientes.push(nuevo);
+          importados++;
+        }
+      }
+
+      save('mc2_clientes', clientes);
+      renderLista(clientes);
+      renderHome();
+      input.value = '';
+
+      const msg = importados > 0
+        ? `✅ ${importados} cliente(s) importado(s)`
+        : `✅ Pólizas actualizadas`;
+      if (omitidos > 0) toast(msg + ` (${omitidos} sin nombre omitidos)`);
+      else toast(msg);
+
+    } catch(err) {
+      console.error('CSV error:', err);
+      toast('❌ Error leyendo CSV: ' + err.message);
+    }
+  };
+  reader.readAsText(file, 'UTF-8');
+}
+
+function parsearLineaCSV(linea, sep) {
+  const vals = [];
+  let actual = '';
+  let enComillas = false;
+  for (let i = 0; i < linea.length; i++) {
+    const ch = linea[i];
+    if (ch === '"') {
+      enComillas = !enComillas;
+    } else if (ch === sep && !enComillas) {
+      vals.push(actual);
+      actual = '';
+    } else {
+      actual += ch;
+    }
+  }
+  vals.push(actual);
+  return vals;
+}
+
+
+// ============================================================
+// EDITAR CLIENTE
+// ============================================================
+let polizaEditandoIdx = null;
+
+function editarCliente() {
+  if (clienteIdx === null) return;
+  const c = clientes[clienteIdx];
+  // Llenar formulario de edición
+  document.getElementById('ec-nombre').value  = c.nombre  || '';
+  document.getElementById('ec-tel').value     = c.tel     || '';
+  document.getElementById('ec-nac').value     = c.nac     || '';
+  document.getElementById('ec-email').value   = c.email   || '';
+  document.getElementById('ec-rfc').value     = c.rfc     || '';
+  document.getElementById('ec-dir').value     = c.dir     || '';
+  document.getElementById('ec-notas').value   = c.notas   || '';
+
+  // Renderizar pólizas editables
+  renderPolizasEditar();
+  goScreen('s-editar-cliente');
+}
+
+function renderPolizasEditar() {
+  const c = clientes[clienteIdx];
+  const el = document.getElementById('ec-polizas-lista');
+  if (!(c.polizas||[]).length) {
+    el.innerHTML = '<div style="text-align:center;padding:16px;color:var(--mid);font-size:13px;">Sin pólizas aún</div>';
+    return;
+  }
+  el.innerHTML = c.polizas.map((p,pi) => `
+    <div style="background:var(--white);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;" onclick="editarPoliza(${pi})">
+      <div>
+        <div style="font-size:13px;font-weight:700;">${iconTipo(p.tipo)} ${p.tipo||'Sin tipo'}</div>
+        <div style="font-size:11px;color:var(--mid);">${p.aseg||''} · ${p.num||''} · Vence: ${p.vigencia||'—'}</div>
+      </div>
+      <div style="font-size:20px;color:var(--mid);">›</div>
+    </div>`).join('');
+}
+
+function guardarEdicionCliente() {
+  const nombre = document.getElementById('ec-nombre').value.trim();
+  const tel    = document.getElementById('ec-tel').value.trim();
+  if (!nombre) { toast('⚠️ El nombre es obligatorio'); return; }
+  if (!tel)    { toast('⚠️ El teléfono es obligatorio'); return; }
+
+  clientes[clienteIdx].nombre = nombre;
+  clientes[clienteIdx].tel    = tel;
+  clientes[clienteIdx].nac    = document.getElementById('ec-nac').value;
+  clientes[clienteIdx].email  = document.getElementById('ec-email').value.trim();
+  clientes[clienteIdx].rfc    = document.getElementById('ec-rfc').value.trim();
+  clientes[clienteIdx].dir    = document.getElementById('ec-dir').value.trim();
+  clientes[clienteIdx].notas  = document.getElementById('ec-notas').value.trim();
+
+  save('mc2_clientes', clientes);
+  toast('✅ Cliente actualizado');
+  verCliente(clienteIdx);
+}
+
+// ============================================================
+// EDITAR PÓLIZA
+// ============================================================
+function editarPoliza(pi) {
+  polizaEditandoIdx = pi;
+  const p = clientes[clienteIdx].polizas[pi];
+
+  // Llenar formulario
+  const sel = document.getElementById('ep-tipo');
+  for (let i=0; i<sel.options.length; i++) {
+    if (sel.options[i].text === p.tipo) { sel.selectedIndex=i; break; }
+  }
+  document.getElementById('ep-prima').value      = p.prima     || '';
+  document.getElementById('ep-vigencia').value   = p.vigencia  || '';
+  document.getElementById('ep-num').value        = p.num       || '';
+  document.getElementById('ep-coberturas').value = p.coberturas|| '';
+  document.getElementById('ep-nota').value       = p.nota      || '';
+
+  const selA = document.getElementById('ep-aseg');
+  for (let i=0; i<selA.options.length; i++) {
+    if (selA.options[i].text === p.aseg) { selA.selectedIndex=i; break; }
+  }
+
+  goScreen('s-editar-poliza');
+}
+
+function guardarEdicionPoliza() {
+  if (clienteIdx===null || polizaEditandoIdx===null) return;
+  const tipo = document.getElementById('ep-tipo').value;
+  if (!tipo) { toast('⚠️ Selecciona el tipo de seguro'); return; }
+
+  const p = clientes[clienteIdx].polizas[polizaEditandoIdx];
+  p.tipo       = tipo;
+  p.prima      = parseFloat(document.getElementById('ep-prima').value)||0;
+  p.vigencia   = document.getElementById('ep-vigencia').value;
+  p.num        = document.getElementById('ep-num').value.trim();
+  p.aseg       = document.getElementById('ep-aseg').value;
+  p.coberturas = document.getElementById('ep-coberturas').value.trim();
+  p.nota       = document.getElementById('ep-nota').value.trim();
+
+  save('mc2_clientes', clientes);
+  toast('✅ Póliza actualizada');
+  goBack(); // volver a editar cliente
+  renderPolizasEditar();
+}
+
+function eliminarPoliza() {
+  if (clienteIdx===null || polizaEditandoIdx===null) return;
+  const tipo = clientes[clienteIdx].polizas[polizaEditandoIdx].tipo;
+  if (confirm('¿Eliminar póliza de ' + tipo + '?')) {
+    clientes[clienteIdx].polizas.splice(polizaEditandoIdx, 1);
+    save('mc2_clientes', clientes);
+    toast('🗑 Póliza eliminada');
+    polizaEditandoIdx = null;
+    goBack();
+    renderPolizasEditar();
+  }
+}
+
+// INIT
+renderHome();
+</script>
+</body>
+</html>
