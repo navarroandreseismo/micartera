@@ -474,7 +474,18 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
   <button class="fb" onclick="guardarPerfil()">💾 Guardar perfil</button>
   <div style="height:8px"></div>
   <button onclick="probarNotificacion()" class="fb alt">🔔 Probar notificación</button>
-  <div style="height:8px"></div>
+ </div>
+ <div class="fsec" style="padding:0 14px;margin-top:10px">🔄 Sincronización entre celulares</div>
+ <div style="background:#f8f4ee;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:14px">
+  <div style="font-size:11px;color:var(--mid);margin-bottom:8px;line-height:1.4">Pon el mismo <b>código de equipo</b> en los celulares que quieras sincronizar. Cualquier cambio se replica automáticamente.</div>
+  <div class="fg" style="margin-bottom:8px"><label class="fl">Código de equipo (mín 8 caracteres)</label><input class="fi" id="sync-code" placeholder="ej: lomaos2026"></div>
+  <div id="sync-estado" style="font-size:11px;color:var(--mid);margin-bottom:8px"></div>
+  <div style="display:flex;gap:8px">
+   <button onclick="syncGuardarYPush()" class="fb" style="margin:0;padding:11px;font-size:13px">💾 Guardar y subir</button>
+   <button onclick="syncForzarPull()" class="fb alt" style="margin:0;padding:11px;font-size:13px">⬇️ Bajar ahora</button>
+  </div>
+ </div>
+ <div style="padding:14px">
   <button onclick="confirmarBorrarTodo()" class="fb danger">🗑 Borrar todos los datos</button>
  </div>
 </div>
@@ -514,7 +525,77 @@ var MESES_ABR=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov'
 
 // ============== STORAGE ==============
 function load(k,d){try{var v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
-function save(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){toast('⚠️ Error guardando');return false}}
+function save(k,v){try{localStorage.setItem(k,JSON.stringify(v));if(k==='mc2_clientes')syncPushDebounced();return true}catch(e){toast('⚠️ Error guardando');return false}}
+
+// ============== SYNC (Cloudflare KV) ==============
+var syncTimer=null;
+var lastSyncedTs=parseInt(localStorage.getItem('mc2_sync_lastts')||'0',10);
+function getSyncCode(){return (localStorage.getItem('mc2_sync_code')||'').trim()}
+function setSyncCode(c){localStorage.setItem('mc2_sync_code',c||'')}
+function syncPushDebounced(){
+ if(!getSyncCode())return;
+ if(syncTimer)clearTimeout(syncTimer);
+ syncTimer=setTimeout(syncPush,800);
+}
+function syncPush(){
+ var code=getSyncCode();if(!code)return;
+ var data={ts:Date.now(),clientes:clientes};
+ fetch(PROXY_URL+'/sync?code='+encodeURIComponent(code),{
+  method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)
+ }).then(function(r){
+  if(r.ok){lastSyncedTs=data.ts;localStorage.setItem('mc2_sync_lastts',lastSyncedTs);actualizarSyncEstado()}
+  else{actualizarSyncEstado('Error subir')}
+ }).catch(function(e){actualizarSyncEstado('Sin conexión')});
+}
+function syncPull(silencioso){
+ var code=getSyncCode();if(!code)return Promise.resolve();
+ return fetch(PROXY_URL+'/sync?code='+encodeURIComponent(code))
+  .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json()})
+  .then(function(d){
+   if(!d||!d.ts){actualizarSyncEstado('Vacío en la nube');return}
+   if(d.ts<=lastSyncedTs){actualizarSyncEstado();return}
+   if(d.clientes&&Array.isArray(d.clientes)){
+    clientes=d.clientes;
+    localStorage.setItem('mc2_clientes',JSON.stringify(clientes));
+    lastSyncedTs=d.ts;
+    localStorage.setItem('mc2_sync_lastts',lastSyncedTs);
+    if(!silencioso)toast('🔄 Datos actualizados desde la nube');
+    var act=document.querySelector('.screen.active');
+    if(act){
+     if(act.id==='s-home')renderHome();
+     else if(act.id==='s-clientes')renderLista();
+     else if(act.id==='s-detalle'&&clienteIdx!==null&&clienteIdx<clientes.length)renderDetalle();
+    }
+   }
+   actualizarSyncEstado();
+  }).catch(function(e){actualizarSyncEstado('Error: '+e.message)});
+}
+function actualizarSyncEstado(err){
+ var el=document.getElementById('sync-estado');if(!el)return;
+ var code=getSyncCode();
+ if(!code){el.innerHTML='<span style="color:var(--mid)">Sin código — sin sincronizar</span>';return}
+ if(err){el.innerHTML='<span style="color:var(--red)">⚠️ '+err+'</span>';return}
+ if(lastSyncedTs===0){el.innerHTML='<span style="color:var(--orange)">⏳ Pendiente de sincronizar</span>';return}
+ var diff=Math.round((Date.now()-lastSyncedTs)/1000);
+ var hace=diff<60?'hace '+diff+'s':diff<3600?'hace '+Math.round(diff/60)+'min':'hace '+Math.round(diff/3600)+'h';
+ el.innerHTML='<span style="color:var(--green)">✅ Activo — última sync '+hace+'</span>';
+}
+function syncGuardarYPush(){
+ var c=document.getElementById('sync-code').value.trim();
+ if(!c){setSyncCode('');toast('Código borrado — sync desactivado');actualizarSyncEstado();return}
+ if(c.length<8){toast('⚠️ Mínimo 8 caracteres');return}
+ setSyncCode(c);
+ toast('🔄 Subiendo a la nube...');
+ syncPush();
+ setTimeout(function(){syncPull();},1500);
+}
+function syncForzarPull(){
+ var c=getSyncCode();
+ if(!c){toast('⚠️ Pon el código primero y guárdalo');return}
+ toast('⬇️ Bajando datos...');
+ syncPull();
+}
+
 var clientes=load('mc2_clientes',[]);
 var perfil=load('mc2_perfil',{nombre:'',tel:'',email:'',meta:0,clave:'',foto:''});
 var tabActual='todos';
@@ -1472,6 +1553,8 @@ function cargarPerfil(){
  var av=document.getElementById('p-avatar');
  if(perfil.foto){av.style.backgroundImage='url('+perfil.foto+')';av.firstChild.nodeValue=''}
  else{av.style.backgroundImage='';av.firstChild.nodeValue=ini(perfil.nombre||'A')}
+ var sc=document.getElementById('sync-code');if(sc)sc.value=getSyncCode();
+ actualizarSyncEstado();
 }
 function guardarPerfil(){
  var nombre=document.getElementById('p-nombre').value.trim();
@@ -1769,8 +1852,11 @@ function init(){
  document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)modalCerrar()});
  renderHome();
  setTimeout(function(){programarNotificaciones()},1500);
- // Splash desvanece después de 1.8s
  setTimeout(dismissSplash,1800);
+ // Sync inicial + polling cada 15s
+ if(getSyncCode()){setTimeout(function(){syncPull(true)},2500)}
+ setInterval(function(){if(getSyncCode())syncPull(true)},15000);
+ setInterval(actualizarSyncEstado,30000);
 }
 init();
 </script>
