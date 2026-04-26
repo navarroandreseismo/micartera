@@ -291,10 +291,10 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
   <div class="fsec">👤 Datos del cliente</div>
   <div class="fg"><label class="fl">Nombre completo *</label><input class="fi" id="nc-nombre" placeholder="Nombre completo"></div>
   <div class="fr">
-   <div class="fg"><label class="fl">Teléfono *</label><input class="fi" type="tel" id="nc-tel" placeholder="10 dígitos"></div>
+   <div class="fg"><label class="fl">Teléfono</label><input class="fi" type="tel" id="nc-tel" placeholder="10 dígitos"></div>
    <div class="fg"><label class="fl">Nacimiento</label><input class="fi" type="date" id="nc-nac"></div>
   </div>
-  <div class="fg"><label class="fl">Correo *</label><input class="fi" type="email" id="nc-email" placeholder="correo@ejemplo.com"></div>
+  <div class="fg"><label class="fl">Correo</label><input class="fi" type="email" id="nc-email" placeholder="correo@ejemplo.com"></div>
   <div class="fg"><label class="fl">RFC</label><input class="fi" id="nc-rfc" placeholder="RFC"></div>
   <div class="fg"><label class="fl">Dirección</label><input class="fi" id="nc-dir" placeholder="Calle, Colonia, Ciudad"></div>
   <div class="fg"><label class="fl">Notas</label><input class="fi" id="nc-notas" placeholder="Referido por, intereses..."></div>
@@ -339,10 +339,10 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
   <div class="fsec">👤 Datos del cliente</div>
   <div class="fg"><label class="fl">Nombre *</label><input class="fi" id="ec-nombre"></div>
   <div class="fr">
-   <div class="fg"><label class="fl">Teléfono *</label><input class="fi" type="tel" id="ec-tel"></div>
+   <div class="fg"><label class="fl">Teléfono</label><input class="fi" type="tel" id="ec-tel"></div>
    <div class="fg"><label class="fl">Nacimiento</label><input class="fi" type="date" id="ec-nac"></div>
   </div>
-  <div class="fg"><label class="fl">Correo *</label><input class="fi" type="email" id="ec-email"></div>
+  <div class="fg"><label class="fl">Correo</label><input class="fi" type="email" id="ec-email"></div>
   <div class="fg"><label class="fl">RFC</label><input class="fi" id="ec-rfc"></div>
   <div class="fg"><label class="fl">Dirección</label><input class="fi" id="ec-dir"></div>
   <div class="fg"><label class="fl">Notas</label><input class="fi" id="ec-notas"></div>
@@ -1039,9 +1039,7 @@ function guardarCliente(){
  var tel=document.getElementById('nc-tel').value.trim();
  var email=document.getElementById('nc-email').value.trim();
  if(!nombre){toast('⚠️ Nombre es obligatorio');document.getElementById('nc-nombre').focus();return}
- if(!tel){toast('⚠️ Teléfono es obligatorio');document.getElementById('nc-tel').focus();return}
- if(!email){toast('⚠️ Correo es obligatorio');document.getElementById('nc-email').focus();return}
- if(!/^\S+@\S+\.\S+$/.test(email)){toast('⚠️ Correo inválido');return}
+ if(email&&!/^\S+@\S+\.\S+$/.test(email)){toast('⚠️ Correo inválido');return}
  var rfc=document.getElementById('nc-rfc').value.trim().toUpperCase();
  var nac=document.getElementById('nc-nac').value;
  var dir=document.getElementById('nc-dir').value.trim();
@@ -1133,9 +1131,7 @@ function guardarEdicion(){
  var tel=document.getElementById('ec-tel').value.trim();
  var email=document.getElementById('ec-email').value.trim();
  if(!nombre){toast('⚠️ Nombre obligatorio');return}
- if(!tel){toast('⚠️ Teléfono obligatorio');return}
- if(!email){toast('⚠️ Correo obligatorio');return}
- if(!/^\S+@\S+\.\S+$/.test(email)){toast('⚠️ Correo inválido');return}
+ if(email&&!/^\S+@\S+\.\S+$/.test(email)){toast('⚠️ Correo inválido');return}
  var rfc=document.getElementById('ec-rfc').value.trim().toUpperCase();
  // Verificar duplicado (excluyendo a sí mismo)
  var dup=buscarDuplicado(nombre,tel,email,rfc,clienteIdx);
