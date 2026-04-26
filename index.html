@@ -922,6 +922,7 @@ function renderDetalle(){
    (p.coberturas?'<div class="row"><span class="k">Coberturas</span><span class="v" style="font-size:11px">'+esc(p.coberturas)+'</span></div>':'')+
    (p.nota?'<div class="row"><span class="k">Notas</span><span class="v" style="font-size:11px">'+esc(p.nota)+'</span></div>':'')+
    '</div>'+veh+
+   renderComisionBlock(p,pi)+
    '<div style="display:flex;gap:6px;margin:10px 12px 12px;flex-wrap:wrap">'+
    '<button onclick="renovarPoliza('+pi+')" class="fb green" style="margin:0;padding:10px;font-size:12px;background:#10b981;flex:1">🔄 Renovar</button>'+
    '<button onclick="editarPoliza('+pi+')" class="fb alt" style="margin:0;padding:10px;font-size:12px;flex:1">✏️ Editar</button>'+
